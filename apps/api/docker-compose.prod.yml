@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+      target: production
+    image: store-backend:latest
+    container_name: store_app
+    restart: unless-stopped
+    ports:
+      - '3002:3000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+      REDIS_HOST: host.docker.internal
+      REDIS_PORT: 6379
+      MINIO_ENDPOINT: host.docker.internal
+      MINIO_PORT: 9000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

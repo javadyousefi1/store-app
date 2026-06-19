@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: store-frontend:latest
+    container_name: store-frontend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - BACKEND_URL=http://host.docker.internal:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
