@@ -22,7 +22,7 @@ export class CartService {
   async getCart(userId: string): Promise<Cart | null> {
     const cart = await this.cartRepo.findOne({
       where: { userId },
-      relations: ['items', 'items.variant'],
+      relations: ['items', 'items.variant', 'items.variant.product'],
     });
 
     if (!cart) return null;
@@ -95,7 +95,7 @@ export class CartService {
 
     const updated = await this.cartRepo.findOne({
       where: { id: cartId },
-      relations: ['items', 'items.variant'],
+      relations: ['items', 'items.variant', 'items.variant.product'],
     });
     await this.attachVariantImageUrls(updated);
     return updated;

@@ -12,6 +12,10 @@ export interface CartVariant {
   attributes: Record<string, string>;
   imageIds: string[];
   imageUrls: string[];
+  product?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface CartItem {
@@ -83,6 +87,32 @@ export function useRemoveFromCart() {
         .map((i) => ({ variantId: i.variantId, quantity: i.quantity }));
       const r = await apiClient.put("/cart", { items: newItems });
       return r.data.data;
+    },
+    onSuccess: (data) => qc.setQueryData(QUERY_KEY, data),
+  });
+}
+
+export function useUpdateCartQuantity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      variantId,
+      quantity,
+    }: {
+      variantId: string;
+      quantity: number;
+    }) => {
+      const current = qc.getQueryData<Cart | null>(QUERY_KEY);
+      const newItems = (current?.items ?? [])
+        .map((item) => ({
+          variantId: item.variantId,
+          quantity:
+            item.variantId === variantId ? quantity : item.quantity,
+        }))
+        .filter((item) => item.quantity > 0);
+
+      const response = await apiClient.put("/cart", { items: newItems });
+      return response.data.data;
     },
     onSuccess: (data) => qc.setQueryData(QUERY_KEY, data),
   });

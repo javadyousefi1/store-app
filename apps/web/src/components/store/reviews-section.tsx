@@ -1,107 +1,107 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronRight, ChevronLeft, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const REVIEWS = [
+const reviews = [
   {
-    id: 1,
-    name: "الهام مرادی",
-    city: "کرج",
-    rating: 5,
-    text: "شومیز برای تابستون عالیه. پارچه‌اش خنکه و اصلاً بدن‌نما نیست. بسته‌بندی تمیز بود و بعد از شستشو هم فرم لباس تغییر نکرد.",
-    initials: "ا",
-    color: "#F4AABB",
-  },
-  {
-    id: 2,
-    name: "نیلوفر کریمی",
+    name: "نگار رضایی",
     city: "تهران",
-    rating: 5,
-    text: "کیفیت پارچه واقعاً خوبه. رنگش بعد از چند بار شستشو هم ثابت مونده. ارسال هم سریع بود و بسته‌بندی مرتب.",
-    initials: "ن",
-    color: "#8B9D6A",
+    text: "استایل‌ها متنوع و رنگ‌ها دقیقاً مثل عکس‌هاست. بسته‌بندی مرتب بود و خرید خیلی خوبی داشتم.",
   },
   {
-    id: 3,
-    name: "سارا محمدی",
+    name: "سارینا نوری",
+    city: "شیراز",
+    text: "ارسال سریع انجام شد و کیفیت پارچه و دوخت لباس از چیزی که انتظار داشتم بهتر بود.",
+  },
+  {
+    name: "مریم احمدی",
     city: "اصفهان",
-    rating: 5,
-    text: "ست خریدم برای مسافرت. تنخور عالی داشت و قیمتش به کیفیتش می‌ارزید. حتماً دوباره سفارش میدم.",
-    initials: "س",
-    color: "#EDD87A",
+    text: "تن‌خور لباس خیلی خوب بود و راهنمای سایز کمک کرد دقیقاً انتخاب درستی داشته باشم.",
   },
   {
-    id: 4,
-    name: "مریم رضایی",
-    city: "مشهد",
-    rating: 5,
-    text: "از طراحی مینیمالش خیلی خوشم اومد. ست‌شدن با چیزای مختلف راحته و رنگش برای همه فصل‌ها مناسبه.",
-    initials: "م",
-    color: "#B8C5D8",
+    name: "الهام کریمی",
+    city: "کرج",
+    text: "بعد از چند بار شست‌وشو فرم و رنگ لباس کاملاً حفظ شده و دوباره از الینا خرید می‌کنم.",
   },
 ];
 
 export function ReviewsSection() {
-  const [idx, setIdx] = useState(0);
+  const [active, setActive] = useState(0);
 
-  const prev = () => setIdx((i) => (i - 1 + REVIEWS.length) % REVIEWS.length);
-  const next = () => setIdx((i) => (i + 1) % REVIEWS.length);
+  useEffect(() => {
+    const timer = window.setInterval(
+      () => setActive((current) => (current + 1) % reviews.length),
+      6500,
+    );
+    return () => window.clearInterval(timer);
+  }, []);
 
-  const r = REVIEWS[idx];
+  const goTo = (index: number) => {
+    setActive((index + reviews.length) % reviews.length);
+  };
+
+  const review = reviews[active];
 
   return (
-    <section className="py-10 bg-zinc-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-lg font-bold text-zinc-900 mb-6 text-right">نظر کاربران</h2>
+    <section className="py-12 sm:py-16">
+      <div className="mb-7 text-center">
+        <h2 className="text-2xl font-bold text-[#282033] sm:text-3xl">نظر مشتریان</h2>
+        <p className="mt-2 text-sm text-[#776f7e]">بخشی از تجربه خرید مشتریان الینا</p>
+      </div>
 
-      <div className="relative max-w-xl mx-auto">
-        <div className="bg-white rounded-2xl border p-6 space-y-4">
-          <div className="flex items-center gap-3 flex-row-reverse">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0"
-              style={{ backgroundColor: r.color }}
-            >
-              {r.initials}
+      <div className="mx-auto flex max-w-2xl items-center gap-3">
+        <div className="flex shrink-0 flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => goTo(active - 1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-[#332b3d] shadow-sm transition hover:border-primary hover:text-primary"
+            aria-label="نظر قبلی"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => goTo(active + 1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-[#332b3d] shadow-sm transition hover:border-primary hover:text-primary"
+            aria-label="نظر بعدی"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+        </div>
+
+        <article className="min-h-64 flex-1 rounded-lg border border-border bg-white p-6 shadow-[0_10px_30px_rgba(48,35,70,0.05)] sm:p-8">
+          <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
+            <div>
+              <p className="font-bold text-[#2d2438]">{review.name}</p>
+              <p className="mt-1 text-xs text-[#8d8493]">{review.city}</p>
             </div>
-            <div className="text-right">
-              <p className="font-semibold text-zinc-900">{r.name}</p>
-              <p className="text-xs text-zinc-400">{r.city}</p>
-            </div>
-            <div className="flex gap-0.5 ms-auto">
-              {Array.from({ length: r.rating }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+            <div className="flex gap-1 text-[#efb32f]" aria-label="امتیاز پنج از پنج">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Star key={index} className="h-4 w-4 fill-current" />
               ))}
             </div>
           </div>
-          <p className="text-sm text-zinc-600 leading-relaxed text-right">«{r.text}»</p>
-        </div>
-
-        {/* Arrows */}
-        <button
-          onClick={next}
-          className="absolute top-1/2 -translate-y-1/2 -start-4 w-8 h-8 rounded-full bg-white border shadow-sm flex items-center justify-center hover:bg-zinc-50 transition-colors"
-        >
-          <ChevronRight className="h-4 w-4 text-zinc-600" />
-        </button>
-        <button
-          onClick={prev}
-          className="absolute top-1/2 -translate-y-1/2 -end-4 w-8 h-8 rounded-full bg-white border shadow-sm flex items-center justify-center hover:bg-zinc-50 transition-colors"
-        >
-          <ChevronLeft className="h-4 w-4 text-zinc-600" />
-        </button>
+          <p className="pt-5 text-right text-sm leading-8 text-[#4f4658] sm:text-base">
+            «{review.text}»
+          </p>
+        </article>
       </div>
 
-      {/* Dots */}
-      <div className="flex justify-center gap-1.5 mt-5">
-        {REVIEWS.map((_, i) => (
+      <div className="mt-5 flex justify-center gap-2">
+        {reviews.map((item, index) => (
           <button
-            key={i}
-            onClick={() => setIdx(i)}
-            className={`rounded-full transition-all duration-300 ${i === idx ? "w-4 h-2 bg-zinc-900" : "w-2 h-2 bg-zinc-300"}`}
+            key={item.name}
+            type="button"
+            onClick={() => goTo(index)}
+            className={cn(
+              "h-2 rounded-full transition-all",
+              index === active ? "w-9 bg-primary" : "w-2 bg-[#ddd8e1]",
+            )}
+            aria-label={`نمایش نظر ${index + 1}`}
           />
         ))}
-      </div>
       </div>
     </section>
   );
