@@ -15,10 +15,12 @@ export function CategoryFilter({ categories, active }: Props) {
 
   function select(id?: string) {
     const params = new URLSearchParams(searchParams.toString());
+    params.delete("categoryIds");
     if (id) params.set("categoryId", id);
     else params.delete("categoryId");
     params.delete("page");
-    router.push(`/products?${params}`);
+    const query = params.toString();
+    router.push(query ? `/products?${query}` : "/products");
   }
 
   return (

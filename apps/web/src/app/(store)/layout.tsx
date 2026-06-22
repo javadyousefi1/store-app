@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { StoreHeader } from "@/components/store/header";
 import { StoreFooter } from "@/components/store/footer";
 import { MobileBottomNav } from "@/components/store/mobile-bottom-nav";
@@ -12,7 +13,9 @@ export default function StoreLayout({
       <StoreHeader />
       <main className="flex-1 min-h-svh">{children}</main>
       <StoreFooter />
-      <MobileBottomNav />
+      <Suspense fallback={null}>
+        <MobileBottomNav />
+      </Suspense>
     </div>
   );
 }
