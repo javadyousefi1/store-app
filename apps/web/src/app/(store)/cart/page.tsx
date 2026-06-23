@@ -55,7 +55,7 @@ export default function CartPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[45svh] items-center justify-center">
+      <div className="flex min-h-[calc(100svh-128px)] items-center justify-center pb-4 md:min-h-[45svh] md:pb-0">
         <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -63,7 +63,7 @@ export default function CartPage() {
 
   if (!items.length) {
     return (
-      <div className="mx-auto flex min-h-[55svh] max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
+      <div className="mx-auto flex min-h-[calc(100svh-128px)] max-w-xl flex-col items-center justify-center gap-4 px-5 pb-4 text-center md:min-h-[55svh] md:px-4 md:pb-0">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
           <ShoppingBag className="h-9 w-9 text-primary" />
         </div>
@@ -131,11 +131,13 @@ export default function CartPage() {
                     {item.variant.product?.name ?? "محصول"}
                   </h2>
                   <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    {Object.entries(item.variant.attributes).map(([key, value]) => (
-                      <span key={key}>
-                        {key}: {value}
-                      </span>
-                    ))}
+                    {Object.entries(item.variant.attributes).map(
+                      ([key, value]) => (
+                        <span key={key}>
+                          {key}: {value}
+                        </span>
+                      ),
+                    )}
                   </div>
                   <p className="mt-2 text-sm font-bold text-primary">
                     {formatPrice(item.variant.price)}

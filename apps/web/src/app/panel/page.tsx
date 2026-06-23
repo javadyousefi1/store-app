@@ -14,6 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import type { TooltipContentProps } from "recharts";
 import {
   TrendingUp,
   Clock,
@@ -74,7 +75,8 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "#9ca3af",
 };
 
-const TOOLTIP_STYLE = "rounded-lg border bg-background p-3 text-xs shadow-md space-y-1.5 min-w-[150px]";
+const TOOLTIP_STYLE =
+  "rounded-lg border bg-background p-3 text-xs shadow-md space-y-1.5 min-w-[150px]";
 
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 
@@ -117,10 +119,17 @@ interface KpiCardProps {
   iconColor: string;
 }
 
-function KpiCard({ label, sublabel, value, icon: Icon, iconBg, iconColor }: KpiCardProps) {
+function KpiCard({
+  label,
+  sublabel,
+  value,
+  icon: Icon,
+  iconBg,
+  iconColor,
+}: KpiCardProps) {
   return (
     <Card>
-      <CardContent >
+      <CardContent>
         <div
           className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl"
           style={{ backgroundColor: iconBg }}
@@ -128,8 +137,12 @@ function KpiCard({ label, sublabel, value, icon: Icon, iconBg, iconColor }: KpiC
           <Icon className="h-5 w-5" style={{ color: iconColor }} />
         </div>
         <p className="text-2xl font-bold leading-none tabular-nums">{value}</p>
-        <p className="mt-1.5 text-xs text-muted-foreground leading-tight">{label}</p>
-        {sublabel && <p className="text-[11px] text-muted-foreground/60">{sublabel}</p>}
+        <p className="mt-1.5 text-xs text-muted-foreground leading-tight">
+          {label}
+        </p>
+        {sublabel && (
+          <p className="text-[11px] text-muted-foreground/60">{sublabel}</p>
+        )}
       </CardContent>
     </Card>
   );
@@ -152,21 +165,30 @@ function RevenueChart({ data }: { data: RevenueChartItem[] }) {
             <p className="text-base font-bold leading-none tabular-nums">
               {totalOrders.toLocaleString("fa-IR")}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">سفارش / ۳۰ روز</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              سفارش / ۳۰ روز
+            </p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 px-3 pt-0 pb-4">
         <div className="h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <AreaChart
+              data={data}
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#6366f1" stopOpacity={0.22} />
                   <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#f0f0f0"
+              />
               <XAxis
                 dataKey="date"
                 tickFormatter={fmtAxisDate}
@@ -183,12 +205,18 @@ function RevenueChart({ data }: { data: RevenueChartItem[] }) {
                 width={52}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({
+                  active,
+                  payload,
+                  label,
+                }: TooltipContentProps<number, string>) => {
                   if (!active || !payload?.length) return null;
                   const item = payload[0].payload as RevenueChartItem;
                   return (
                     <div className={TOOLTIP_STYLE}>
-                      <p className="font-medium">{fmtAxisDate(label as string)}</p>
+                      <p className="font-medium">
+                        {fmtAxisDate(label as string)}
+                      </p>
                       <div className="flex justify-between gap-4">
                         <span className="text-muted-foreground">درآمد</span>
                         <span className="font-semibold text-indigo-600">
@@ -210,7 +238,12 @@ function RevenueChart({ data }: { data: RevenueChartItem[] }) {
                 strokeWidth={2}
                 fill="url(#revenueGrad)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#6366f1", stroke: "#fff", strokeWidth: 2 }}
+                activeDot={{
+                  r: 4,
+                  fill: "#6366f1",
+                  stroke: "#fff",
+                  strokeWidth: 2,
+                }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -251,11 +284,17 @@ function OrdersDonut({ data }: { data: OrdersByStatus[] }) {
                 strokeWidth={0}
               >
                 {data.map((entry, i) => (
-                  <Cell key={i} fill={STATUS_COLORS[entry.status] ?? "#d1d5db"} />
+                  <Cell
+                    key={i}
+                    fill={STATUS_COLORS[entry.status] ?? "#d1d5db"}
+                  />
                 ))}
               </Pie>
               <Tooltip
-                content={({ active, payload }) => {
+                content={({
+                  active,
+                  payload,
+                }: TooltipContentProps<number, string>) => {
                   if (!active || !payload?.length) return null;
                   const d = payload[0].payload as OrdersByStatus;
                   const cfg = ORDER_STATUS_CONFIG[d.status];
@@ -283,17 +322,26 @@ function OrdersDonut({ data }: { data: OrdersByStatus[] }) {
             const cfg = ORDER_STATUS_CONFIG[item.status];
             const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
             return (
-              <div key={item.status} className="flex items-center justify-between text-xs">
+              <div
+                key={item.status}
+                className="flex items-center justify-between text-xs"
+              >
                 <div className="flex items-center gap-2">
                   <span
                     className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
-                    style={{ backgroundColor: STATUS_COLORS[item.status] ?? "#d1d5db" }}
+                    style={{
+                      backgroundColor: STATUS_COLORS[item.status] ?? "#d1d5db",
+                    }}
                   />
-                  <span className="text-muted-foreground">{cfg?.label ?? item.status}</span>
+                  <span className="text-muted-foreground">
+                    {cfg?.label ?? item.status}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 tabular-nums">
                   <span className="text-muted-foreground/70">{pct}٪</span>
-                  <span className="font-semibold w-6 text-right">{item.count}</span>
+                  <span className="font-semibold w-6 text-right">
+                    {item.count}
+                  </span>
                 </div>
               </div>
             );
@@ -320,10 +368,15 @@ function TopProductsChart({ data }: { data: TopProduct[] }) {
       </CardHeader>
       <CardContent className="flex-1 pt-0 space-y-4">
         {top7.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">داده‌ای موجود نیست</p>
+          <p className="text-sm text-muted-foreground text-center py-8">
+            داده‌ای موجود نیست
+          </p>
         ) : (
           top7.map((item, i) => {
-            const pct = Math.max(Math.round((item.revenue / maxRevenue) * 100), 4);
+            const pct = Math.max(
+              Math.round((item.revenue / maxRevenue) * 100),
+              4,
+            );
             return (
               <div key={i}>
                 <div className="flex items-baseline justify-between mb-1.5 gap-3">
@@ -366,15 +419,24 @@ function NewUsersChart({ data }: { data: NewUsersChartItem[] }) {
             <p className="text-base font-bold leading-none tabular-nums">
               {total.toLocaleString("fa-IR")}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">۳۰ روز اخیر</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              ۳۰ روز اخیر
+            </p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1 px-3 pt-0 pb-4">
         <div className="h-[220px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+            <LineChart
+              data={data}
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="#f0f0f0"
+              />
               <XAxis
                 dataKey="date"
                 tickFormatter={fmtAxisDate}
@@ -391,13 +453,21 @@ function NewUsersChart({ data }: { data: NewUsersChartItem[] }) {
                 width={28}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({
+                  active,
+                  payload,
+                  label,
+                }: TooltipContentProps<number, string>) => {
                   if (!active || !payload?.length) return null;
                   return (
                     <div className={TOOLTIP_STYLE}>
-                      <p className="font-medium">{fmtAxisDate(label as string)}</p>
+                      <p className="font-medium">
+                        {fmtAxisDate(label as string)}
+                      </p>
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">کاربر جدید</span>
+                        <span className="text-muted-foreground">
+                          کاربر جدید
+                        </span>
                         <span className="font-semibold text-cyan-600">
                           {(payload[0].value as number).toLocaleString("fa-IR")}
                         </span>
@@ -412,7 +482,12 @@ function NewUsersChart({ data }: { data: NewUsersChartItem[] }) {
                 stroke="#06b6d4"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: "#06b6d4", stroke: "#fff", strokeWidth: 2 }}
+                activeDot={{
+                  r: 4,
+                  fill: "#06b6d4",
+                  stroke: "#fff",
+                  strokeWidth: 2,
+                }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -438,23 +513,38 @@ function RecentOrdersTable({ data }: { data: RecentOrder[] }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">مشتری</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">مبلغ</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">وضعیت</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground hidden sm:table-cell">تاریخ</th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  مشتری
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  مبلغ
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  وضعیت
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground hidden sm:table-cell">
+                  تاریخ
+                </th>
               </tr>
             </thead>
             <tbody>
               {data.slice(0, 10).map((order) => {
                 const cfg = ORDER_STATUS_CONFIG[order.status];
                 return (
-                  <tr key={order.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3 font-medium">{order.customerName}</td>
+                  <tr
+                    key={order.id}
+                    className="border-b last:border-0 hover:bg-muted/20 transition-colors"
+                  >
+                    <td className="px-4 py-3 font-medium">
+                      {order.customerName}
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground tabular-nums text-xs">
                       {fmtMoney(order.totalAmount)}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${cfg?.className ?? ""}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${cfg?.className ?? ""}`}
+                      >
                         {cfg?.label ?? order.status}
                       </span>
                     </td>
@@ -488,39 +578,74 @@ function LowStockTable({ data }: { data: LowStockVariant[] }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">محصول</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">ویژگی</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">کل</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">رزرو</th>
-                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">موجود</th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  محصول
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  ویژگی
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  کل
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  رزرو
+                </th>
+                <th className="px-4 py-2.5 text-right font-medium text-xs text-muted-foreground">
+                  موجود
+                </th>
               </tr>
             </thead>
             <tbody>
               {data.map((v) => {
                 const availColor =
-                  v.available <= 2 ? "text-red-600 font-bold" :
-                  v.available <= 4 ? "text-amber-600 font-semibold" :
-                  "";
+                  v.available <= 2
+                    ? "text-red-600 font-bold"
+                    : v.available <= 4
+                      ? "text-amber-600 font-semibold"
+                      : "";
                 return (
-                  <tr key={v.sku} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                  <tr
+                    key={v.sku}
+                    className="border-b last:border-0 hover:bg-muted/20 transition-colors"
+                  >
                     <td className="px-4 py-3">
-                      <p className="font-medium leading-tight text-xs">{v.productName}</p>
-                      <p className="text-[11px] text-muted-foreground font-mono">{v.sku}</p>
+                      <p className="font-medium leading-tight text-xs">
+                        {v.productName}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground font-mono">
+                        {v.sku}
+                      </p>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {Object.entries(v.attributes).map(([k, val]) => (
-                          <span key={k} className="inline-flex items-center gap-1 rounded border bg-muted/60 px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                          <span
+                            key={k}
+                            className="inline-flex items-center gap-1 rounded border bg-muted/60 px-1.5 py-0.5 text-[11px] text-muted-foreground"
+                          >
                             {isHexColor(val) ? (
-                              <span className="inline-block h-3 w-3 rounded-full border border-black/10 shrink-0" style={{ backgroundColor: val }} />
-                            ) : val}
+                              <span
+                                className="inline-block h-3 w-3 rounded-full border border-black/10 shrink-0"
+                                style={{ backgroundColor: val }}
+                              />
+                            ) : (
+                              val
+                            )}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground tabular-nums text-xs">{v.stock}</td>
-                    <td className="px-4 py-3 text-muted-foreground tabular-nums text-xs">{v.reserved}</td>
-                    <td className={`px-4 py-3 tabular-nums text-sm ${availColor}`}>{v.available}</td>
+                    <td className="px-4 py-3 text-muted-foreground tabular-nums text-xs">
+                      {v.stock}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground tabular-nums text-xs">
+                      {v.reserved}
+                    </td>
+                    <td
+                      className={`px-4 py-3 tabular-nums text-sm ${availColor}`}
+                    >
+                      {v.available}
+                    </td>
                   </tr>
                 );
               })}
@@ -587,7 +712,9 @@ function DashboardContent({ data }: { data: DashboardData }) {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">داشبورد</h2>
-        <p className="text-sm text-muted-foreground mt-0.5">خلاصه عملکرد فروشگاه</p>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          خلاصه عملکرد فروشگاه
+        </p>
       </div>
 
       {/* KPI Cards — 2 rows of 3 */}

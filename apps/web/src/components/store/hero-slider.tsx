@@ -9,7 +9,7 @@ const slides = [
   {
     type: "video",
     src: "/elina/hero-video.mp4",
-    mobilePoster: "/elina/hero-blue-mobile.webp",
+    mobilePoster: "/elina/hero-video-poster.webp",
     desktopPoster: "/elina/hero-blue-desktop.webp",
     label: "کالکشن تازه الینا",
   },
@@ -33,32 +33,43 @@ type HeroViewport = "mobile" | "desktop";
 function SlideMedia({
   slide,
   viewport,
-  priority = false,
+  eager = false,
   videoEnabled = true,
-  videoMedia,
 }: {
   slide: Slide;
   viewport: HeroViewport;
-  priority?: boolean;
+  eager?: boolean;
   videoEnabled?: boolean;
-  videoMedia?: string;
 }) {
   if (slide.type === "video") {
+    const poster =
+      viewport === "mobile" ? slide.mobilePoster : slide.desktopPoster;
+
     return (
-      <video
-        className="h-full w-full object-cover"
-        poster={
-          viewport === "mobile" ? slide.mobilePoster : slide.desktopPoster
-        }
-        autoPlay={videoEnabled}
-        muted
-        loop
-        playsInline
-        preload={videoEnabled ? "auto" : "none"}
-        aria-label={slide.label}
-      >
-        {videoEnabled && <source src={slide.src} media={videoMedia} />}
-      </video>
+      <div className="relative h-full w-full">
+        <Image
+          src={poster}
+          alt={slide.label}
+          fill
+          loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : "auto"}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {videoEnabled && (
+          <video
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+          >
+            <source src={slide.src} type="video/mp4" />
+          </video>
+        )}
+      </div>
     );
   }
 
@@ -69,9 +80,10 @@ function SlideMedia({
       src={imageSrc}
       alt={slide.label}
       fill
-      priority={priority}
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : "auto"}
       sizes="100vw"
-      className="object-cover"
+      className="object-cover object-center"
     />
   );
 }
@@ -86,21 +98,23 @@ function SliderPagination({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-center gap-2.5" dir="ltr">
+    <div className="flex items-center justify-center" dir="ltr">
       {slides.map((slide, index) => (
         <button
           key={slide.label}
           type="button"
           onClick={() => onSelect(index)}
-          className={cn(
-            "h-2.5 rounded-full transition-all duration-300 ease-out",
-            index === active
-              ? "w-11 bg-brand-600"
-              : "w-2.5 bg-[#dedbe3] hover:bg-[#cbc6d1]",
-          )}
+          className="flex h-11 w-11 items-center justify-center rounded-full"
           aria-label={`نمایش اسلاید ${index + 1}`}
           aria-current={index === active ? "true" : undefined}
-        />
+        >
+          <span
+            className={cn(
+              "h-2.5 rounded-full transition-all duration-300 ease-out",
+              index === active ? "w-8 bg-brand-600" : "w-2.5 bg-[#cbc6d1]",
+            )}
+          />
+        </button>
       ))}
     </div>
   );
@@ -110,7 +124,8 @@ function MobileHeroCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollTimerRef = useRef<number | undefined>(undefined);
-  const [position, setPosition] = useState(1);
+  const [position, setPosition] = useState(2);
+  const [videoAllowed, setVideoAllowed] = useState(false);
 
   const scrollToPosition = (nextPosition: number, smooth = true) => {
     const scroller = scrollerRef.current;
@@ -125,21 +140,34 @@ function MobileHeroCarousel() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() =>
-      scrollToPosition(1, false),
+      scrollToPosition(2, false),
     );
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setPosition((current) => {
-        const next = current + 1;
-        scrollToPosition(next);
-        return next;
-      });
-    }, 6000);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    return () => window.clearInterval(timer);
+    let interval: number | undefined;
+    const startTimer = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setPosition((current) => {
+          const next = current + 1;
+          scrollToPosition(next);
+          return next;
+        });
+      }, 6000);
+    }, 15_000);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      if (interval) window.clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVideoAllowed(true), 12_000);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const settleScroll = () => {
@@ -200,23 +228,26 @@ function MobileHeroCarousel() {
             ref={(node) => {
               itemRefs.current[index] = node;
             }}
-            className="relative aspect-[1.8/1] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
+            className="relative aspect-[9/5] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
           >
             <SlideMedia
               slide={slide}
               viewport="mobile"
-              priority={index === 1}
-              videoMedia="(max-width: 1023px)"
+              eager={index === 2}
+              videoEnabled={
+                videoAllowed && slide.type === "video" && index === position
+              }
             />
           </div>
         ))}
       </div>
 
-      <div className="hidden h-11 items-end justify-center md:flex">
+      <div className="absolute bottom-6 left-1/2 z-30 hidden -translate-x-1/2 rounded-full bg-white/90 px-4 py-2.5 shadow-[0_6px_18px_rgba(44,33,59,0.14)] backdrop-blur-sm md:flex">
         <SliderPagination
           active={activeSlide}
           onSelect={(index) => {
             const nextPosition = index + 1;
+            if (index === 0) setVideoAllowed(true);
             setPosition(nextPosition);
             scrollToPosition(nextPosition);
           }}
@@ -229,6 +260,7 @@ function MobileHeroCarousel() {
 function DesktopHeroSlider() {
   const [active, setActive] = useState(1);
   const [previous, setPrevious] = useState<number | null>(null);
+  const [videoAllowed, setVideoAllowed] = useState(false);
   const turnTimerRef = useRef<number | undefined>(undefined);
 
   const turnTo = (index: number) => {
@@ -248,27 +280,41 @@ function DesktopHeroSlider() {
   };
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActive((current) => {
-        const next = (current + 1) % slides.length;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-        window.clearTimeout(turnTimerRef.current);
-        setPrevious(current);
-        turnTimerRef.current = window.setTimeout(() => {
-          setPrevious(null);
-        }, 180);
+    let interval: number | undefined;
+    const startTimer = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setActive((current) => {
+          const next = (current + 1) % slides.length;
 
-        return next;
-      });
-    }, 6000);
+          window.clearTimeout(turnTimerRef.current);
+          setPrevious(current);
+          turnTimerRef.current = window.setTimeout(() => {
+            setPrevious(null);
+          }, 180);
+
+          return next;
+        });
+      }, 6000);
+    }, 15_000);
 
     return () => {
-      window.clearInterval(timer);
+      window.clearTimeout(startTimer);
+      if (interval) window.clearInterval(interval);
       window.clearTimeout(turnTimerRef.current);
     };
   }, []);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVideoAllowed(true), 12_000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const goTo = (index: number) => {
+    if ((index + slides.length) % slides.length === 0) {
+      setVideoAllowed(true);
+    }
     turnTo(index);
   };
 
@@ -277,7 +323,7 @@ function DesktopHeroSlider() {
       className="relative hidden w-full bg-white lg:block"
       aria-label="پیشنهادهای ویژه"
     >
-      <div className="relative h-[clamp(320px,30vw,430px)] w-full overflow-hidden 2xl:aspect-[2.4/1] 2xl:h-auto">
+      <div className="relative aspect-[12/5] w-full overflow-hidden bg-white">
         {slides.map((slide, index) => (
           <div
             key={slide.label}
@@ -294,21 +340,22 @@ function DesktopHeroSlider() {
             <SlideMedia
               slide={slide}
               viewport="desktop"
-              priority={index === 1}
-              videoEnabled={slide.type !== "video" || index === active}
-              videoMedia="(min-width: 1024px)"
+              eager={false}
+              videoEnabled={
+                videoAllowed && slide.type === "video" && index === active
+              }
             />
           </div>
         ))}
 
         <div
-          className="absolute bottom-5 right-6 z-30 hidden items-center gap-3 lg:flex 2xl:hidden"
+          className="absolute bottom-5 right-6 z-30 hidden items-center gap-3 lg:flex"
           dir="ltr"
         >
           <button
             type="button"
             onClick={() => goTo(active - 1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
             aria-label="اسلاید قبلی"
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2} />
@@ -316,20 +363,16 @@ function DesktopHeroSlider() {
           <button
             type="button"
             onClick={() => goTo(active + 1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
             aria-label="اسلاید بعدی"
           >
             <ChevronRight className="h-5 w-5" strokeWidth={2} />
           </button>
         </div>
 
-        <div className="absolute bottom-5 left-1/2 z-30 hidden -translate-x-1/2 rounded-full bg-white/95 px-4 py-3 shadow-[0_6px_18px_rgba(44,33,59,0.14)] backdrop-blur-sm lg:block 2xl:hidden">
+        <div className="absolute bottom-5 left-1/2 z-30 hidden -translate-x-1/2 rounded-full bg-white/95 px-4 py-3 shadow-[0_6px_18px_rgba(44,33,59,0.14)] backdrop-blur-sm lg:block">
           <SliderPagination active={active} onSelect={goTo} />
         </div>
-      </div>
-
-      <div className="relative z-20 hidden h-14 items-center justify-center border-t border-[#f0edf2] bg-white 2xl:flex">
-        <SliderPagination active={active} onSelect={goTo} />
       </div>
     </section>
   );

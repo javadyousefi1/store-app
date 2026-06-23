@@ -17,7 +17,9 @@ export function useAuthSession() {
     queryKey: AUTH_SESSION_QUERY_KEY,
     queryFn: async () => {
       try {
-        const response = await authAxios.get<{ data: AuthSession }>("/session");
+        const response = await authAxios.get<{ data: AuthSession | null }>(
+          "/session",
+        );
         return response.data.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {

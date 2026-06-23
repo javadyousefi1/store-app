@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const W = "mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10";
 
@@ -59,10 +64,16 @@ const socialLinks = [
 ];
 
 export function StoreFooter() {
+  const pathname = usePathname();
+  const hideOnMobile = pathname === "/cart" || pathname === "/account";
+
   return (
     <footer
       id="footer"
-      className="border-t border-border bg-white text-[#514a5c]"
+      className={cn(
+        "border-t border-border bg-white text-[#514a5c]",
+        hideOnMobile && "max-md:hidden",
+      )}
     >
       <div
         className={`${W} pt-10 pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-10`}
@@ -74,10 +85,11 @@ export function StoreFooter() {
               className="mb-4 block h-14 w-36 overflow-hidden"
               aria-label="صفحه اصلی الینا"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src="/elina/elina-logo.png"
                 alt="Elina"
+                width={170}
+                height={82}
                 className="h-full w-full object-contain object-right"
               />
             </Link>
@@ -160,7 +172,7 @@ export function StoreFooter() {
         </div>
 
         <div className="mt-9 flex flex-col items-center justify-between gap-4 border-t border-border pt-5 sm:flex-row">
-          <p className="text-xs text-[#91899a]">
+          <p className="text-xs text-[#6f6675]">
             تمامی حقوق برای Elina محفوظ است.
           </p>
           <div className="flex gap-2">

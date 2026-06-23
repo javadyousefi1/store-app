@@ -11,7 +11,9 @@ export default function StoreLayout({
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <StoreHeader />
-      <main className="flex-1 min-h-svh">{children}</main>
+      <main id="main-content" className="min-h-0 flex-1 md:min-h-svh">
+        {children}
+      </main>
       <StoreFooter />
       <Suspense fallback={null}>
         <MobileBottomNav />

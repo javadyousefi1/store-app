@@ -28,10 +28,7 @@ export async function GET() {
     typeof payload?.exp === "number" && payload.exp * 1000 <= Date.now();
 
   if (!payload?.phone || expired) {
-    return NextResponse.json(
-      { data: null, message: "Unauthenticated" },
-      { status: 401 },
-    );
+    return NextResponse.json({ data: null });
   }
 
   return NextResponse.json({

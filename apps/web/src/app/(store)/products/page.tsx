@@ -1,7 +1,11 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { ProductCard, ProductCardSkeleton } from "@/components/store/product-card";
+import {
+  ProductCard,
+  ProductCardSkeleton,
+} from "@/components/store/product-card";
 import { CategoryFilter } from "@/components/store/category-filter";
 import { apiFetch } from "@/lib/server-fetch";
 import { cn } from "@/lib/utils";
@@ -18,6 +22,15 @@ interface PageProps {
     search?: string | string[];
   }>;
 }
+
+export const metadata: Metadata = {
+  title: "فروشگاه پوشاک زنانه",
+  description:
+    "مشاهده و خرید آنلاین محصولات زنانه الینا؛ جدیدترین مانتو، تیشرت، ست و شلوار.",
+  alternates: {
+    canonical: "/products",
+  },
+};
 
 function first(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value;
@@ -56,6 +69,15 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+          فروشگاه پوشاک زنانه
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          جدیدترین محصولات الینا را بر اساس دسته‌بندی و قیمت پیدا کنید.
+        </p>
+      </div>
+
       <Suspense>
         <CategoryFilter categories={categories} active={categoryId} />
       </Suspense>
@@ -86,6 +108,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 : "border-border hover:bg-muted",
             )}
             aria-disabled={pageNum === 1}
+            aria-label="صفحه قبلی"
           >
             <ChevronRight className="h-4 w-4" />
           </Link>
@@ -120,6 +143,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border hover:bg-muted",
                   )}
+                  aria-label={`صفحه ${item.toLocaleString("fa-IR")}`}
+                  aria-current={item === pageNum ? "page" : undefined}
                 >
                   {item.toLocaleString("fa-IR")}
                 </Link>
@@ -135,6 +160,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 : "border-border hover:bg-muted",
             )}
             aria-disabled={pageNum === products.totalPages}
+            aria-label="صفحه بعدی"
           >
             <ChevronLeft className="h-4 w-4" />
           </Link>

@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Heart,
-  LogIn,
-  Package,
-  SearchCheck,
-  UserRound,
-} from "lucide-react";
+import { Heart, LogIn, Package, SearchCheck, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/use-auth";
 import { triggerAuthModal } from "@/lib/auth-modal-trigger";
@@ -38,7 +32,7 @@ export default function AccountPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[45svh] items-center justify-center">
+      <div className="flex min-h-[calc(100svh-128px)] items-center justify-center pb-4 md:min-h-[45svh] md:pb-0">
         <span className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -46,7 +40,7 @@ export default function AccountPage() {
 
   if (!session) {
     return (
-      <div className="mx-auto flex min-h-[55svh] max-w-lg flex-col items-center justify-center px-5 text-center">
+      <div className="mx-auto flex min-h-[calc(100svh-128px)] max-w-lg flex-col items-center justify-center px-5 pb-4 text-center md:min-h-[55svh] md:pb-0">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
           <UserRound className="h-9 w-9 text-primary" />
         </div>

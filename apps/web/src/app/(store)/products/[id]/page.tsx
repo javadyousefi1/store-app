@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { apiFetch } from "@/lib/server-fetch";
@@ -6,6 +7,42 @@ import type { Attribute, ProductDetail } from "@/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const product = await apiFetch<ProductDetail>(`/products/${id}`);
+    const description =
+      product.description?.slice(0, 155) ||
+      `خرید ${product.name} از فروشگاه آنلاین الینا`;
+
+    return {
+      title: product.name,
+      description,
+      alternates: {
+        canonical: `/products/${id}`,
+      },
+      openGraph: {
+        type: "website",
+        title: product.name,
+        description,
+        url: `/products/${id}`,
+        images: product.coverUrl ? [{ url: product.coverUrl }] : undefined,
+      },
+    };
+  } catch {
+    return {
+      title: "محصول",
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
 }
 
 export default async function ProductPage({ params }: PageProps) {
@@ -27,16 +64,23 @@ export default async function ProductPage({ params }: PageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/products" className="hover:text-foreground flex items-center gap-1">
+        <Link
+          href="/products"
+          className="hover:text-foreground flex items-center gap-1"
+        >
           <ArrowRight className="h-3.5 w-3.5" />
           محصولات
         </Link>
         <span>/</span>
-        <span className="text-foreground truncate max-w-[200px]">{product.name}</span>
+        <span className="text-foreground truncate max-w-[200px]">
+          {product.name}
+        </span>
       </nav>
 
       <ProductDetailClient
-        product={product as Parameters<typeof ProductDetailClient>[0]["product"]}
+        product={
+          product as Parameters<typeof ProductDetailClient>[0]["product"]
+        }
         valueLabels={valueLabels}
       />
     </div>

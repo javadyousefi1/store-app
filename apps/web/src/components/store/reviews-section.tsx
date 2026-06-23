@@ -31,6 +31,8 @@ export function ReviewsSection() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const timer = window.setInterval(
       () => setActive((current) => (current + 1) % reviews.length),
       6500,
@@ -47,8 +49,12 @@ export function ReviewsSection() {
   return (
     <section className="py-12 sm:py-16">
       <div className="mb-7 text-center">
-        <h2 className="text-2xl font-bold text-[#282033] sm:text-3xl">نظر مشتریان</h2>
-        <p className="mt-2 text-sm text-[#776f7e]">بخشی از تجربه خرید مشتریان الینا</p>
+        <h2 className="text-2xl font-bold text-[#282033] sm:text-3xl">
+          نظر مشتریان
+        </h2>
+        <p className="mt-2 text-sm text-[#776f7e]">
+          بخشی از تجربه خرید مشتریان الینا
+        </p>
       </div>
 
       <div className="mx-auto flex max-w-2xl items-center gap-3">
@@ -71,13 +77,21 @@ export function ReviewsSection() {
           </button>
         </div>
 
-        <article className="min-h-64 flex-1 rounded-lg border border-border bg-white p-6 shadow-[0_10px_30px_rgba(48,35,70,0.05)] sm:p-8">
+        <article
+          className="min-h-64 flex-1 rounded-lg border border-border bg-white p-6 shadow-[0_10px_30px_rgba(48,35,70,0.05)] sm:p-8"
+          aria-roledescription="اسلاید نظر مشتری"
+          aria-label={`نظر ${active + 1} از ${reviews.length}`}
+        >
           <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
             <div>
               <p className="font-bold text-[#2d2438]">{review.name}</p>
-              <p className="mt-1 text-xs text-[#8d8493]">{review.city}</p>
+              <p className="mt-1 text-xs text-[#6f6675]">{review.city}</p>
             </div>
-            <div className="flex gap-1 text-[#efb32f]" aria-label="امتیاز پنج از پنج">
+            <div
+              role="img"
+              className="flex gap-1 text-[#efb32f]"
+              aria-label="امتیاز پنج از پنج"
+            >
               {Array.from({ length: 5 }).map((_, index) => (
                 <Star key={index} className="h-4 w-4 fill-current" />
               ))}
@@ -89,18 +103,23 @@ export function ReviewsSection() {
         </article>
       </div>
 
-      <div className="mt-5 flex justify-center gap-2">
+      <div className="mt-2 flex justify-center">
         {reviews.map((item, index) => (
           <button
             key={item.name}
             type="button"
             onClick={() => goTo(index)}
-            className={cn(
-              "h-2 rounded-full transition-all",
-              index === active ? "w-9 bg-primary" : "w-2 bg-[#ddd8e1]",
-            )}
+            className="flex h-11 w-11 items-center justify-center rounded-full"
             aria-label={`نمایش نظر ${index + 1}`}
-          />
+            aria-current={index === active ? "true" : undefined}
+          >
+            <span
+              className={cn(
+                "h-2 rounded-full transition-all",
+                index === active ? "w-8 bg-primary" : "w-2 bg-[#c8c1cc]",
+              )}
+            />
+          </button>
         ))}
       </div>
     </section>
