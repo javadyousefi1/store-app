@@ -29,6 +29,10 @@ async function seed() {
     if (!existing) {
       await userRepo.save(userRepo.create({ phone, role: UserRole.ADMIN }));
       console.log(`Admin created: ${phone}`);
+    } else if (existing.role !== UserRole.ADMIN) {
+      existing.role = UserRole.ADMIN;
+      await userRepo.save(existing);
+      console.log(`Admin promoted: ${phone}`);
     } else {
       console.log(`Admin already exists: ${phone}`);
     }

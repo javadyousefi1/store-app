@@ -31,6 +31,7 @@ import { BaleModule } from './modules/bale/bale.module';
 import { HealthModule } from './modules/health/health.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { RestockNotificationModule } from './modules/restock-notification/restock-notification.module';
+import { SeedService } from './database/seed.service';
 
 const entities = [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Settings, RestockNotification];
 
@@ -41,19 +42,36 @@ const entities = [User, Category, Product, ProductVariant, Attribute, AttributeV
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('database.host'),
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.name'),
-        entities,
-        migrations: [__dirname + '/database/migrations/*.{ts,js}'],
-        migrationsTableName: 'migrations',
-        synchronize: false,
-        logging: false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get<string>('database.host');
+        const port = configService.get<number>('database.port');
+        const username = configService.get<string>('database.username');
+        const password = configService.get<string>('database.password');
+        const database = configService.get<string>('database.name');
+
+        console.log('========== [DB CONFIG DEBUG] ==========');
+        console.log('host:', JSON.stringify(host), 'len:', host?.length);
+        console.log('port:', JSON.stringify(port), 'type:', typeof port);
+        console.log('username:', JSON.stringify(username), 'len:', username?.length);
+        console.log('password:', JSON.stringify(password), 'len:', password?.length);
+        console.log('database:', JSON.stringify(database), 'len:', database?.length);
+        console.log('raw process.env.DB_PASS:', JSON.stringify(process.env.DB_PASS), 'len:', process.env.DB_PASS?.length);
+        console.log('========================================');
+
+        return {
+          type: 'postgres' as const,
+          host,
+          port,
+          username,
+          password,
+          database,
+          entities,
+          migrations: [__dirname + '/database/migrations/*.{ts,js}'],
+          migrationsTableName: 'migrations',
+          synchronize: false,
+          logging: false,
+        };
+      },
     }),
 
     CacheModule,
@@ -71,6 +89,8 @@ const entities = [User, Category, Product, ProductVariant, Attribute, AttributeV
     HealthModule,
     DashboardModule,
     RestockNotificationModule,
+    TypeOrmModule.forFeature([User]),
   ],
+  providers: [SeedService],
 })
 export class AppModule {}

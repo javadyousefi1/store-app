@@ -4,6 +4,7 @@ import { triggerAuthModal } from "@/lib/auth-modal-trigger";
 const apiClient = axios.create({
   baseURL: "/api/proxy",
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {

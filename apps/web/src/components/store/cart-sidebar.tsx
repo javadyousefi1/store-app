@@ -22,7 +22,7 @@ export function CartSidebar({ open, onClose }: Props) {
   const { data: cart, isLoading } = useCart();
   const removeItem = useRemoveFromCart();
   const clearCart = useClearCart();
-  const { data: attributes } = useAttributeOptions();
+  const { data: attributes } = useAttributeOptions({ enabled: open });
 
   const valueLabels: Record<string, string> = {};
   for (const attr of attributes ?? []) {

@@ -1,7 +1,8 @@
 services:
   app:
     build:
-      context: .
+      context: ../..
+      dockerfile: apps/api/Dockerfile
       target: production
     container_name: store_app
     restart: unless-stopped
@@ -10,6 +11,7 @@ services:
     env_file:
       - .env
     environment:
+      # override host-only values from .env so app reaches services over the compose network
       DB_HOST: postgres
       REDIS_HOST: redis
       MINIO_ENDPOINT: minio
@@ -22,7 +24,7 @@ services:
         condition: service_healthy
 
   postgres:
-    image: postgres:18
+    image: docker.arvancloud.ir/postgres:18
     container_name: store_postgres
     restart: unless-stopped
     environment:
@@ -30,36 +32,49 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS:-postgres}
       POSTGRES_DB: ${DB_NAME:-store_db}
       PGDATA: /var/lib/postgresql/data/pgdata
+      # force password auth on every TCP connection so the healthcheck below actually validates credentials
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
     ports:
-      - '5432:5432'
+      # bind to loopback only — no public internet exposure. use SSH tunnel if you need external access.
+      - '127.0.0.1:5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres}']
+      # real auth check: if .env password drifts from the password baked into the volume, container goes unhealthy
+      # and the app refuses to start instead of failing silently mid-request.
+      test:
+        - 'CMD-SHELL'
+        - 'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT 1" >/dev/null 2>&1'
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
   redis:
     image: hub.hamdocker.ir/library/redis:latest
     container_name: store_redis
     restart: unless-stopped
     command: >
-      sh -c "if [ -n \"$$REDIS_PASSWORD\" ]; then redis-server --requirepass $$REDIS_PASSWORD; else redis-server; fi"
+      sh -c "if [ -n \"$$REDIS_PASSWORD\" ]; then
+               redis-server --requirepass \"$$REDIS_PASSWORD\";
+             else
+               redis-server;
+             fi"
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ['CMD-SHELL', 'if [ -n "$$REDIS_PASSWORD" ]; then redis-cli -a "$$REDIS_PASSWORD" ping; else redis-cli ping; fi']
       interval: 10s
       timeout: 5s
       retries: 5
 
   minio:
-    image: minio/minio:RELEASE.2023-09-07T02-05-02Z
+    image: docker.arvancloud.ir/minio/minio:RELEASE.2023-09-07T02-05-02Z
     container_name: store_minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
@@ -67,8 +82,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - '127.0.0.1:9000:9000'
+      - '127.0.0.1:9001:9001'
     volumes:
       - minio_data:/data
     healthcheck:

@@ -6,11 +6,12 @@ import type { ApiResponse, Attribute } from "@/types";
 
 const QUERY_KEY = ["attributes"];
 
-export function useAttributeOptions() {
+export function useAttributeOptions(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: QUERY_KEY,
     queryFn: () =>
       apiClient.get<ApiResponse<Attribute[]>>("/attributes").then((r) => r.data.data),
+    enabled: options?.enabled ?? true,
   });
 }
 
