@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,7 +21,6 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { CartSidebar } from "./cart-sidebar";
 import { triggerAuthModal } from "@/lib/auth-modal-trigger";
 import { registerCartSidebarTrigger } from "@/lib/cart-sidebar-trigger";
 import {
@@ -30,6 +30,10 @@ import {
 } from "@/hooks/use-auth";
 
 const W = "mx-auto w-full max-w-[1920px] px-4 sm:px-6 lg:px-8";
+const CartSidebar = dynamic(
+  () => import("./cart-sidebar").then((mod) => mod.CartSidebar),
+  { ssr: false },
+);
 
 const desktopLinks = [
   { href: "/products", label: "فروشگاه", icon: ShoppingBag },
@@ -90,10 +94,20 @@ export function StoreHeader() {
     let frameId: number | null = null;
     let heroEndY = 180;
     let navVisible = true;
+    let direction: "up" | "down" | null = null;
+    let directionDistance = 0;
+    let lastToggleAt = 0;
+    const jitterThreshold = 4;
+    const hideDistance = 18;
+    const revealDistance = 28;
+    const toggleCooldownMs = 180;
 
     const setNavVisibility = (visible: boolean) => {
       if (navVisible === visible) return;
       navVisible = visible;
+      direction = null;
+      directionDistance = 0;
+      lastToggleAt = performance.now();
       setDesktopNavVisible(visible);
     };
 
@@ -112,19 +126,41 @@ export function StoreHeader() {
       if (!desktopQuery.matches) {
         setNavVisibility(true);
         previousY = window.scrollY;
+        direction = null;
+        directionDistance = 0;
         return;
       }
 
       const currentY = window.scrollY;
       const pastHero = currentY > heroEndY - 196;
       const delta = currentY - previousY;
+      const coolingDown = performance.now() - lastToggleAt < toggleCooldownMs;
 
       if (!pastHero || currentY < 40) {
         setNavVisibility(true);
-      } else if (delta > 2) {
-        setNavVisibility(false);
-      } else if (delta < -2) {
-        setNavVisibility(true);
+        direction = null;
+        directionDistance = 0;
+      } else if (coolingDown) {
+        direction = null;
+        directionDistance = 0;
+      } else if (Math.abs(delta) > jitterThreshold) {
+        const nextDirection = delta > 0 ? "down" : "up";
+
+        if (direction !== nextDirection) {
+          direction = nextDirection;
+          directionDistance = 0;
+        }
+
+        directionDistance += Math.abs(delta);
+
+        if (nextDirection === "down" && directionDistance >= hideDistance) {
+          setNavVisibility(false);
+        } else if (
+          nextDirection === "up" &&
+          directionDistance >= revealDistance
+        ) {
+          setNavVisibility(true);
+        }
       }
 
       previousY = currentY;
@@ -176,6 +212,8 @@ export function StoreHeader() {
             alt="بفرمایید تخفیف؛ ارسال رایگان برای خریدهای بالای ۲.۵ میلیون تومان"
             width={866}
             height={90}
+            loading="eager"
+            fetchPriority="high"
             sizes="100vw"
             className="h-auto w-full max-w-[1100px] object-contain"
           />
@@ -184,17 +222,17 @@ export function StoreHeader() {
 
       <div className="max-md:sticky max-md:top-0 max-md:z-50 lg:sticky lg:top-0 lg:z-50">
         <div
-          className="hidden min-h-14 w-full items-center justify-center overflow-hidden bg-[#f5ede4] px-5 py-2 md:flex lg:min-h-[72px] lg:px-6"
+          className="hidden min-h-11 w-full items-center justify-center overflow-hidden bg-[#ead8c8] px-5 py-1.5 md:flex lg:min-h-[58px] lg:px-6"
           role="region"
           aria-label="پیشنهاد ویژه خرید"
         >
-          <div className="promo-message flex items-center justify-center gap-2 text-center text-[#493d36] sm:gap-3">
+          <div className="promo-message flex items-center justify-center gap-2 text-center text-[#3f332d] sm:gap-3">
             <Sparkles
-              className="promo-sparkle hidden h-6 w-6 shrink-0 fill-[#c94f49] text-[#c94f49] sm:block lg:h-8 lg:w-8"
+              className="promo-sparkle hidden h-6 w-6 shrink-0 fill-[#a9413b] text-[#a9413b] sm:block lg:h-8 lg:w-8"
               strokeWidth={2.4}
               aria-hidden="true"
             />
-            <strong className="promo-highlight shrink-0 text-xs font-extrabold text-[#c94f49] sm:text-sm lg:text-lg">
+            <strong className="promo-highlight shrink-0 text-xs font-extrabold text-[#a9413b] sm:text-sm lg:text-lg">
               بفرمایید تخفیف
             </strong>
             <span
@@ -211,16 +249,17 @@ export function StoreHeader() {
           <div className={`${W} hidden h-[76px] items-center gap-6 lg:flex`}>
             <Link
               href="/"
-              className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden"
+              className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden"
               aria-label="صفحه اصلی الینا"
             >
               <Image
-                src="/elina/elina-logo.png"
+                src="/elina/elina-logo-full.png"
                 alt="Elina"
-                width={170}
-                height={82}
+                width={1254}
+                height={1254}
                 loading="eager"
-                className="h-auto w-[86px] object-contain"
+                fetchPriority="high"
+                className="h-full w-full object-contain"
               />
             </Link>
 
@@ -364,16 +403,17 @@ export function StoreHeader() {
             <div className="flex h-[60px] items-center gap-3 py-2">
               <Link
                 href="/"
-                className="flex h-11 w-16 shrink-0 items-center overflow-hidden"
+                className="flex h-11 w-11 shrink-0 items-center overflow-hidden"
                 aria-label="صفحه اصلی الینا"
               >
                 <Image
-                  src="/elina/elina-logo.png"
+                  src="/elina/elina-logo-full.png"
                   alt="Elina"
-                  width={170}
-                  height={82}
+                  width={1254}
+                  height={1254}
                   loading="eager"
-                  className="h-auto w-full object-contain"
+                  fetchPriority="high"
+                  className="h-full w-full object-contain"
                 />
               </Link>
 

@@ -53,6 +53,88 @@ const products = [
   },
 ];
 
+const promoBlurDataUrl =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmMGY2Ii8+PC9zdmc+";
+
+const promoCards = [
+  {
+    title: "جایگاه تصویر پرومو اصلی",
+    href: "/products",
+    mobileImage: "",
+    desktopImage: "",
+    className:
+      "group relative min-h-[330px] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-2 md:row-span-2 md:min-h-[540px]",
+    sizes: "(max-width: 768px) 100vw, 50vw",
+  },
+  {
+    title: "جایگاه تصویر پرومو جدیدترین‌ها",
+    href: "/products",
+    mobileImage: "",
+    desktopImage: "",
+    className:
+      "group relative aspect-[2/1] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-1 md:aspect-auto",
+    sizes: "(max-width: 768px) 100vw, 50vw",
+  },
+  {
+    title: "جایگاه تصویر پرومو روزمره",
+    href: "/products",
+    mobileImage: "",
+    desktopImage: "",
+    className:
+      "group relative aspect-[2/1] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-2 md:aspect-auto",
+    sizes: "(max-width: 768px) 100vw, 50vw",
+  },
+] as const;
+
+function PromoImage({
+  src,
+  alt,
+  sizes,
+  className,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  className: string;
+}) {
+  const imageClassName = `object-cover transition duration-700 group-hover:scale-[1.025] ${className}`;
+
+  if (!src) {
+    return (
+      <div
+        className={`absolute inset-0 bg-[#f3f0f6] ${className}`}
+        aria-label={alt}
+        role="img"
+      />
+    );
+  }
+
+  if (src.startsWith("https://")) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className={`absolute inset-0 h-full w-full ${imageClassName}`}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      placeholder="blur"
+      blurDataURL={promoBlurDataUrl}
+      sizes={sizes}
+      className={imageClassName}
+    />
+  );
+}
+
 const trustItems = [
   { title: "پشتیبانی ۲۴/۷", text: "همیشه کنار شما هستیم", icon: Headphones },
   { title: "بازگشت آسان", text: "بدون قید و شرط", icon: RefreshCcw },
@@ -124,42 +206,22 @@ export function ElinaHome() {
           </section>
 
           <section className="content-auto grid gap-4 pb-10 sm:gap-5 sm:pb-14 md:grid-cols-2 md:grid-rows-2">
-            <Link
-              href="/products"
-              className="group relative min-h-[330px] overflow-hidden rounded-3xl shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-2 md:row-span-2 md:min-h-[540px]"
-            >
-              <Image
-                src="/elina/promo-summer.webp"
-                alt="کالکشن تابستانه"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition duration-700 group-hover:scale-[1.025]"
-              />
-            </Link>
-            <Link
-              href="/products"
-              className="group relative aspect-[2/1] overflow-hidden rounded-3xl shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-1 md:aspect-auto"
-            >
-              <Image
-                src="/elina/promo-new.webp"
-                alt="جدیدترین‌ها"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition duration-700 group-hover:scale-[1.025]"
-              />
-            </Link>
-            <Link
-              href="/products"
-              className="group relative aspect-[2/1] overflow-hidden rounded-3xl shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-2 md:aspect-auto"
-            >
-              <Image
-                src="/elina/promo-daily.webp"
-                alt="استایل‌های روزمره"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition duration-700 group-hover:scale-[1.025]"
-              />
-            </Link>
+            {promoCards.map((card) => (
+              <Link key={card.title} href={card.href} className={card.className}>
+                <PromoImage
+                  src={card.mobileImage}
+                  alt={card.title}
+                  sizes={card.sizes}
+                  className="md:hidden"
+                />
+                <PromoImage
+                  src={card.desktopImage}
+                  alt=""
+                  sizes={card.sizes}
+                  className="hidden md:block"
+                />
+              </Link>
+            ))}
           </section>
         </div>
       </div>

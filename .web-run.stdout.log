@@ -1,0 +1,342 @@
+
+> web@0.1.0 dev C:\Users\Amir\Desktop\elina\apps\web
+> next dev --port 3001
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.3:3001
+✓ Ready in 1200ms
+Creating turbopack project { dir: 'C:\\Users\\Amir\\Desktop\\elina\\apps\\web', testMode: true }
+
+ GET / 200 in 5.6s (next.js: 832ms, application-code: 4.7s)
+ GET / 200 in 924ms (next.js: 45ms, application-code: 879ms)
+ GET / 200 in 1225ms (next.js: 27ms, application-code: 1198ms)
+ GET / 200 in 936ms (next.js: 302ms, application-code: 635ms)
+ GET / 200 in 223ms (next.js: 131ms, application-code: 92ms)
+ GET /api/proxy/attributes 200 in 583ms
+ GET /api/proxy/cart 200 in 606ms
+ GET / 200 in 7.7s (next.js: 738ms, application-code: 7.0s)
+ GET / 200 in 4.4s (next.js: 274ms, application-code: 4.1s)
+ GET / 200 in 4.9s (next.js: 915ms, application-code: 4.0s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 2.8s (next.js: 2.4s, application-code: 446ms)
+ GET /api/proxy/attributes 500 in 2.8s (next.js: 2.4s, application-code: 458ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 621ms (next.js: 158ms, application-code: 463ms)
+ GET / 200 in 1005ms (next.js: 50ms, application-code: 955ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 341ms (next.js: 78ms, application-code: 263ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 315ms (next.js: 24ms, application-code: 291ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 133ms (next.js: 22ms, application-code: 111ms)
+ GET / 200 in 4.4s (next.js: 531ms, application-code: 3.9s)
+ GET / 200 in 3.0s (next.js: 644ms, application-code: 2.4s)
+ GET / 200 in 1920ms (next.js: 178ms, application-code: 1742ms)
+ GET / 200 in 1923ms (next.js: 519ms, application-code: 1404ms)
+ GET / 200 in 1925ms (next.js: 793ms, application-code: 1133ms)
+ GET / 200 in 853ms (next.js: 267ms, application-code: 586ms)
+✓ Finished filesystem cache database compaction in 10.2s
+ GET / 200 in 1589ms (next.js: 57ms, application-code: 1532ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 352ms (next.js: 158ms, application-code: 195ms)
+ GET /api/proxy/cart 500 in 365ms (next.js: 182ms, application-code: 183ms)
+ GET / 200 in 1396ms (next.js: 202ms, application-code: 1194ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 904ms (next.js: 152ms, application-code: 752ms)
+ GET / 200 in 71ms (next.js: 38ms, application-code: 34ms)
+ GET / 200 in 3.0s (next.js: 355ms, application-code: 2.7s)
+ GET / 200 in 1794ms (next.js: 200ms, application-code: 1594ms)
+ GET / 200 in 981ms (next.js: 181ms, application-code: 800ms)
+ GET /products 200 in 597ms (next.js: 337ms, application-code: 259ms)
+ GET / 200 in 3.4s (next.js: 33ms, application-code: 3.4s)
+ GET / 200 in 3.4s (next.js: 875ms, application-code: 2.6s)
+ GET / 200 in 2.3s (next.js: 101ms, application-code: 2.2s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 896ms (next.js: 298ms, application-code: 598ms)
+ GET /api/proxy/attributes 500 in 929ms (next.js: 368ms, application-code: 561ms)
+ GET / 200 in 5.6s (next.js: 314ms, application-code: 5.3s)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 2.1s (next.js: 484ms, application-code: 1642ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 1474ms (next.js: 277ms, application-code: 1197ms)
+ GET /api/proxy/attributes 500 in 1503ms (next.js: 610ms, application-code: 894ms)
+ GET / 200 in 2.5s (next.js: 217ms, application-code: 2.3s)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 575ms (next.js: 266ms, application-code: 309ms)
+ GET / 200 in 6.8s (next.js: 4.1s, application-code: 2.7s)
+ GET / 200 in 16.4s (next.js: 99ms, application-code: 16.3s)
+ GET / 200 in 16.4s (next.js: 560ms, application-code: 15.8s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 1591ms (next.js: 378ms, application-code: 1213ms)
+ GET /api/proxy/attributes 500 in 1772ms (next.js: 582ms, application-code: 1190ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 804ms (next.js: 193ms, application-code: 610ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 605ms (next.js: 88ms, application-code: 517ms)
+ GET /api/proxy/attributes 500 in 667ms (next.js: 375ms, application-code: 291ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 376ms (next.js: 70ms, application-code: 306ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 313ms (next.js: 61ms, application-code: 252ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 1299ms (next.js: 80ms, application-code: 1219ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 521ms (next.js: 175ms, application-code: 346ms)
+ GET / 200 in 1260ms (next.js: 121ms, application-code: 1139ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 178ms (next.js: 44ms, application-code: 133ms)
+ GET /api/proxy/cart 500 in 193ms (next.js: 69ms, application-code: 124ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 930ms (next.js: 222ms, application-code: 708ms)
+ GET / 200 in 1182ms (next.js: 41ms, application-code: 1141ms)
+ GET / 200 in 1059ms (next.js: 12ms, application-code: 1047ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 300ms (next.js: 136ms, application-code: 164ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 191ms (next.js: 43ms, application-code: 147ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 298ms (next.js: 24ms, application-code: 274ms)
+ GET / 200 in 4.2s (next.js: 100ms, application-code: 4.1s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 270ms (next.js: 76ms, application-code: 195ms)
+ GET /api/proxy/attributes 500 in 168ms (next.js: 23ms, application-code: 145ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 376ms (next.js: 73ms, application-code: 303ms)
+ GET / 200 in 2.4s (next.js: 869ms, application-code: 1526ms)
+ GET / 200 in 663ms (next.js: 90ms, application-code: 573ms)
+ GET / 200 in 147ms (next.js: 38ms, application-code: 109ms)
+ GET / 200 in 1190ms (next.js: 135ms, application-code: 1055ms)
+✓ Compiled in 79.1s
+ GET /products 200 in 8.0s (next.js: 1847ms, application-code: 6.1s)
+ GET / 200 in 2.1s (next.js: 415ms, application-code: 1665ms)
+ GET / 200 in 1069ms (next.js: 85ms, application-code: 984ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 553ms (next.js: 233ms, application-code: 321ms)
+ GET /api/proxy/attributes 500 in 563ms (next.js: 436ms, application-code: 126ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 672ms (next.js: 37ms, application-code: 635ms)
+ GET / 200 in 13.0s (next.js: 21ms, application-code: 13.0s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 783ms (next.js: 67ms, application-code: 716ms)
+ GET /api/proxy/attributes 500 in 786ms (next.js: 91ms, application-code: 695ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 116ms (next.js: 12ms, application-code: 104ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 733ms (next.js: 242ms, application-code: 491ms)
+ GET /api/proxy/attributes 500 in 757ms (next.js: 332ms, application-code: 426ms)
+ GET / 200 in 705ms (next.js: 18ms, application-code: 687ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 603ms (next.js: 339ms, application-code: 264ms)
+ GET / 200 in 2.2s (next.js: 573ms, application-code: 1577ms)
+ GET / 200 in 309ms (next.js: 20ms, application-code: 289ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 156ms (next.js: 61ms, application-code: 95ms)
+✓ Compiled in 84.4s
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 1089ms (next.js: 518ms, application-code: 571ms)
+ GET /api/proxy/attributes 500 in 1083ms (next.js: 591ms, application-code: 491ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 86ms (next.js: 12ms, application-code: 74ms)
+ GET / 200 in 2.6s (next.js: 764ms, application-code: 1832ms)
+ GET / 200 in 405ms (next.js: 39ms, application-code: 367ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 134ms (next.js: 56ms, application-code: 78ms)
+ GET / 200 in 3.8s (next.js: 1792ms, application-code: 2.0s)
+ GET / 200 in 5.1s (next.js: 294ms, application-code: 4.8s)
+ GET /api/proxy/attributes 200 in 883ms (next.js: 561ms, application-code: 322ms)
+ GET / 200 in 4.8s (next.js: 1440ms, application-code: 3.3s)
+ GET / 200 in 939ms (next.js: 72ms, application-code: 867ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET / 200 in 5.5s (next.js: 35ms, application-code: 5.5s)
+ GET / 200 in 4.2s (next.js: 1374ms, application-code: 2.8s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 117ms (next.js: 19ms, application-code: 98ms)
+ GET /api/proxy/attributes 500 in 135ms (next.js: 32ms, application-code: 103ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 107ms (next.js: 8ms, application-code: 98ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 86ms (next.js: 13ms, application-code: 73ms)
+ GET /api/proxy/cart 500 in 101ms (next.js: 36ms, application-code: 65ms)
+ GET / 200 in 1992ms (next.js: 596ms, application-code: 1396ms)
+ GET / 200 in 248ms (next.js: 15ms, application-code: 232ms)
+ GET / 200 in 8.2s (next.js: 5.1s, application-code: 3.1s)
+ GET / 200 in 45s (next.js: 412ms, application-code: 44s)
+ GET / 200 in 46s (next.js: 136ms, application-code: 46s)
+ GET / 200 in 10.9s (next.js: 2.1s, application-code: 8.8s)
+ GET / 200 in 9.5s (next.js: 2.3s, application-code: 7.2s)
+ GET / 200 in 3.8s (next.js: 301ms, application-code: 3.5s)
+ GET / 200 in 3.8s (next.js: 746ms, application-code: 3.1s)
+ GET / 200 in 3.8s (next.js: 497ms, application-code: 3.3s)
+ GET / 200 in 3.5s (next.js: 1369ms, application-code: 2.2s)
+ GET / 200 in 3.5s (next.js: 1824ms, application-code: 1708ms)
+ GET / 200 in 3.5s (next.js: 1598ms, application-code: 1940ms)
+ GET / 200 in 347ms (next.js: 48ms, application-code: 299ms)
+ GET / 200 in 2.5s (next.js: 91ms, application-code: 2.4s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 2.1s (next.js: 797ms, application-code: 1278ms)
+ GET /api/proxy/attributes 500 in 2.1s (next.js: 973ms, application-code: 1119ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 84ms (next.js: 16ms, application-code: 68ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 1139ms (next.js: 488ms, application-code: 651ms)
+ GET / 200 in 5.2s (next.js: 629ms, application-code: 4.6s)
+ GET / 200 in 2.4s (next.js: 585ms, application-code: 1838ms)
+ GET / 200 in 1274ms (next.js: 517ms, application-code: 758ms)
+ GET / 200 in 554ms (next.js: 134ms, application-code: 420ms)
+ GET / 200 in 1295ms (next.js: 39ms, application-code: 1256ms)
+ GET / 200 in 17.7s (next.js: 1889ms, application-code: 15.8s)
+ GET / 200 in 9.6s (next.js: 8.2s, application-code: 1456ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+ GET / 200 in 1897ms (next.js: 58ms, application-code: 1838ms)
+ GET / 200 in 11.4s (next.js: 654ms, application-code: 10.8s)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 180ms (next.js: 26ms, application-code: 154ms)
+ GET /api/proxy/attributes 500 in 183ms (next.js: 66ms, application-code: 116ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 197ms (next.js: 59ms, application-code: 138ms)
+ GET / 200 in 1378ms (next.js: 59ms, application-code: 1319ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 207ms (next.js: 49ms, application-code: 158ms)
+ GET /api/proxy/attributes 500 in 241ms (next.js: 94ms, application-code: 147ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 327ms (next.js: 243ms, application-code: 84ms)
+ GET / 200 in 4.5s (next.js: 1158ms, application-code: 3.4s)
+ GET / 200 in 90s (next.js: 72s, application-code: 18.6s)
+ GET / 200 in 1896ms (next.js: 545ms, application-code: 1352ms)
+ GET / 200 in 37.4s (next.js: 149ms, application-code: 37.3s)
+ GET / 200 in 2.3s (next.js: 67ms, application-code: 2.3s)
+ GET / 200 in 5.1s (next.js: 144ms, application-code: 5.0s)
+ GET / 200 in 6.7s (next.js: 4.4s, application-code: 2.3s)
+ GET / 200 in 7.2s (next.js: 1875ms, application-code: 5.3s)
+ GET / 200 in 7.5s (next.js: 1413ms, application-code: 6.1s)
+ GET / 200 in 2.0s (next.js: 58ms, application-code: 1989ms)
+ GET / 200 in 1606ms (next.js: 83ms, application-code: 1523ms)
+ GET /products 200 in 4.6s (next.js: 2.0s, application-code: 2.6s)
+ GET /products 200 in 1057ms (next.js: 329ms, application-code: 729ms)
+ GET / 200 in 1842ms (next.js: 36ms, application-code: 1806ms)
+[PROXY] GET http://localhost:3000/cart
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/cart 500 in 1649ms (next.js: 1143ms, application-code: 505ms)
+ GET /api/proxy/attributes 500 in 1609ms (next.js: 1236ms, application-code: 373ms)
+[PROXY] GET http://localhost:3000/attributes
+[PROXY] token present: false
+ GET /api/proxy/attributes 500 in 121ms (next.js: 17ms, application-code: 103ms)
+ GET / 200 in 616ms (next.js: 21ms, application-code: 595ms)
+○ Compiling /orders ...
+ GET /orders 200 in 12.8s (next.js: 11.5s, application-code: 1312ms)
+ GET /orders 200 in 280ms (next.js: 34ms, application-code: 247ms)
+[PROXY] GET http://localhost:3000/orders?page=1&limit=10
+[PROXY] token present: false
+ GET /api/proxy/orders?page=1&limit=10 500 in 189ms (next.js: 67ms, application-code: 122ms)
+ GET / 200 in 1465ms (next.js: 289ms, application-code: 1176ms)
+ GET /products 200 in 489ms (next.js: 17ms, application-code: 472ms)
+✓ Compiled in 668.9s
+ GET / 200 in 6.8s (next.js: 2.7s, application-code: 4.1s)
+ GET / 200 in 6.8s (next.js: 3.3s, application-code: 3.5s)
+ GET / 200 in 6.9s (next.js: 2.9s, application-code: 3.9s)
+ GET / 200 in 6.9s (next.js: 2.5s, application-code: 4.4s)
+ GET / 200 in 6.9s (next.js: 3.5s, application-code: 3.3s)
+ GET / 200 in 6.9s (next.js: 4.2s, application-code: 2.7s)
+ GET / 200 in 6.2s (next.js: 1461ms, application-code: 4.8s)
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.3:3001
+✓ Ready in 937ms
+Creating turbopack project { dir: 'C:\\Users\\Amir\\Desktop\\elina\\apps\\web', testMode: true }
+
+ GET / 200 in 5.3s (next.js: 746ms, application-code: 4.6s)
+ GET / 200 in 6.0s (next.js: 127ms, application-code: 5.9s)
+ GET / 200 in 3.0s (next.js: 281ms, application-code: 2.8s)
+C:\Users\Amir\Desktop\elina\apps\web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  web@0.1.0 dev: `next dev --port 3001`
+Exit status 4294967295

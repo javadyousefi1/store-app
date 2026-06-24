@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "daily",
       priority: 1,
-      images: [`${siteUrl}/elina/hero-blue-desktop.webp`],
+      images: [`${siteUrl}/elina/elina-logo-full.png`],
     },
     {
       url: `${siteUrl}/products`,

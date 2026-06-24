@@ -78,7 +78,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <Suspense>
+      <Suspense fallback={null}>
         <CategoryFilter categories={categories} active={categoryId} />
       </Suspense>
 

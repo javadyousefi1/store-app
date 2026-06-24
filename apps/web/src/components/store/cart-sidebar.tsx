@@ -77,7 +77,13 @@ export function CartSidebar({ open, onClose }: Props) {
                     <div className="w-14 h-14 rounded-lg border bg-muted/50 overflow-hidden shrink-0">
                       {thumb ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={thumb} alt="" className="w-full h-full object-cover" />
+                        <img
+                          src={thumb}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <ImageIcon className="h-5 w-5 text-muted-foreground/30" />

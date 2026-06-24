@@ -47,10 +47,10 @@ export const metadata: Metadata = {
       "جدیدترین پوشاک و استایل‌های زنانه با ارسال سریع و ضمانت بازگشت.",
     images: [
       {
-        url: "/elina/hero-blue-desktop.webp",
-        width: 1920,
-        height: 800,
-        alt: "فروشگاه آنلاین پوشاک زنانه الینا",
+        url: "/elina/elina-logo-full.png",
+        width: 1254,
+        height: 1254,
+        alt: "لوگوی فروشگاه آنلاین پوشاک زنانه الینا",
       },
     ],
   },
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "الینا | فروشگاه آنلاین لباس زنانه",
     description:
       "جدیدترین پوشاک و استایل‌های زنانه با ارسال سریع و ضمانت بازگشت.",
-    images: ["/elina/hero-blue-desktop.webp"],
+    images: ["/elina/elina-logo-full.png"],
   },
   robots: {
     index: true,
@@ -95,7 +95,7 @@ const structuredData = {
       name: "الینا",
       alternateName: "Elina",
       url: siteUrl,
-      logo: `${siteUrl}/elina/elina-logo.png`,
+      logo: `${siteUrl}/elina/elina-logo-full.png`,
       email: "info@elinaclothes.com",
     },
     {

@@ -1,0 +1,24 @@
+[browser] Uncaught Error: Internal Next.js error: Router action dispatched before initialization.
+[browser] Uncaught Error: Internal Next.js error: Router action dispatched before initialization.
+[browser] Uncaught Error: Internal Next.js error: Router action dispatched before initialization.
+[browser] Uncaught Error: Internal Next.js error: Router action dispatched before initialization.
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed
+[browser] Image with src "/elina/category-set.webp" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed

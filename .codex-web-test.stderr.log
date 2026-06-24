@@ -1,0 +1,11 @@
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...

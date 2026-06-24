@@ -12,11 +12,11 @@ export default function StoreLoading() {
         <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-brand-50 shadow-[0_12px_36px_rgba(83,58,147,0.12)]">
           <span className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-brand-600 motion-reduce:animate-none" />
           <Image
-            src="/elina/elina-logo.png"
+            src="/elina/elina-logo-full.png"
             alt=""
-            width={170}
-            height={82}
-            className="h-auto w-16"
+            width={1254}
+            height={1254}
+            className="h-16 w-16 object-contain"
           />
         </div>
         <p className="text-sm font-semibold text-brand-800">کمی صبر کنید…</p>

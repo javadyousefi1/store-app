@@ -82,6 +82,8 @@ export function BestsellersSection({ products, categories }: Props) {
                 <img
                   src={p.coverUrl}
                   alt={p.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (

@@ -1,0 +1,105 @@
+
+> web@0.1.0 dev C:\Users\Amir\Desktop\elina\apps\web
+> next dev --port 3001
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.235.22.103:3001
+✓ Ready in 688ms
+Creating turbopack project { dir: 'C:\\Users\\Amir\\Desktop\\elina\\apps\\web', testMode: true }
+
+ GET / 200 in 8.5s (next.js: 969ms, application-code: 7.5s)
+ GET / 200 in 1968ms (next.js: 255ms, application-code: 1713ms)
+ GET / 200 in 2.1s (next.js: 39ms, application-code: 2.0s)
+ GET / 200 in 1977ms (next.js: 19ms, application-code: 1958ms)
+ GET / 200 in 1550ms (next.js: 146ms, application-code: 1404ms)
+✓ Finished filesystem cache database compaction in 10.0s
+ GET / 200 in 8.1s (next.js: 1079ms, application-code: 7.0s)
+ GET / 200 in 8.0s (next.js: 1863ms, application-code: 6.2s)
+ GET / 200 in 5.0s (next.js: 3.6s, application-code: 1460ms)
+ GET / 200 in 5.1s (next.js: 267ms, application-code: 4.8s)
+✓ Compiled in 295.6s
+ GET / 200 in 6.8s (next.js: 400ms, application-code: 6.4s)
+ GET / 200 in 2.2s (next.js: 857ms, application-code: 1368ms)
+ GET / 200 in 847ms (next.js: 71ms, application-code: 776ms)
+✓ Compiled in 446.1s
+ GET / 200 in 10.9s (next.js: 1231ms, application-code: 9.7s)
+ GET / 200 in 10.9s (next.js: 2.3s, application-code: 8.6s)
+ GET / 200 in 7.5s (next.js: 161ms, application-code: 7.3s)
+ GET / 200 in 7.5s (next.js: 1579ms, application-code: 5.9s)
+ GET / 200 in 3.3s (next.js: 336ms, application-code: 2.9s)
+ GET / 200 in 3.3s (next.js: 1703ms, application-code: 1574ms)
+✓ Compiled in 78.3s
+ GET / 200 in 35.4s (next.js: 203ms, application-code: 35.2s)
+ GET / 200 in 20.6s (next.js: 422ms, application-code: 20.2s)
+✓ Compiled in 135.4s
+ GET /products 200 in 38.0s (next.js: 5.2s, application-code: 32.9s)
+ GET / 200 in 38.9s (next.js: 4.1s, application-code: 34.9s)
+ GET / 200 in 39.0s (next.js: 3.4s, application-code: 35.6s)
+✓ Compiled in 93.9s
+ GET / 200 in 16.8s (next.js: 5.2s, application-code: 11.6s)
+ GET / 200 in 13.9s (next.js: 7.4s, application-code: 6.5s)
+ GET / 200 in 6.8s (next.js: 2.6s, application-code: 4.2s)
+ GET / 200 in 13.9s (next.js: 7.1s, application-code: 6.8s)
+ GET / 200 in 9.8s (next.js: 2.9s, application-code: 6.9s)
+ GET / 200 in 2.4s (next.js: 1036ms, application-code: 1359ms)
+ GET / 200 in 21.2s (next.js: 5.9s, application-code: 15.3s)
+ GET / 200 in 7.0s (next.js: 1422ms, application-code: 5.6s)
+ GET / 200 in 3.2s (next.js: 643ms, application-code: 2.5s)
+ GET / 200 in 2.1s (next.js: 484ms, application-code: 1625ms)
+ GET / 200 in 880ms (next.js: 90ms, application-code: 790ms)
+ GET / 200 in 842ms (next.js: 191ms, application-code: 651ms)
+✓ Compiled in 85.5s
+✓ Compiled in 131.6s
+ GET / 200 in 2.1s (next.js: 563ms, application-code: 1520ms)
+ GET / 200 in 15.7s (next.js: 3.0s, application-code: 12.7s)
+ GET / 200 in 1740ms (next.js: 910ms, application-code: 830ms)
+ GET / 200 in 4.5s (next.js: 191ms, application-code: 4.3s)
+ GET / 200 in 7.1s (next.js: 974ms, application-code: 6.1s)
+ GET / 200 in 1786ms (next.js: 654ms, application-code: 1132ms)
+ GET / 200 in 21.8s (next.js: 2.2s, application-code: 19.6s)
+ GET / 200 in 6.4s (next.js: 495ms, application-code: 5.9s)
+✓ Finished filesystem cache database compaction in 16.4s
+ GET /panl 404 in 2.3s (next.js: 1232ms, application-code: 1065ms)
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.235.22.103:3001
+✓ Ready in 1325ms
+Creating turbopack project { dir: 'C:\\Users\\Amir\\Desktop\\elina\\apps\\web', testMode: true }
+
+ GET / 200 in 6.0s (next.js: 1256ms, application-code: 4.8s)
+ GET / 200 in 1190ms (next.js: 585ms, application-code: 605ms)
+ GET / 200 in 157ms (next.js: 45ms, application-code: 112ms)
+ GET / 200 in 339ms (next.js: 35ms, application-code: 304ms)
+ GET /products 200 in 888ms (next.js: 164ms, application-code: 724ms)
+ GET / 200 in 2.7s (next.js: 84ms, application-code: 2.6s)
+ GET / 200 in 1409ms (next.js: 43ms, application-code: 1366ms)
+ GET / 200 in 1303ms (next.js: 41ms, application-code: 1262ms)
+ GET / 200 in 992ms (next.js: 48ms, application-code: 944ms)
+ GET / 200 in 310ms (next.js: 63ms, application-code: 247ms)
+ GET /products 200 in 630ms (next.js: 25ms, application-code: 606ms)
+ GET / 200 in 1572ms (next.js: 25ms, application-code: 1547ms)
+○ Compiling /panel ...
+ GET /panel 307 in 37.4s (next.js: 29.4s, application-code: 8.0s)
+ GET /login 200 in 2.7s (next.js: 480ms, application-code: 2.2s)
+ POST /api/auth/get-otp 500 in 3.6s (next.js: 2.6s, application-code: 944ms)
+ POST /api/auth/get-otp 500 in 1179ms (next.js: 454ms, application-code: 725ms)
+ GET / 200 in 2.1s (next.js: 66ms, application-code: 2.0s)
+ GET / 200 in 6.8s (next.js: 420ms, application-code: 6.3s)
+ GET / 200 in 4.7s (next.js: 1081ms, application-code: 3.6s)
+ GET / 200 in 3.3s (next.js: 1311ms, application-code: 2.0s)
+ GET /?check=header2 200 in 5.3s (next.js: 75ms, application-code: 5.2s)
+ GET / 200 in 2.7s (next.js: 1081ms, application-code: 1583ms)
+✓ Compiled in 1002.9s
+ GET / 200 in 5.0s (next.js: 112ms, application-code: 4.9s)
+ GET / 200 in 19.6s (next.js: 16.3s, application-code: 3.3s)
+✓ Compiled in 65.3s
+ GET / 200 in 492ms (next.js: 115ms, application-code: 376ms)
+ GET / 200 in 235ms (next.js: 33ms, application-code: 202ms)
+ GET / 200 in 95ms (next.js: 29ms, application-code: 66ms)
+ GET / 200 in 1353ms (next.js: 318ms, application-code: 1034ms)
+ GET /products 200 in 4.8s (next.js: 1324ms, application-code: 3.4s)
+ GET / 200 in 3.9s (next.js: 237ms, application-code: 3.7s)
+ GET / 200 in 1221ms (next.js: 27ms, application-code: 1193ms)
+ GET /panel 307 in 8.4s (next.js: 571ms, application-code: 7.8s)
+ GET / 200 in 4.1s (next.js: 235ms, application-code: 3.9s)

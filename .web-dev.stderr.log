@@ -1,0 +1,112 @@
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ETIMEDOUT',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+⨯ ./apps/web/src/app/(store)/layout.tsx:1:1
+Module not found: Can't resolve '@/components/store/header'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mStoreHeader[0m } [36mfrom[0m [32m"@/components/store/header"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m [36mimport[0m { [33mStoreFooter[0m } [36mfrom[0m [32m"@/components/store/footer"[0m;
+  [90m3 |[0m
+  [90m4 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mStoreLayout[0m({ children }: { children: [33mReact[0m.[33mReactNode[0m }) {
+
+Import map: aliased to relative './src/components/store/header' inside of [project]/apps/web
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./apps/web/src/app/(store)/layout.tsx:1:1
+Module not found: Can't resolve '@/components/store/header'
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mStoreHeader[0m } [36mfrom[0m [32m"@/components/store/header"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m [36mimport[0m { [33mStoreFooter[0m } [36mfrom[0m [32m"@/components/store/footer"[0m;
+  [90m3 |[0m
+  [90m4 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mStoreLayout[0m({ children }: { children: [33mReact[0m.[33mReactNode[0m }) {
+
+Import map: aliased to relative './src/components/store/header' inside of [project]/apps/web
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⚠ Server is approaching the used memory threshold, restarting...
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+⨯ [TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+⨯ [TypeError: fetch failed] {
+  digest: '3227098399',
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[browser] Uncaught TypeError: fetch failed
+[browser] Image with src "/elina/hero-linen.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading

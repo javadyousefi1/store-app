@@ -7,73 +7,46 @@ import { cn } from "@/lib/utils";
 
 const slides = [
   {
-    type: "video",
-    src: "/elina/hero-video.mp4",
-    mobilePoster: "/elina/hero-video-poster.webp",
-    desktopPoster: "/elina/hero-blue-desktop.webp",
-    label: "کالکشن تازه الینا",
+    mobileSrc: "",
+    desktopSrc: "",
+    label: "جایگاه تصویر هیرو اول",
   },
   {
-    type: "image",
-    mobileSrc: "/elina/hero-blue-mobile.webp",
-    desktopSrc: "/elina/hero-blue-desktop.webp",
-    label: "تی‌شرت سالیوان",
-  },
-  {
-    type: "image",
-    mobileSrc: "/elina/hero-linen-mobile.webp",
-    desktopSrc: "/elina/hero-linen-desktop.webp",
-    label: "ست وست لینن",
+    mobileSrc: "",
+    desktopSrc: "",
+    label: "جایگاه تصویر هیرو دوم",
   },
 ] as const;
 
 type Slide = (typeof slides)[number];
 type HeroViewport = "mobile" | "desktop";
+const blurDataUrl =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmMGY2Ii8+PC9zdmc+";
 
 function SlideMedia({
   slide,
   viewport,
   eager = false,
-  videoEnabled = true,
 }: {
   slide: Slide;
   viewport: HeroViewport;
   eager?: boolean;
-  videoEnabled?: boolean;
 }) {
-  if (slide.type === "video") {
-    const poster =
-      viewport === "mobile" ? slide.mobilePoster : slide.desktopPoster;
+  const imageSrc = viewport === "mobile" ? slide.mobileSrc : slide.desktopSrc;
+  const imageClassName = cn(
+    "object-cover",
+    viewport === "mobile" ? "object-[center_58%]" : "object-center",
+  );
 
+  if (!imageSrc) {
     return (
-      <div className="relative h-full w-full">
-        <Image
-          src={poster}
-          alt={slide.label}
-          fill
-          loading={eager ? "eager" : "lazy"}
-          fetchPriority={eager ? "high" : "auto"}
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        {videoEnabled && (
-          <video
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
-            aria-hidden="true"
-          >
-            <source src={slide.src} type="video/mp4" />
-          </video>
-        )}
-      </div>
+      <div
+        className="absolute inset-0 flex items-center justify-center bg-[#f3f0f6]"
+        aria-label={slide.label}
+        role="img"
+      />
     );
   }
-
-  const imageSrc = viewport === "mobile" ? slide.mobileSrc : slide.desktopSrc;
 
   return (
     <Image
@@ -82,8 +55,10 @@ function SlideMedia({
       fill
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : "auto"}
+      placeholder="blur"
+      blurDataURL={blurDataUrl}
       sizes="100vw"
-      className="object-cover object-center"
+      className={imageClassName}
     />
   );
 }
@@ -98,20 +73,20 @@ function SliderPagination({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-center" dir="ltr">
+    <div className="flex items-center justify-center gap-2" dir="ltr">
       {slides.map((slide, index) => (
         <button
           key={slide.label}
           type="button"
           onClick={() => onSelect(index)}
-          className="flex h-11 w-11 items-center justify-center rounded-full"
+          className="flex h-5 w-5 items-center justify-center rounded-full"
           aria-label={`نمایش اسلاید ${index + 1}`}
           aria-current={index === active ? "true" : undefined}
         >
           <span
             className={cn(
-              "h-2.5 rounded-full transition-all duration-300 ease-out",
-              index === active ? "w-8 bg-brand-600" : "w-2.5 bg-[#cbc6d1]",
+              "h-2 rounded-full transition-all duration-300 ease-out",
+              index === active ? "w-6 bg-brand-600" : "w-2 bg-[#cbc6d1]",
             )}
           />
         </button>
@@ -124,8 +99,7 @@ function MobileHeroCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollTimerRef = useRef<number | undefined>(undefined);
-  const [position, setPosition] = useState(2);
-  const [videoAllowed, setVideoAllowed] = useState(false);
+  const [position, setPosition] = useState(1);
 
   const scrollToPosition = (nextPosition: number, smooth = true) => {
     const scroller = scrollerRef.current;
@@ -140,7 +114,7 @@ function MobileHeroCarousel() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() =>
-      scrollToPosition(2, false),
+      scrollToPosition(1, false),
     );
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -163,11 +137,6 @@ function MobileHeroCarousel() {
       window.clearTimeout(startTimer);
       if (interval) window.clearInterval(interval);
     };
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setVideoAllowed(true), 12_000);
-    return () => window.clearTimeout(timer);
   }, []);
 
   const settleScroll = () => {
@@ -228,26 +197,22 @@ function MobileHeroCarousel() {
             ref={(node) => {
               itemRefs.current[index] = node;
             }}
-            className="relative aspect-[9/5] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
+            className="relative aspect-[9/4.6] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
           >
             <SlideMedia
               slide={slide}
               viewport="mobile"
-              eager={index === 2}
-              videoEnabled={
-                videoAllowed && slide.type === "video" && index === position
-              }
+              eager={index === 1}
             />
           </div>
         ))}
       </div>
 
-      <div className="absolute bottom-6 left-1/2 z-30 hidden -translate-x-1/2 rounded-full bg-white/90 px-4 py-2.5 shadow-[0_6px_18px_rgba(44,33,59,0.14)] backdrop-blur-sm md:flex">
+      <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 md:flex">
         <SliderPagination
           active={activeSlide}
           onSelect={(index) => {
             const nextPosition = index + 1;
-            if (index === 0) setVideoAllowed(true);
             setPosition(nextPosition);
             scrollToPosition(nextPosition);
           }}
@@ -258,9 +223,8 @@ function MobileHeroCarousel() {
 }
 
 function DesktopHeroSlider() {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
   const [previous, setPrevious] = useState<number | null>(null);
-  const [videoAllowed, setVideoAllowed] = useState(false);
   const turnTimerRef = useRef<number | undefined>(undefined);
 
   const turnTo = (index: number) => {
@@ -306,15 +270,7 @@ function DesktopHeroSlider() {
     };
   }, []);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setVideoAllowed(true), 12_000);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   const goTo = (index: number) => {
-    if ((index + slides.length) % slides.length === 0) {
-      setVideoAllowed(true);
-    }
     turnTo(index);
   };
 
@@ -323,7 +279,7 @@ function DesktopHeroSlider() {
       className="relative hidden w-full bg-white lg:block"
       aria-label="پیشنهادهای ویژه"
     >
-      <div className="relative aspect-[12/5] w-full overflow-hidden bg-white">
+      <div className="relative aspect-[3/1] w-full overflow-hidden bg-white">
         {slides.map((slide, index) => (
           <div
             key={slide.label}
@@ -340,10 +296,7 @@ function DesktopHeroSlider() {
             <SlideMedia
               slide={slide}
               viewport="desktop"
-              eager={false}
-              videoEnabled={
-                videoAllowed && slide.type === "video" && index === active
-              }
+              eager={index === 0}
             />
           </div>
         ))}
@@ -370,7 +323,7 @@ function DesktopHeroSlider() {
           </button>
         </div>
 
-        <div className="absolute bottom-5 left-1/2 z-30 hidden -translate-x-1/2 rounded-full bg-white/95 px-4 py-3 shadow-[0_6px_18px_rgba(44,33,59,0.14)] backdrop-blur-sm lg:block">
+        <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 lg:block">
           <SliderPagination active={active} onSelect={goTo} />
         </div>
       </div>
@@ -380,7 +333,7 @@ function DesktopHeroSlider() {
 
 export function HeroSlider() {
   return (
-    <div data-home-hero className="sticky top-0 z-0 bg-white max-md:top-[60px]">
+    <div data-home-hero className="relative z-0 bg-white">
       <MobileHeroCarousel />
       <DesktopHeroSlider />
     </div>

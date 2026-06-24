@@ -103,20 +103,20 @@ export function ReviewsSection() {
         </article>
       </div>
 
-      <div className="mt-2 flex justify-center">
+      <div className="mt-4 flex justify-center gap-2">
         {reviews.map((item, index) => (
           <button
             key={item.name}
             type="button"
             onClick={() => goTo(index)}
-            className="flex h-11 w-11 items-center justify-center rounded-full"
+            className="flex h-5 w-5 items-center justify-center rounded-full"
             aria-label={`نمایش نظر ${index + 1}`}
             aria-current={index === active ? "true" : undefined}
           >
             <span
               className={cn(
                 "h-2 rounded-full transition-all",
-                index === active ? "w-8 bg-primary" : "w-2 bg-[#c8c1cc]",
+                index === active ? "w-6 bg-primary" : "w-2 bg-[#c8c1cc]",
               )}
             />
           </button>

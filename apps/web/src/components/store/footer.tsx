@@ -86,10 +86,10 @@ export function StoreFooter() {
               aria-label="صفحه اصلی الینا"
             >
               <Image
-                src="/elina/elina-logo.png"
+                src="/elina/elina-logo-full.png"
                 alt="Elina"
-                width={170}
-                height={82}
+                width={1254}
+                height={1254}
                 className="h-full w-full object-contain object-right"
               />
             </Link>

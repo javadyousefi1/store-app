@@ -1,0 +1,10 @@
+▲ Next.js 16.2.7
+- Local:         http://localhost:3001
+- Network:       http://10.235.49.217:3001
+✓ Ready in 1476ms
+[PROXY] GET http://localhost:3000/categories
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/categories
+[PROXY] token present: false
+[PROXY] GET http://localhost:3000/categories
+[PROXY] token present: false

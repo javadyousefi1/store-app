@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -12,10 +13,19 @@ import {
   UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  MobileCategoryDrawer,
-  MobileProductFilterDialog,
-} from "./mobile-nav-overlays";
+
+const MobileCategoryDrawer = dynamic(
+  () =>
+    import("./mobile-nav-overlays").then((mod) => mod.MobileCategoryDrawer),
+  { ssr: false },
+);
+const MobileProductFilterDialog = dynamic(
+  () =>
+    import("./mobile-nav-overlays").then(
+      (mod) => mod.MobileProductFilterDialog,
+    ),
+  { ssr: false },
+);
 
 const navItems = [
   {
@@ -59,7 +69,7 @@ export function MobileBottomNav() {
   const [hash, setHash] = useState("");
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const filterAvailable = pathname === "/" || pathname.startsWith("/products");
+  const isProductsPage = pathname.startsWith("/products");
 
   const closeOverlays = () => {
     setCategoriesOpen(false);
@@ -96,14 +106,14 @@ export function MobileBottomNav() {
         <div className="mx-auto grid h-[68px] max-w-xl grid-cols-5">
           {navItems.map((item) => {
             const active = item.isActive(pathname, hash);
-            const isContextualProductsLink =
-              "action" in item && item.action === "filters" && !filterAvailable;
-            const ItemIcon = isContextualProductsLink ? Store : item.icon;
-            const itemLabel = isContextualProductsLink ? "محصولات" : item.label;
+            const isStoreLink =
+              "action" in item && item.action === "filters" && !isProductsPage;
+            const ItemIcon = isStoreLink ? Store : item.icon;
+            const itemLabel = isStoreLink ? "فروشگاه" : item.label;
             const className = cn(
               "flex min-w-0 touch-manipulation flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition",
               active ||
-                (isContextualProductsLink && pathname.startsWith("/products"))
+                (isStoreLink && pathname.startsWith("/products"))
                 ? "text-primary"
                 : "text-[#656771] hover:text-primary",
             );
@@ -137,13 +147,13 @@ export function MobileBottomNav() {
                     }
 
                     if (item.action === "filters") {
-                      if (filterAvailable) setFiltersOpen(true);
-                      else router.push("/#season-picks");
+                      if (isProductsPage) setFiltersOpen(true);
+                      else router.push("/products");
                     }
                   }}
                   className={className}
                   aria-haspopup={
-                    item.action === "categories" || filterAvailable
+                    item.action === "categories" || isProductsPage
                       ? "dialog"
                       : undefined
                   }

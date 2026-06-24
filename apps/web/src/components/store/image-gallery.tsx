@@ -26,6 +26,8 @@ export function ImageGallery({ variantImageUrls, coverUrl }: Props) {
           <img
             src={active}
             alt=""
+            loading="eager"
+            decoding="async"
             className="w-full h-full object-contain"
           />
         ) : (
@@ -49,7 +51,13 @@ export function ImageGallery({ variantImageUrls, coverUrl }: Props) {
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              <img
+                src={url}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
             </button>
           ))}
         </div>
