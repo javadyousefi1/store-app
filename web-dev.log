@@ -1,0 +1,250 @@
+Scope: all 6 workspace projects
+? Verifying lockfile against supply-chain policies (1070 entries)...
+[WARN] Request took 13574ms: https://registry.npmjs.org/@next%2Feslint-plugin-next
+[WARN] Request took 12224ms: https://registry.npmjs.org/@tailwindcss%2Foxide-win32-x64-msvc
+[WARN] Request took 22371ms: https://registry.npmjs.org/@typescript-eslint%2Ftype-utils
+[WARN] Request took 15735ms: https://registry.npmjs.org/@typescript-eslint%2Futils
+[WARN] Request took 21446ms: https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree
+[WARN] Request took 21509ms: https://registry.npmjs.org/@typescript-eslint%2Fparser
+[WARN] Request took 39963ms: https://registry.npmjs.org/@tailwindcss%2Fpostcss
+[WARN] Request took 34085ms: https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin
+[WARN] Request took 36155ms: https://registry.npmjs.org/@types%2Fnode
+[WARN] Request took 10057ms: https://registry.npmjs.org/@typescript-eslint%2Futils
+[WARN] Request took 21790ms: https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys
+[WARN] Request took 10629ms: https://registry.npmjs.org/body-parser
+[WARN] GET https://registry.npmjs.org/@tailwindcss%2Foxide-linux-arm-gnueabihf error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 48993ms: https://registry.npmjs.org/@typescript-eslint%2Ftsconfig-utils
+[WARN] Request took 22657ms: https://registry.npmjs.org/@typescript-eslint%2Ftypescript-estree
+[WARN] Request took 12329ms: https://registry.npmjs.org/@typescript-eslint%2Fvisitor-keys
+[WARN] Request took 51009ms: https://registry.npmjs.org/@typescript-eslint%2Fscope-manager
+[WARN] Request took 25796ms: https://registry.npmjs.org/@typescript-eslint%2Feslint-plugin
+[WARN] Request took 12214ms: https://registry.npmjs.org/get-intrinsic
+[WARN] Request took 16220ms: https://registry.npmjs.org/next
+[WARN] Request took 12224ms: https://registry.npmjs.org/react-is
+[WARN] Request took 12436ms: https://registry.npmjs.org/react-dom
+[WARN] Request took 11313ms: https://registry.npmjs.org/scheduler
+[WARN] Request took 15032ms: https://registry.npmjs.org/react-is
+[WARN] Request took 14321ms: https://registry.npmjs.org/strtok3
+[WARN] Request took 14730ms: https://registry.npmjs.org/tailwind-merge
+[WARN] Request took 18185ms: https://registry.npmjs.org/typescript
+✓ Lockfile passes supply-chain policies (1070 entries in 2m 13.2s)
+../..                                    | Progress: resolved 1, reused 0, downloaded 0, added 0
+../..                                    |    +1016 ++++++++++++++++++++++++++++
+../..                                    | Progress: resolved 1016, reused 0, downloaded 6, added 0
+../..                                    | Progress: resolved 1016, reused 0, downloaded 16, added 15
+../..                                    | Progress: resolved 1016, reused 0, downloaded 32, added 32
+[WARN] GET https://registry.npmjs.org/libphonenumber-js/-/libphonenumber-js-1.13.7.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/validator/-/validator-13.15.35.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 46, added 46
+[WARN] GET https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@nestjs/core/-/core-10.4.22.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@nuxtjs/opencollective/-/opencollective-0.3.2.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 58, added 58
+../..                                    | Progress: resolved 1016, reused 0, downloaded 82, added 82
+[WARN] Tarball download average speed 49 KiB/s (size 56 KiB) is below 50 KiB/s: https://registry.npmjs.org/express/-/express-4.22.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 94, added 93
+../..                                    | Progress: resolved 1016, reused 0, downloaded 113, added 113
+[WARN] Tarball download average speed 23 KiB/s (size 63 KiB) is below 50 KiB/s: https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz (GET)
+[WARN] Tarball download average speed 31 KiB/s (size 180 KiB) is below 50 KiB/s: https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 122, added 122
+[WARN] Tarball download average speed 2 KiB/s (size 3 KiB) is below 50 KiB/s: https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 135, added 133
+../..                                    | Progress: resolved 1016, reused 0, downloaded 146, added 145
+../..                                    | Progress: resolved 1016, reused 0, downloaded 155, added 153
+../..                                    | Progress: resolved 1016, reused 0, downloaded 169, added 167
+../..                                    | Progress: resolved 1016, reused 0, downloaded 181, added 180
+[WARN] Tarball download average speed 47 KiB/s (size 94 KiB) is below 50 KiB/s: https://registry.npmjs.org/minimatch/-/minimatch-9.0.5.tgz (GET)
+[WARN] Tarball download average speed 13 KiB/s (size 43 KiB) is below 50 KiB/s: https://registry.npmjs.org/node-fetch/-/node-fetch-2.7.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 194, added 187
+../..                                    | Progress: resolved 1016, reused 0, downloaded 209, added 206
+../..                                    | Progress: resolved 1016, reused 0, downloaded 217, added 215
+../..                                    | Progress: resolved 1016, reused 0, downloaded 221, added 216
+../..                                    | Progress: resolved 1016, reused 0, downloaded 223, added 219
+../..                                    | Progress: resolved 1016, reused 0, downloaded 234, added 224
+[WARN] Tarball download average speed 46 KiB/s (size 95 KiB) is below 50 KiB/s: https://registry.npmjs.org/diff/-/diff-4.0.4.tgz (GET)
+[WARN] GET https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 249, added 233
+[WARN] GET https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/ioredis/-/ioredis-5.11.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 258, added 235
+../..                                    | Progress: resolved 1016, reused 0, downloaded 273, added 242
+../..                                    | Progress: resolved 1016, reused 0, downloaded 287, added 251
+../..                                    | Progress: resolved 1016, reused 0, downloaded 299, added 284
+[WARN] Tarball download average speed 33 KiB/s (size 54 KiB) is below 50 KiB/s: https://registry.npmjs.org/@angular-devkit/core/-/core-17.3.11.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 307, added 303
+../..                                    | Progress: resolved 1016, reused 0, downloaded 316, added 316
+[WARN] Tarball download average speed 14 KiB/s (size 59 KiB) is below 50 KiB/s: https://registry.npmjs.org/@nestjs/cli/-/cli-10.4.9.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 328, added 327
+[WARN] Tarball download average speed 25 KiB/s (size 48 KiB) is below 50 KiB/s: https://registry.npmjs.org/@angular-devkit/schematics/-/schematics-17.3.11.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 342, added 337
+../..                                    | Progress: resolved 1016, reused 0, downloaded 357, added 355
+[WARN] Tarball download average speed 24 KiB/s (size 26 KiB) is below 50 KiB/s: https://registry.npmjs.org/commander/-/commander-4.1.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 379, added 378
+[WARN] GET https://registry.npmjs.org/cli-width/-/cli-width-4.1.0.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 395, added 395
+[WARN] Tarball download average speed 1 KiB/s (size 30 KiB) is below 50 KiB/s: https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 415, added 415
+../..                                    | Progress: resolved 1016, reused 0, downloaded 427, added 429
+[WARN] GET https://registry.npmjs.org/@types/eslint/-/eslint-9.6.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 437, added 439
+[WARN] GET https://registry.npmjs.org/@webassemblyjs/wast-printer/-/wast-printer-1.14.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 439, added 441
+[WARN] Tarball download average speed 27 KiB/s (size 91 KiB) is below 50 KiB/s: https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.24.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 445, added 446
+[WARN] Tarball download average speed 32 KiB/s (size 197 KiB) is below 50 KiB/s: https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 457, added 459
+../..                                    | Progress: resolved 1016, reused 0, downloaded 465, added 464
+[WARN] Tarball download average speed 17 KiB/s (size 133 KiB) is below 50 KiB/s: https://registry.npmjs.org/ioredis/-/ioredis-5.11.1.tgz (GET)
+[WARN] Tarball download average speed 49 KiB/s (size 212 KiB) is below 50 KiB/s: https://registry.npmjs.org/ajv/-/ajv-8.20.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 487, added 486
+../..                                    | Progress: resolved 1016, reused 0, downloaded 494, added 495
+[WARN] Tarball download average speed 5 KiB/s (size 35 KiB) is below 50 KiB/s: https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-5.6.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 500, added 501
+[WARN] Tarball download average speed 24 KiB/s (size 71 KiB) is below 50 KiB/s: https://registry.npmjs.org/@eslint-community/regexpp/-/regexpp-4.12.2.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 512, added 514
+../..                                    | Progress: resolved 1016, reused 0, downloaded 520, added 519
+../..                                    | Progress: resolved 1016, reused 0, downloaded 531, added 532
+[WARN] Tarball download average speed 27 KiB/s (size 50 KiB) is below 50 KiB/s: https://registry.npmjs.org/ts-api-utils/-/ts-api-utils-1.4.3.tgz (GET)
+[WARN] Tarball download average speed 27 KiB/s (size 78 KiB) is below 50 KiB/s: https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.9.0.tgz (GET)
+[WARN] Tarball download average speed 7 KiB/s (size 185 KiB) is below 50 KiB/s: https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.2.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 546, added 546
+[WARN] Tarball download average speed 25 KiB/s (size 57 KiB) is below 50 KiB/s: https://registry.npmjs.org/graphemer/-/graphemer-1.4.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 554, added 555
+../..                                    | Progress: resolved 1016, reused 0, downloaded 562, added 564
+[WARN] GET https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 567, added 570
+[WARN] GET https://registry.npmjs.org/@base-ui/utils/-/utils-0.3.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 572, added 573
+[WARN] Tarball download average speed 45 KiB/s (size 180 KiB) is below 50 KiB/s: https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 583, added 586
+../..                                    | Progress: resolved 1016, reused 0, downloaded 588, added 589
+../..                                    | Progress: resolved 1016, reused 0, downloaded 592, added 592
+../..                                    | Progress: resolved 1016, reused 0, downloaded 597, added 599
+../..                                    | Progress: resolved 1016, reused 0, downloaded 597, added 600
+[WARN] Tarball download average speed 21 KiB/s (size 156 KiB) is below 50 KiB/s: https://registry.npmjs.org/reselect/-/reselect-5.2.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 604, added 606
+[WARN] GET https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 613, added 616
+[WARN] GET https://registry.npmjs.org/@turbo/windows-64/-/windows-64-2.9.18.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/typescript/-/typescript-5.9.2.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Tarball download average speed 34 KiB/s (size 188 KiB) is below 50 KiB/s: https://registry.npmjs.org/@babel/core/-/core-7.29.7.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 616, added 619
+../..                                    | Progress: resolved 1016, reused 0, downloaded 623, added 626
+../..                                    | Progress: resolved 1016, reused 0, downloaded 632, added 634
+../..                                    | Progress: resolved 1016, reused 0, downloaded 638, added 641
+../..                                    | Progress: resolved 1016, reused 0, downloaded 639, added 642
+../..                                    | Progress: resolved 1016, reused 0, downloaded 643, added 646
+[WARN] Tarball download average speed 26 KiB/s (size 33 KiB) is below 50 KiB/s: https://registry.npmjs.org/ast-types/-/ast-types-0.9.6.tgz (GET)
+[WARN] Tarball download average speed 26 KiB/s (size 164 KiB) is below 50 KiB/s: https://registry.npmjs.org/@babel/traverse/-/traverse-7.29.7.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 648, added 651
+[WARN] GET https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-5.17.14.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 651, added 654
+../..                                    | Progress: resolved 1016, reused 0, downloaded 654, added 656
+[WARN] Tarball download average speed 31 KiB/s (size 428 KiB) is below 50 KiB/s: https://registry.npmjs.org/@babel/parser/-/parser-7.29.7.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 658, added 660
+[WARN] Tarball download average speed 41 KiB/s (size 185 KiB) is below 50 KiB/s: https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 660, added 663
+[WARN] Tarball download average speed 45 KiB/s (size 55 KiB) is below 50 KiB/s: https://registry.npmjs.org/decimal.js-light/-/decimal.js-light-2.5.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 664, added 667
+../..                                    | Progress: resolved 1016, reused 0, downloaded 671, added 673
+[WARN] GET https://registry.npmjs.org/typescript/-/typescript-5.9.2.tgz error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 682, added 680
+../..                                    | Progress: resolved 1016, reused 0, downloaded 686, added 686
+../..                                    | Progress: resolved 1016, reused 0, downloaded 697, added 696
+../..                                    | Progress: resolved 1016, reused 0, downloaded 704, added 706
+../..                                    | Progress: resolved 1016, reused 0, downloaded 712, added 709
+[WARN] Tarball download average speed 2 KiB/s (size 93 KiB) is below 50 KiB/s: https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 717, added 717
+[WARN] Tarball download average speed 11 KiB/s (size 169 KiB) is below 50 KiB/s: https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 722, added 725
+../..                                    | Progress: resolved 1016, reused 0, downloaded 732, added 736
+[WARN] Tarball download average speed 46 KiB/s (size 151 KiB) is below 50 KiB/s: https://registry.npmjs.org/@noble/hashes/-/hashes-1.8.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 739, added 741
+../..                                    | Progress: resolved 1016, reused 0, downloaded 743, added 747
+../..                                    | Progress: resolved 1016, reused 0, downloaded 755, added 753
+[WARN] Tarball download average speed 44 KiB/s (size 57 KiB) is below 50 KiB/s: https://registry.npmjs.org/ip-address/-/ip-address-10.2.0.tgz (GET)
+[WARN] Tarball download average speed 11 KiB/s (size 187 KiB) is below 50 KiB/s: https://registry.npmjs.org/react-redux/-/react-redux-9.3.0.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 767, added 768
+../..                                    | Progress: resolved 1016, reused 0, downloaded 772, added 773
+[WARN] GET https://registry.npmjs.org/commander/-/commander-14.0.3.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 781, added 783
+[WARN] GET https://registry.npmjs.org/get-stream/-/get-stream-9.0.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@sec-ant/readable-stream/-/readable-stream-0.4.1.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 791, added 794
+../..                                    | Progress: resolved 1016, reused 0, downloaded 807, added 808
+../..                                    | Progress: resolved 1016, reused 0, downloaded 819, added 820
+../..                                    | Progress: resolved 1016, reused 0, downloaded 825, added 827
+[WARN] Tarball download average speed 14 KiB/s (size 18 KiB) is below 50 KiB/s: https://registry.npmjs.org/cosmiconfig/-/cosmiconfig-9.0.2.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 836, added 839
+[WARN] GET https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/webpack/-/webpack-5.97.1.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 843, added 846
+../..                                    | Progress: resolved 1016, reused 0, downloaded 846, added 848
+[WARN] GET https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.376.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Tarball download average speed 12 KiB/s (size 16 KiB) is below 50 KiB/s: https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-16.2.0.tgz (GET)
+[WARN] Tarball download average speed 12 KiB/s (size 31 KiB) is below 50 KiB/s: https://registry.npmjs.org/sonner/-/sonner-2.0.7.tgz (GET)
+[WARN] Tarball download average speed 28 KiB/s (size 82 KiB) is below 50 KiB/s: https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.21.6.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 853, added 854
+../..                                    | Progress: resolved 1016, reused 0, downloaded 861, added 864
+../..                                    | Progress: resolved 1016, reused 0, downloaded 862, added 865
+../..                                    | Progress: resolved 1016, reused 0, downloaded 875, added 876
+../..                                    | Progress: resolved 1016, reused 0, downloaded 885, added 887
+[WARN] Tarball download average speed 34 KiB/s (size 569 KiB) is below 50 KiB/s: https://registry.npmjs.org/zod/-/zod-3.25.76.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 897, added 897
+[WARN] GET https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-6.21.0.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 908, added 906
+../..                                    | Progress: resolved 1016, reused 0, downloaded 915, added 911
+../..                                    | Progress: resolved 1016, reused 0, downloaded 917, added 911
+../..                                    | Progress: resolved 1016, reused 0, downloaded 927, added 914
+../..                                    | Progress: resolved 1016, reused 0, downloaded 935, added 918
+[WARN] Tarball download average speed 48 KiB/s (size 60 KiB) is below 50 KiB/s: https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.50.0.tgz (GET)
+[WARN] Tarball download average speed 9 KiB/s (size 420 KiB) is below 50 KiB/s: https://registry.npmjs.org/acorn/-/acorn-5.7.4.tgz (GET)
+[WARN] Tarball download average speed 40 KiB/s (size 741 KiB) is below 50 KiB/s: https://registry.npmjs.org/zod/-/zod-4.4.3.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 944, added 922
+../..                                    | Progress: resolved 1016, reused 0, downloaded 956, added 927
+../..                                    | Progress: resolved 1016, reused 0, downloaded 963, added 929
+[WARN] GET https://registry.npmjs.org/next/-/next-16.2.7.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 965, added 933
+../..                                    | Progress: resolved 1016, reused 0, downloaded 969, added 935
+[WARN] GET https://registry.npmjs.org/resolve/-/resolve-2.0.0-next.5.tgz error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 973, added 938
+../..                                    | Progress: resolved 1016, reused 0, downloaded 979, added 939
+../..                                    | Progress: resolved 1016, reused 0, downloaded 986, added 941
+[WARN] GET https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.2.7.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 992, added 948
+[WARN] GET https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.34.5.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 996, added 956
+../..                                    | Progress: resolved 1016, reused 0, downloaded 996, added 967
+../..                                    | Progress: resolved 1016, reused 0, downloaded 997, added 979
+../..                                    | Progress: resolved 1016, reused 0, downloaded 999, added 996
+[WARN] Tarball download average speed 33 KiB/s (size 407 KiB) is below 50 KiB/s: https://registry.npmjs.org/@types/node/-/node-20.19.43.tgz (GET)
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1000, added 1001
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1001, added 1003
+[WARN] GET https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-2.12.0.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1002, added 1005
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1003, added 1006
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1003, added 1007
+[WARN] GET https://registry.npmjs.org/@turbo/windows-64/-/windows-64-2.9.18.tgz error (23). Will retry in 1 minute. 1 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1004, added 1007
+[WARN] GET https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-5.17.14.tgz error (23). Will retry in 1 minute. 1 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1004, added 1008
+[WARN] GET https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.29.0.tgz error (23). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1005, added 1008
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1005, added 1009
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1006, added 1009
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1006, added 1010
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1007, added 1010
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1007, added 1011
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1008, added 1011
+../..                                    | Progress: resolved 1016, reused 0, downloaded 1008, added 1012
+[WARN] GET https://registry.npmjs.org/next/-/next-16.2.7.tgz error (23). Will retry in 1 minute. 1 retries left.

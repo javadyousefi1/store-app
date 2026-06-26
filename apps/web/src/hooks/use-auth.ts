@@ -1,10 +1,37 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import type { AuthResponse, GetOtpRequest, VerifyOtpRequest } from "@/types";
+import type {
+  AuthResponse,
+  AuthSession,
+  GetOtpRequest,
+  VerifyOtpRequest,
+} from "@/types";
 
 const authAxios = axios.create({ baseURL: "/api/auth" });
+export const AUTH_SESSION_QUERY_KEY = ["auth-session"] as const;
+
+export function useAuthSession() {
+  return useQuery({
+    queryKey: AUTH_SESSION_QUERY_KEY,
+    queryFn: async () => {
+      try {
+        const response = await authAxios.get<{ data: AuthSession | null }>(
+          "/session",
+        );
+        return response.data.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          return null;
+        }
+        throw error;
+      }
+    },
+    retry: false,
+    staleTime: 60_000,
+  });
+}
 
 export function useGetOtp() {
   return useMutation({

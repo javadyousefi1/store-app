@@ -24,7 +24,7 @@ export class ProductController {
   // ── Public ────────────────────────────────────────────────────────────────
 
   @Get()
-  @ApiOperation({ summary: 'List products', description: 'Paginated. Filter by categoryId. Cover image returned as presigned URL.' })
+  @ApiOperation({ summary: 'List products', description: 'Paginated. Supports category, price, search, and sorting filters. Cover image returned as presigned URL.' })
   @ApiResponse({ status: 200, description: 'Paginated product list.' })
   findAll(@Query() dto: GetProductsDto) {
     return this.productService.findAll(dto);

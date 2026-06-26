@@ -6,13 +6,14 @@ import type { ApiResponse, Category, CreateCategoryRequest, UpdateCategoryReques
 
 const QUERY_KEY = ["categories"];
 
-export function useCategories() {
+export function useCategories(enabled = true) {
   return useQuery({
     queryKey: QUERY_KEY,
     queryFn: () =>
       apiClient
         .get<ApiResponse<Category[]>>("/categories")
         .then((r) => r.data.data),
+    enabled,
   });
 }
 

@@ -1,163 +1,336 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const SHIRT_COLORS = [
-  { hex: "#EDD87A" },
-  { hex: "#8B9D6A" },
-  { hex: "#F4AABB" },
-  { hex: "#F0F0EE" },
-];
+const slides = [
+  {
+    mobileSrc: "/elina/hero/hero-blue-mobile.webp",
+    desktopSrc: "/elina/hero/hero-blue-desktop.webp",
+    label: "تیشرت سالیوان — انرژی کارتونی برای استایل تابستونی",
+  },
+  {
+    mobileSrc: "/elina/hero/hero-linen-mobile.webp",
+    desktopSrc: "/elina/hero/hero-linen-desktop.webp",
+    label: "ست وست لنین شلوار ایتالیایی — مناسب هر روز، مناسب هر جا",
+  },
+  {
+    mobileSrc: "/elina/hero/hero-shomiz-mobile.webp",
+    desktopSrc: "/elina/hero/hero-shomiz-desktop.webp",
+    label: "شومیز مانتویی — ۴ رنگ برای انتخاب",
+  },
+] as const;
 
-const SLIDES = [
-  {
-    title: "شومیز ستاره‌ای؛",
-    line2: "انتخاب خنک تابستان",
-    sub: "سبک، خنک، همیشه شیک",
-    badge: "در ۴ رنگ",
-    cta: "خرید شومیز ستاره‌ای",
-    href: "/products",
-    bg: "#F5EEE6",
-    colorRotate: true,
-    color: "",
-  },
-  {
-    title: "ست لینن",
-    line2: "راحتی بدون توضیح",
-    sub: "قابل ست، پارچه سبک",
-    badge: "محبوب فصل",
-    cta: "مشاهده ست‌ها",
-    href: "/products",
-    bg: "#EEF3EE",
-    colorRotate: false,
-    color: "#8B9D6A",
-  },
-  {
-    title: "کلکسیون بیسیک",
-    line2: "هر روز شیک",
-    sub: "خرید هوشمند، هویت ثابت",
-    badge: "پرفروش",
-    cta: "مشاهده بیسیک‌ها",
-    href: "/products",
-    bg: "#EEF0F5",
-    colorRotate: false,
-    color: "#B8C5D8",
-  },
-];
+type Slide = (typeof slides)[number];
+type HeroViewport = "mobile" | "desktop";
+const blurDataUrl =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmMGY2Ii8+PC9zdmc+";
 
-export function HeroSlider() {
-  const [slide, setSlide] = useState(0);
-  const [ci, setCi] = useState(0);
-  const s = SLIDES[slide];
+function SlideMedia({
+  slide,
+  viewport,
+  eager = false,
+}: {
+  slide: Slide;
+  viewport: HeroViewport;
+  eager?: boolean;
+}) {
+  const imageSrc = viewport === "mobile" ? slide.mobileSrc : slide.desktopSrc;
+  const imageClassName = cn(
+    "h-full w-full",
+    viewport === "mobile"
+      ? "object-cover object-[center_58%]"
+      : "object-cover object-center",
+  );
+
+  if (!imageSrc) {
+    return (
+      <div
+        className="absolute inset-0 flex items-center justify-center bg-[#f3f0f6]"
+        aria-label={slide.label}
+        role="img"
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={imageSrc}
+      alt={slide.label}
+      fill
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : "auto"}
+      placeholder={viewport === "mobile" ? "blur" : "empty"}
+      blurDataURL={viewport === "mobile" ? blurDataUrl : undefined}
+      sizes="100vw"
+      className={imageClassName}
+    />
+  );
+}
+
+const mobileSlides = [slides[slides.length - 1], ...slides, slides[0]];
+
+function SliderPagination({
+  active,
+  onSelect,
+}: {
+  active: number;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-2" dir="ltr">
+      {slides.map((slide, index) => (
+        <button
+          key={slide.label}
+          type="button"
+          onClick={() => onSelect(index)}
+          className="flex h-5 w-5 items-center justify-center rounded-full"
+          aria-label={`نمایش اسلاید ${index + 1}`}
+          aria-current={index === active ? "true" : undefined}
+        >
+          <span
+            className={cn(
+              "h-2 rounded-full transition-all duration-300 ease-out",
+              index === active ? "w-6 bg-brand-600" : "w-2 bg-[#cbc6d1]",
+            )}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function MobileHeroCarousel() {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollTimerRef = useRef<number | undefined>(undefined);
+  const [position, setPosition] = useState(1);
+
+  const scrollToPosition = (nextPosition: number, smooth = true) => {
+    const scroller = scrollerRef.current;
+    const item = itemRefs.current[nextPosition];
+    if (!scroller || !item) return;
+
+    scroller.scrollTo({
+      left: item.offsetLeft - (scroller.clientWidth - item.clientWidth) / 2,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  };
 
   useEffect(() => {
-    const t = setInterval(() => setSlide((x) => (x + 1) % SLIDES.length), 4500);
-    return () => clearInterval(t);
+    const frame = window.requestAnimationFrame(() =>
+      scrollToPosition(1, false),
+    );
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
-    if (!s.colorRotate) return;
-    const t = setInterval(() => setCi((x) => (x + 1) % SHIRT_COLORS.length), 1100);
-    return () => clearInterval(t);
-  }, [s.colorRotate]);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const shirtColor = s.colorRotate ? SHIRT_COLORS[ci].hex : s.color;
+    let interval: number | undefined;
+    const startTimer = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setPosition((current) => {
+          const next = current + 1;
+          scrollToPosition(next);
+          return next;
+        });
+      }, 6000);
+    }, 15_000);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      if (interval) window.clearInterval(interval);
+    };
+  }, []);
+
+  const settleScroll = () => {
+    window.clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = window.setTimeout(() => {
+      const scroller = scrollerRef.current;
+      if (!scroller) return;
+
+      const scrollerCenter = scroller.scrollLeft + scroller.clientWidth / 2;
+      let nearest = 0;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      itemRefs.current.forEach((item, index) => {
+        if (!item) return;
+        const itemCenter = item.offsetLeft + item.clientWidth / 2;
+        const distance = Math.abs(scrollerCenter - itemCenter);
+        if (distance < nearestDistance) {
+          nearest = index;
+          nearestDistance = distance;
+        }
+      });
+
+      setPosition(nearest);
+
+      if (nearest === 0) {
+        setPosition(slides.length);
+        scrollToPosition(slides.length, false);
+      } else if (nearest === mobileSlides.length - 1) {
+        setPosition(1);
+        scrollToPosition(1, false);
+      }
+    }, 120);
+  };
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(scrollTimerRef.current);
+    },
+    [],
+  );
+
+  const activeSlide = (position - 1 + slides.length) % slides.length;
 
   return (
-    <div className="px-3 sm:px-6 lg:px-8 pt-4 pb-2">
+    <section
+      className="relative w-full bg-[#f8f6fb] pt-3 pb-2 md:py-3 lg:hidden"
+      aria-label="پیشنهادهای ویژه"
+    >
       <div
-        className="relative rounded-2xl overflow-hidden"
-        style={{ backgroundColor: s.bg }}
+        ref={scrollerRef}
+        onScroll={settleScroll}
+        dir="ltr"
+        className="flex touch-pan-x snap-x snap-mandatory gap-3 overflow-x-auto px-7 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {/* Content row */}
-        <div className="flex items-center justify-between gap-2 px-5 sm:px-10 lg:px-14 py-7 sm:py-10 lg:py-14 min-h-[200px] sm:min-h-[300px] lg:min-h-[420px]">
-
-          {/* Shirt — visual LEFT (end in RTL) */}
-          <div className="shrink-0 relative w-[90px] sm:w-[160px] lg:w-[240px] h-[120px] sm:h-[210px] lg:h-[320px]">
-            {/* Body */}
-            <div
-              className="absolute inset-x-[15%] top-[5%] bottom-[12%] rounded-t-[40%] rounded-b-md transition-colors duration-700"
-              style={{ backgroundColor: shirtColor }}
+        {mobileSlides.map((slide, index) => (
+          <div
+            key={`${slide.label}-${index}`}
+            ref={(node) => {
+              itemRefs.current[index] = node;
+            }}
+            className="relative aspect-[9/4.6] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
+          >
+            <SlideMedia
+              slide={slide}
+              viewport="mobile"
+              eager={index === 1}
             />
-            {/* Collar notch */}
-            <div
-              className="absolute top-[5%] left-[50%] -translate-x-1/2 w-[25%] h-[10%] rounded-b-full transition-colors duration-700"
-              style={{ backgroundColor: s.bg }}
-            />
-            {/* Left arm */}
-            <div
-              className="absolute top-[12%] -left-[8%] w-[22%] h-[45%] rounded-full transition-colors duration-700 -rotate-6"
-              style={{ backgroundColor: shirtColor }}
-            />
-            {/* Right arm */}
-            <div
-              className="absolute top-[12%] -right-[8%] w-[22%] h-[45%] rounded-full transition-colors duration-700 rotate-6"
-              style={{ backgroundColor: shirtColor }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-              <span className="opacity-15 text-3xl sm:text-5xl">✦</span>
-            </div>
           </div>
+        ))}
+      </div>
 
-          {/* Text — visual RIGHT (start in RTL) */}
-          <div className="flex-1 min-w-0 text-right space-y-2 sm:space-y-3 lg:space-y-4">
-            <h2 className="font-bold leading-snug text-zinc-900 text-xl sm:text-3xl lg:text-5xl">
-              {s.title}
-              {s.line2 && <><br />{s.line2}</>}
-            </h2>
+      <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 md:flex">
+        <SliderPagination
+          active={activeSlide}
+          onSelect={(index) => {
+            const nextPosition = index + 1;
+            setPosition(nextPosition);
+            scrollToPosition(nextPosition);
+          }}
+        />
+      </div>
+    </section>
+  );
+}
 
-            <p className="text-zinc-600 text-xs sm:text-sm lg:text-base">{s.sub}</p>
+function DesktopHeroSlider() {
+  const [active, setActive] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const isFirstActive = useRef(true);
 
-            {s.colorRotate ? (
-              <div className="flex items-center justify-end gap-1.5 sm:gap-2">
-                <span className="text-[10px] sm:text-xs text-zinc-500">{s.badge}</span>
-                {SHIRT_COLORS.map((c, i) => (
-                  <span
-                    key={c.hex}
-                    className="rounded-full border-2 transition-all duration-300 inline-block"
-                    style={{
-                      width:  i === ci ? 16 : 12,
-                      height: i === ci ? 16 : 12,
-                      backgroundColor: c.hex,
-                      borderColor: i === ci ? "#555" : "transparent",
-                      boxShadow: i === ci ? "0 0 0 2px #55555530" : "none",
-                    }}
-                  />
-                ))}
-              </div>
-            ) : (
-              <span className="inline-block text-[10px] sm:text-xs bg-white/60 px-2.5 py-0.5 rounded-full text-zinc-600">
-                {s.badge}
-              </span>
-            )}
+  useEffect(() => {
+    if (isFirstActive.current) {
+      isFirstActive.current = false;
+      return;
+    }
 
-            <div>
-              <Link
-                href={s.href}
-                className="inline-flex items-center bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-700 transition-colors text-xs sm:text-sm lg:text-base px-4 sm:px-6 py-2 sm:py-2.5 lg:py-3"
-              >
-                {s.cta}
-              </Link>
+    setIsTransitioning(true);
+    const timer = window.setTimeout(() => setIsTransitioning(false), 320);
+    return () => window.clearTimeout(timer);
+  }, [active]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let interval: number | undefined;
+    const startTimer = window.setTimeout(() => {
+      interval = window.setInterval(() => {
+        setActive((current) => (current + 1) % slides.length);
+      }, 6000);
+    }, 15_000);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      if (interval) window.clearInterval(interval);
+    };
+  }, []);
+
+  const goTo = (index: number) => {
+    const next = (index + slides.length) % slides.length;
+    if (next === active) return;
+    setActive(next);
+  };
+
+  return (
+    <section
+      className="relative hidden w-full bg-white lg:block"
+      aria-label="پیشنهادهای ویژه"
+    >
+      <div className="relative h-[clamp(360px,38vw,500px)] w-full overflow-hidden bg-white">
+        <div
+          dir="ltr"
+          className={cn(
+            "flex h-full w-full transition-transform duration-[320ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] motion-reduce:transition-none",
+            isTransitioning && "will-change-transform",
+          )}
+          style={{ transform: `translate3d(-${active * 100}%, 0, 0)` }}
+        >
+          {slides.map((slide, index) => (
+            <div
+              key={slide.label}
+              className="relative h-full w-full shrink-0"
+              aria-hidden={index !== active}
+            >
+              <SlideMedia
+                slide={slide}
+                viewport="desktop"
+                eager={index === 0}
+              />
             </div>
-          </div>
-        </div>
-
-        {/* Dots */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setSlide(i)}
-              className={cn(
-                "rounded-full transition-all duration-300",
-                i === slide ? "w-4 h-1.5 bg-zinc-900" : "w-1.5 h-1.5 bg-zinc-400"
-              )}
-            />
           ))}
         </div>
+
+        <div
+          className="absolute bottom-5 right-6 z-30 hidden items-center gap-3 lg:flex"
+          dir="ltr"
+        >
+          <button
+            type="button"
+            onClick={() => goTo(active - 1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
+            aria-label="اسلاید قبلی"
+          >
+            <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+          </button>
+          <button
+            type="button"
+            onClick={() => goTo(active + 1)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4dfe8] bg-white/95 text-[#554a60] shadow-[0_6px_18px_rgba(44,33,59,0.16)] backdrop-blur-sm transition-colors hover:bg-brand-50 hover:text-primary"
+            aria-label="اسلاید بعدی"
+          >
+            <ChevronRight className="h-5 w-5" strokeWidth={2} />
+          </button>
+        </div>
+
+        <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 lg:block">
+          <SliderPagination active={active} onSelect={goTo} />
+        </div>
       </div>
+    </section>
+  );
+}
+
+export function HeroSlider() {
+  return (
+    <div data-home-hero className="relative z-0 bg-[#f8f6fb] lg:bg-white">
+      <MobileHeroCarousel />
+      <DesktopHeroSlider />
     </div>
   );
 }

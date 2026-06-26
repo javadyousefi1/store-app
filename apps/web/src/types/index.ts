@@ -35,6 +35,11 @@ export interface AuthResponse {
   isNew: boolean;
 }
 
+export interface AuthSession {
+  phone: string;
+  role: UserRole;
+}
+
 // User
 export type UserRole = "user" | "admin";
 

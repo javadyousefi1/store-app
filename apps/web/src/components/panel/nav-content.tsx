@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   LayoutDashboard,
   Package,
@@ -40,7 +40,7 @@ export function NavContent({ onNavigate }: Props) {
   async function handleLogout() {
     await logout.mutateAsync();
     toast.success("خروج موفق");
-    router.push("/login");
+    router.push("/admin/login");
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   ArrowRight, XCircle, AlertCircle, Package, CheckCircle2,
 } from "lucide-react";

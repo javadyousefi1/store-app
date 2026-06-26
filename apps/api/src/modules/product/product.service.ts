@@ -7,7 +7,6 @@ import {ProductVariant} from '../../entities/product-variant.entity';
 import {AttributeService} from '../attribute/attribute.service';
 import {MediaService} from '../media/media.service';
 import {BaleService} from '../bale/bale.service';
-import {paginate} from '../../common/helpers/paginate.helper';
 import {PaginateResult} from '../../common/interfaces/paginate-result.interface';
 import {CreateProductDto} from './dto/create-product.dto';
 import {UpdateProductDto} from './dto/update-product.dto';
@@ -31,14 +30,71 @@ export class ProductService {
     // ── Products ──────────────────────────────────────────────────────────────
 
     async findAll(dto: GetProductsDto): Promise<PaginateResult<Product>> {
-        const where: Record<string, unknown> = { isActive: true };
-        if (dto.categoryId) where.categoryId = dto.categoryId;
+        const priceSummary = this.variantRepo
+            .createQueryBuilder('priceVariant')
+            .select('priceVariant.productId', 'productId')
+            .addSelect('MIN(priceVariant.price)', 'minPrice')
+            .where('priceVariant.deletedAt IS NULL')
+            .groupBy('priceVariant.productId');
 
-        const result = await paginate(this.productRepo, dto.page, dto.limit, {
-            where,
-            relations: ['category', 'cover'],
-            order: {createdAt: 'DESC'},
-        });
+        const query = this.productRepo
+            .createQueryBuilder('product')
+            .leftJoinAndSelect('product.category', 'category')
+            .leftJoinAndSelect('product.cover', 'cover')
+            .leftJoin(
+                `(${priceSummary.getQuery()})`,
+                'priceSummary',
+                '"priceSummary"."productId" = product.id',
+            )
+            .setParameters(priceSummary.getParameters())
+            .where('product.isActive = :isActive', {isActive: true});
+
+        const categoryIds = dto.categoryIds?.length
+            ? dto.categoryIds
+            : dto.categoryId
+                ? [dto.categoryId]
+                : [];
+
+        if (categoryIds.length) {
+            query.andWhere('product.categoryId IN (:...categoryIds)', {categoryIds});
+        }
+
+        if (dto.minPrice !== undefined) {
+            query.andWhere('CAST("priceSummary"."minPrice" AS numeric) >= :minPrice', {
+                minPrice: dto.minPrice,
+            });
+        }
+
+        if (dto.maxPrice !== undefined) {
+            query.andWhere('CAST("priceSummary"."minPrice" AS numeric) <= :maxPrice', {
+                maxPrice: dto.maxPrice,
+            });
+        }
+
+        if (dto.search?.trim()) {
+            query.andWhere('product.name ILIKE :search', {
+                search: `%${dto.search.trim()}%`,
+            });
+        }
+
+        if (dto.sort === 'price_asc') {
+            query.orderBy('CAST("priceSummary"."minPrice" AS numeric)', 'ASC', 'NULLS LAST');
+        } else if (dto.sort === 'price_desc') {
+            query.orderBy('CAST("priceSummary"."minPrice" AS numeric)', 'DESC', 'NULLS LAST');
+        } else {
+            query.orderBy('product.createdAt', 'DESC');
+        }
+
+        query.skip((dto.page - 1) * dto.limit).take(dto.limit);
+
+        const [data, total] = await query.getManyAndCount();
+        const result: PaginateResult<Product> = {
+            data,
+            total,
+            page: dto.page,
+            limit: dto.limit,
+            totalPages: Math.ceil(total / dto.limit),
+        };
 
         result.data = await Promise.all(result.data.map((p) => this.attachCoverUrl(p)));
         await this.attachVariantSummary(result.data);

@@ -1,0 +1,99 @@
+Scope: all 6 workspace projects
+? Verifying lockfile against supply-chain policies (1072 entries)...
+../..                                    | Progress: resolved 1, reused 0, downloaded 0, added 0
+../..                                    |    +1018 ++++++++++++++++++++++++++++
+../..                                    | Progress: resolved 1018, reused 209, downloaded 0, added 0
+../..                                    | Progress: resolved 1018, reused 695, downloaded 0, added 0
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 0, added 22
+[WARN] GET https://registry.npmjs.org/@babel%2Fhelper-module-transforms error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fplugin-transform-typescript error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fparser error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fplugin-syntax-typescript error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@base-ui%2Futils error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@colors%2Fcolors error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@emnapi%2Fruntime error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@borewit%2Ftext-codec error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint-community%2Feslint-utils error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint-community%2Fregexpp error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Fobject-schema error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Feslintrc error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Fcore error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Fconfig-array error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Fconfig-helpers error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@floating-ui%2Fcore error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@eslint%2Fjs error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 0, added 34
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 0, added 143
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 254
+[WARN] GET https://registry.npmjs.org/@img%2Fsharp-libvips-linux-arm64 error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@img%2Fsharp-libvips-linux-arm error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@img%2Fsharp-libvips-linux-riscv64 error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@img%2Fsharp-libvips-linuxmusl-x64 error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 352
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 452
+[WARN] GET https://registry.npmjs.org/@next%2Fswc-win32-arm64-msvc error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 515
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 559
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 603
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 661
+[WARN] Request took 12205ms: https://registry.npmjs.org/@angular-devkit%2Fschematics
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 713
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 782
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 880
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 960
+[WARN] GET https://registry.npmjs.org/@babel%2Fhelper-module-transforms error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fplugin-transform-typescript error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fparser error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fplugin-syntax-typescript error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@babel%2Fruntime error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@types%2Fjsonwebtoken error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@colors%2Fcolors error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] GET https://registry.npmjs.org/@borewit%2Ftext-codec error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1008
+[WARN] Request took 12480ms: https://registry.npmjs.org/@next%2Feslint-plugin-next
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1009
+[WARN] Request took 13571ms: https://registry.npmjs.org/@next%2Fswc-darwin-x64
+[WARN] Request took 13578ms: https://registry.npmjs.org/@next%2Fswc-win32-x64-msvc
+[WARN] Request took 11197ms: https://registry.npmjs.org/@tailwindcss%2Foxide-linux-arm64-musl
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1010
+[WARN] Request took 11735ms: https://registry.npmjs.org/@tailwindcss%2Foxide-linux-arm64-gnu
+[WARN] GET https://registry.npmjs.org/@img%2Fsharp-libvips-linux-riscv64 error (ETIMEDOUT). Will retry in 1 minute. 1 retries left.
+[WARN] Request took 15016ms: https://registry.npmjs.org/@next%2Fswc-darwin-arm64
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1011
+[WARN] Request took 13329ms: https://registry.npmjs.org/@tailwindcss%2Foxide-wasm32-wasi
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1014
+[WARN] Request took 13897ms: https://registry.npmjs.org/@tailwindcss%2Foxide-linux-x64-musl
+[WARN] Request took 22537ms: https://registry.npmjs.org/@angular-devkit%2Fschematics-cli
+../..                                    | Progress: resolved 1018, reused 1010, downloaded 2, added 1015
+[WARN] Request took 14939ms: https://registry.npmjs.org/@tailwindcss%2Foxide-linux-x64-gnu
+[WARN] Request took 14537ms: https://registry.npmjs.org/@tanstack%2Fquery-core
+[WARN] GET https://registry.npmjs.org/atomically error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/balanced-match error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 18739ms: https://registry.npmjs.org/@next%2Fswc-linux-arm64-musl
+[WARN] GET https://registry.npmjs.org/define-properties error (ETIMEDOUT). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 22869ms: https://registry.npmjs.org/@next%2Fswc-linux-x64-gnu
+[WARN] Request took 24727ms: https://registry.npmjs.org/@next%2Fswc-linux-x64-musl
+[WARN] Request took 23632ms: https://registry.npmjs.org/@tailwindcss%2Foxide-darwin-arm64
+[WARN] Request took 24252ms: https://registry.npmjs.org/@tailwindcss%2Foxide-android-arm64
+[WARN] Request took 25250ms: https://registry.npmjs.org/@tailwindcss%2Foxide-linux-arm-gnueabihf
+[WARN] Request took 30541ms: https://registry.npmjs.org/@next%2Fenv
+[WARN] Request took 15128ms: https://registry.npmjs.org/eslint-plugin-react-hooks
+[WARN] Request took 25652ms: https://registry.npmjs.org/@types%2Fnode
+[WARN] Request took 39799ms: https://registry.npmjs.org/@next%2Fswc-win32-arm64-msvc
+[WARN] GET https://registry.npmjs.org/@nodable%2Fentities error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 11834ms: https://registry.npmjs.org/scheduler
+[WARN] GET https://registry.npmjs.org/@tailwindcss%2Foxide-freebsd-x64 error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 10382ms: https://registry.npmjs.org/@types%2Fnode
+[WARN] Request took 11420ms: https://registry.npmjs.org/use-sync-external-store
+[WARN] Request took 27363ms: https://registry.npmjs.org/next
+[WARN] GET https://registry.npmjs.org/@angular-devkit%2Fcore error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 52092ms: https://registry.npmjs.org/@tailwindcss%2Foxide-darwin-x64
+[WARN] Request took 24994ms: https://registry.npmjs.org/react
+[WARN] Request took 11044ms: https://registry.npmjs.org/systeminformation
+[WARN] GET https://registry.npmjs.org/next/-/next-16.2.7.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] GET https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.2.7.tgz error (23). Will retry in 10 seconds. 2 retries left.
+[WARN] Request took 53538ms: https://registry.npmjs.org/@tanstack%2Freact-query
+[WARN] Request took 54920ms: https://registry.npmjs.org/@tailwindcss%2Foxide-freebsd-x64
+[WARN] GET https://registry.npmjs.org/@next%2Fswc-linux-arm64-gnu error (23). Will retry in 10 seconds. 2 retries left.
+✓ Lockfile passes supply-chain policies (1072 entries in 1m 20.6s)
