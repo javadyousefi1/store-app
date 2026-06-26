@@ -2,7 +2,7 @@
 
 import { use, useRef } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { ArrowRight, Plus, Pencil, Trash2, Upload, ImageIcon, X, BellRing, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

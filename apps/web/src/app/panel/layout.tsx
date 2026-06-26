@@ -9,7 +9,7 @@ export default async function PanelLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  if (!cookieStore.get("access_token")) redirect("/login");
+  if (!cookieStore.get("access_token")) redirect("/admin/login");
 
   return (
     <div className="flex h-screen overflow-hidden bg-muted/20">

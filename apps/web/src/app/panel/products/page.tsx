@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Plus, Pencil, Trash2, Eye, ImageIcon, CheckCircle2, XCircle } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

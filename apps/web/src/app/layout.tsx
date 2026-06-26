@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Toaster } from "@/components/ui/sonner";
+import { HotToaster } from "@/components/ui/hot-toaster";
 import { QueryProvider } from "@/providers/query-provider";
 import { AuthModalProvider } from "@/providers/auth-modal-provider";
 import "./globals.css";
@@ -138,7 +138,7 @@ export default function RootLayout({
         />
         <QueryProvider>
           <AuthModalProvider>{children}</AuthModalProvider>
-          <Toaster richColors position="top-center" />
+          <HotToaster />
         </QueryProvider>
       </body>
     </html>

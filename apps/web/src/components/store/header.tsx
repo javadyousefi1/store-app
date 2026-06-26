@@ -20,14 +20,14 @@ import {
   UserRound,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { triggerAuthModal } from "@/lib/auth-modal-trigger";
+import { toast } from "@/lib/toast";
 import { registerCartSidebarTrigger } from "@/lib/cart-sidebar-trigger";
 import {
   AUTH_SESSION_QUERY_KEY,
   useAuthSession,
   useLogout,
 } from "@/hooks/use-auth";
+import { CartCountBadge } from "./cart-count-badge";
 
 const W = "mx-auto w-full max-w-[1920px] px-4 sm:px-6 lg:px-8";
 const CartSidebar = dynamic(
@@ -38,7 +38,7 @@ const CartSidebar = dynamic(
 const desktopLinks = [
   { href: "/products", label: "فروشگاه", icon: ShoppingBag },
   { href: "/products", label: "جدیدترین‌ها", icon: Sparkles },
-  { href: "/#season-picks", label: "منتخب فصل", icon: Star },
+  { href: "/#bestsellers", label: "پرفروش‌ها", icon: Star },
 ] as const;
 
 function SearchBox({ compact = false }: { compact?: boolean }) {
@@ -90,80 +90,72 @@ export function StoreHeader() {
 
   useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 1024px)");
-    let previousY = window.scrollY;
+    const isHome = pathname === "/";
     let frameId: number | null = null;
-    let heroEndY = 180;
+    let hidePoint = 0;
+    let showPoint = 0;
     let navVisible = true;
-    let direction: "up" | "down" | null = null;
-    let directionDistance = 0;
-    let lastToggleAt = 0;
-    const jitterThreshold = 4;
-    const hideDistance = 18;
-    const revealDistance = 28;
-    const toggleCooldownMs = 180;
+    const hysteresis = 100;
 
     const setNavVisibility = (visible: boolean) => {
       if (navVisible === visible) return;
       navVisible = visible;
-      direction = null;
-      directionDistance = 0;
-      lastToggleAt = performance.now();
       setDesktopNavVisible(visible);
     };
 
-    const measureHeroEnd = () => {
-      const heroEnd = document.querySelector<HTMLElement>(
-        "[data-home-hero-end]",
+    const getDocumentOffsetTop = (element: HTMLElement) => {
+      let top = 0;
+      let node: HTMLElement | null = element;
+
+      while (node) {
+        top += node.offsetTop;
+        node = node.offsetParent as HTMLElement | null;
+      }
+
+      return top;
+    };
+
+    const measureScrollThresholds = () => {
+      const hero = document.querySelector<HTMLElement>(
+        "[data-home-hero]",
       );
-      heroEndY = heroEnd
-        ? heroEnd.getBoundingClientRect().top + window.scrollY
-        : 180;
+      const stickyHeader = document.querySelector<HTMLElement>(
+        "[data-store-sticky-header]",
+      );
+      const desktopNav = document.querySelector<HTMLElement>(
+        "[data-desktop-store-nav]",
+      );
+      const fixedHeaderHeight = Math.max(
+        0,
+        (stickyHeader?.offsetHeight ?? 0) - (desktopNav?.offsetHeight ?? 0),
+      );
+
+      if (!hero) {
+        hidePoint = 0;
+        showPoint = 0;
+        return;
+      }
+
+      const heroBottom = getDocumentOffsetTop(hero) + hero.offsetHeight;
+      hidePoint = Math.max(0, heroBottom - fixedHeaderHeight);
+      showPoint = Math.max(0, hidePoint - hysteresis);
     };
 
     const updateNav = () => {
       frameId = null;
 
-      if (!desktopQuery.matches) {
-        setNavVisibility(true);
-        previousY = window.scrollY;
-        direction = null;
-        directionDistance = 0;
+      if (!desktopQuery.matches || !isHome) {
+        navVisible = true;
+        setDesktopNavVisible(true);
         return;
       }
 
       const currentY = window.scrollY;
-      const pastHero = currentY > heroEndY - 196;
-      const delta = currentY - previousY;
-      const coolingDown = performance.now() - lastToggleAt < toggleCooldownMs;
-
-      if (!pastHero || currentY < 40) {
+      if (currentY <= showPoint) {
         setNavVisibility(true);
-        direction = null;
-        directionDistance = 0;
-      } else if (coolingDown) {
-        direction = null;
-        directionDistance = 0;
-      } else if (Math.abs(delta) > jitterThreshold) {
-        const nextDirection = delta > 0 ? "down" : "up";
-
-        if (direction !== nextDirection) {
-          direction = nextDirection;
-          directionDistance = 0;
-        }
-
-        directionDistance += Math.abs(delta);
-
-        if (nextDirection === "down" && directionDistance >= hideDistance) {
-          setNavVisibility(false);
-        } else if (
-          nextDirection === "up" &&
-          directionDistance >= revealDistance
-        ) {
-          setNavVisibility(true);
-        }
+      } else if (currentY >= hidePoint) {
+        setNavVisibility(false);
       }
-
-      previousY = currentY;
     };
 
     const handleScroll = () => {
@@ -173,23 +165,42 @@ export function StoreHeader() {
     };
 
     const handleViewportChange = () => {
-      measureHeroEnd();
+      measureScrollThresholds();
       handleScroll();
     };
 
-    measureHeroEnd();
+    measureScrollThresholds();
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("load", handleViewportChange, { passive: true });
     window.addEventListener("resize", handleViewportChange, { passive: true });
     desktopQuery.addEventListener("change", handleViewportChange);
 
+    const hero = document.querySelector<HTMLElement>("[data-home-hero]");
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => handleViewportChange())
+        : null;
+    if (hero && resizeObserver) {
+      resizeObserver.observe(hero);
+    }
+
+    const stickyHeader = document.querySelector<HTMLElement>(
+      "[data-store-sticky-header]",
+    );
+    if (stickyHeader && resizeObserver) {
+      resizeObserver.observe(stickyHeader);
+    }
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("load", handleViewportChange);
       window.removeEventListener("resize", handleViewportChange);
       desktopQuery.removeEventListener("change", handleViewportChange);
+      resizeObserver?.disconnect();
       if (frameId !== null) window.cancelAnimationFrame(frameId);
     };
-  }, []);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -220,7 +231,10 @@ export function StoreHeader() {
         </div>
       )}
 
-      <div className="max-md:sticky max-md:top-0 max-md:z-50 lg:sticky lg:top-0 lg:z-50">
+      <div
+        data-store-sticky-header
+        className="max-md:sticky max-md:top-0 max-md:z-50 lg:sticky lg:top-0 lg:z-50"
+      >
         <div
           className="hidden min-h-11 w-full items-center justify-center overflow-hidden bg-[#ead8c8] px-5 py-1.5 md:flex lg:min-h-[58px] lg:px-6"
           role="region"
@@ -263,7 +277,7 @@ export function StoreHeader() {
               />
             </Link>
 
-            <div className="max-w-[760px] flex-1">
+            <div className="min-w-0 flex-1">
               <SearchBox />
             </div>
 
@@ -336,16 +350,15 @@ export function StoreHeader() {
                   )}
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={triggerAuthModal}
+                <Link
+                  href="/login"
                   className="flex h-12 cursor-pointer items-center gap-2 rounded-xl border border-border px-5 text-sm font-semibold text-[#2f3045] transition-colors hover:border-primary/40 hover:bg-brand-50"
                 >
                   <UserRound className="h-5 w-5" strokeWidth={2} />
                   ورود
                   <span className="text-[#a1a3a8]">|</span>
                   ثبت‌نام
-                </button>
+                </Link>
               )}
 
               <span className="h-7 w-px bg-[#e0e0e2]" aria-hidden="true" />
@@ -357,22 +370,23 @@ export function StoreHeader() {
                 aria-label="سبد خرید"
               >
                 <ShoppingCart className="h-6 w-6" strokeWidth={1.8} />
+                <CartCountBadge className="-top-0.5 -left-0.5" />
               </button>
             </div>
           </div>
 
           <div
             data-desktop-store-nav
-            className={`hidden overflow-hidden transition-[height,opacity] duration-150 ease-out motion-reduce:transition-none lg:block ${
+            className={`hidden overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:block ${
               desktopNavVisible
-                ? "h-12 opacity-100"
-                : "pointer-events-none h-0 opacity-0"
+                ? "max-h-12 translate-y-0 opacity-100"
+                : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
             }`}
             aria-hidden={!desktopNavVisible}
           >
             <div
-              className={`${W} flex h-12 items-center gap-1 transition-transform duration-150 ease-out motion-reduce:transition-none ${
-                desktopNavVisible ? "translate-y-0" : "-translate-y-1"
+              className={`${W} flex h-12 max-h-12 items-center gap-1 transition-[transform,opacity] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+                desktopNavVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
               }`}
             >
               <Link
@@ -400,7 +414,7 @@ export function StoreHeader() {
           </div>
 
           <div className={`${W} lg:hidden`}>
-            <div className="flex h-[60px] items-center gap-3 py-2">
+            <div className="flex h-[60px] items-center gap-2 py-2">
               <Link
                 href="/"
                 className="flex h-11 w-11 shrink-0 items-center overflow-hidden"
@@ -417,7 +431,17 @@ export function StoreHeader() {
                 />
               </Link>
 
-              <SearchBox compact />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <SearchBox compact />
+                {!session && (
+                  <Link
+                    href="/login"
+                    className="shrink-0 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-[#2f3045] transition-colors hover:bg-brand-50 hover:text-primary"
+                  >
+                    ورود <span className="text-[#d0d0d4]">|</span> ثبت‌نام
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </header>

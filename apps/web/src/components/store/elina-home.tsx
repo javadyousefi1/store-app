@@ -8,6 +8,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { HeroSlider } from "./hero-slider";
+import { HomeHeroScrollArea } from "./home-hero-scroll-area";
 import { HomeProductGrid } from "./home-product-grid";
 import { NewsletterSignup } from "./newsletter-signup";
 import { ReviewsSection } from "./reviews-section";
@@ -58,31 +59,34 @@ const promoBlurDataUrl =
 
 const promoCards = [
   {
-    title: "جایگاه تصویر پرومو اصلی",
+    title: "کالکشن تابستانه — سبک، خنک و خاص برای روزهای آفتابی",
     href: "/products",
-    mobileImage: "",
-    desktopImage: "",
+    mobileImage: "/elina/promo/promo-summer-collection-mobile.png",
+    desktopImage: "/elina/promo/promo-summer-collection-laptop.png",
     className:
-      "group relative min-h-[330px] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-2 md:row-span-2 md:min-h-[540px]",
+      "group relative aspect-[2/1] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-2 md:row-span-2 md:aspect-auto md:min-h-[540px]",
     sizes: "(max-width: 768px) 100vw, 50vw",
+    desktopFit: "contain",
   },
   {
-    title: "جایگاه تصویر پرومو جدیدترین‌ها",
+    title: "جدیدترین‌ها — کلکسیون تازه بهار و تابستان",
     href: "/products",
-    mobileImage: "",
-    desktopImage: "",
+    mobileImage: "/elina/promo/promo-new-arrivals.png",
+    desktopImage: "/elina/promo/promo-new-arrivals.png",
     className:
       "group relative aspect-[2/1] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-1 md:aspect-auto",
     sizes: "(max-width: 768px) 100vw, 50vw",
+    desktopFit: "cover",
   },
   {
-    title: "جایگاه تصویر پرومو روزمره",
+    title: "استایل‌های روزمره — راحت، شیک و همیشه کاربردی",
     href: "/products",
-    mobileImage: "",
-    desktopImage: "",
+    mobileImage: "/elina/promo/promo-everyday-styles.png",
+    desktopImage: "/elina/promo/promo-everyday-styles.png",
     className:
       "group relative aspect-[2/1] overflow-hidden rounded-3xl bg-[#f3f0f6] shadow-[0_12px_34px_rgba(49,36,74,0.1)] md:col-start-1 md:row-start-2 md:aspect-auto",
     sizes: "(max-width: 768px) 100vw, 50vw",
+    desktopFit: "cover",
   },
 ] as const;
 
@@ -91,13 +95,19 @@ function PromoImage({
   alt,
   sizes,
   className,
+  fit = "cover",
 }: {
   src: string;
   alt: string;
   sizes: string;
   className: string;
+  fit?: "cover" | "contain";
 }) {
-  const imageClassName = `object-cover transition duration-700 group-hover:scale-[1.025] ${className}`;
+  const imageClassName = `${
+    fit === "contain" ? "object-contain" : "object-cover"
+  } transition duration-700 ${
+    fit === "contain" ? "" : "group-hover:scale-[1.025]"
+  } ${className}`;
 
   if (!src) {
     return (
@@ -146,15 +156,13 @@ export function ElinaHome() {
   return (
     <div className="w-full pb-8">
       <h1 className="sr-only">فروشگاه آنلاین لباس زنانه الینا</h1>
-      <div className="relative">
-        <HeroSlider />
-        <div data-home-hero-end className="pointer-events-none h-px" />
-
-        <div className="relative z-20 bg-white">
+      <HomeHeroScrollArea
+        hero={<HeroSlider />}
+        categories={
           <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
             <section
               id="home-categories"
-              className="scroll-mt-24 py-9 sm:py-12"
+              className="scroll-mt-24 pt-2 pb-9 sm:py-12"
             >
               <h2 className="mb-5 text-right text-xl font-bold text-brand-800 sm:text-2xl">
                 دسته‌بندی
@@ -183,16 +191,15 @@ export function ElinaHome() {
               </div>
             </section>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="relative z-10 bg-white">
         <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-          <section id="season-picks" className="scroll-mt-24 pb-10 sm:pb-14">
+          <section id="bestsellers" className="scroll-mt-24 pb-10 sm:pb-14">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
-                <span className="lg:hidden">پرفروش‌ها</span>
-                <span className="hidden lg:inline">منتخب فصل</span>
+                پرفروش‌ها
               </h2>
               <Link
                 href="/products"
@@ -219,6 +226,7 @@ export function ElinaHome() {
                   alt=""
                   sizes={card.sizes}
                   className="hidden md:block"
+                  fit={card.desktopFit ?? "cover"}
                 />
               </Link>
             ))}

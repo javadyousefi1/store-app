@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Minus, Plus, CheckCircle2, CreditCard } from "lucide-react";
+import { ShoppingCart, Minus, Plus, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useAddToCart, useCart } from "@/hooks/use-cart";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { ProductVariant } from "@/types";
 
@@ -31,9 +31,7 @@ export function AddToCart({ variant }: Props) {
     if (!variant || !inStock) return;
     try {
       await addToCart.mutateAsync({ variantId: variant.id, qty });
-      toast.success("به سبد خرید اضافه شد", {
-        icon: <CheckCircle2 className="h-4 w-4 text-green-600" />,
-      });
+      toast.success("به سبد خرید افزوده شد");
       setQty(1);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;

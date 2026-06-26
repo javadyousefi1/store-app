@@ -13,6 +13,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CartCountBadge } from "./cart-count-badge";
 
 const MobileCategoryDrawer = dynamic(
   () =>
@@ -121,7 +122,7 @@ export function MobileBottomNav() {
               <>
                 <span
                   className={cn(
-                    "flex h-8 w-12 items-center justify-center rounded-full transition",
+                    "relative flex h-8 w-12 items-center justify-center rounded-full transition",
                     active && "bg-secondary",
                   )}
                 >
@@ -129,6 +130,9 @@ export function MobileBottomNav() {
                     className={cn("h-5 w-5", active && "fill-primary/10")}
                     strokeWidth={active ? 2.2 : 1.8}
                   />
+                  {"href" in item && item.href === "/cart" && (
+                    <CartCountBadge className="-top-0.5 left-1/2 -translate-x-1/2" />
+                  )}
                 </span>
                 <span className="max-w-full truncate px-1">{itemLabel}</span>
               </>

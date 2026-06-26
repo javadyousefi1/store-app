@@ -79,20 +79,7 @@ export function StoreFooter() {
         className={`${W} pt-10 pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-10`}
       >
         <div className="grid grid-cols-2 gap-x-5 gap-y-8 lg:grid-cols-4 lg:gap-8">
-          <div>
-            <Link
-              href="/"
-              className="mb-4 block h-14 w-36 overflow-hidden"
-              aria-label="صفحه اصلی الینا"
-            >
-              <Image
-                src="/elina/elina-logo-full.png"
-                alt="Elina"
-                width={1254}
-                height={1254}
-                className="h-full w-full object-contain object-right"
-              />
-            </Link>
+          <div className="order-3 lg:order-none">
             <h3 className="mb-3 font-semibold text-[#2f263c]">درباره ما</h3>
             <p className="text-xs leading-6 sm:text-sm sm:leading-7">
               الینا؛ انتخابی برای استایل راحت، شیک و زنانه با تمرکز بر کیفیت
@@ -100,7 +87,7 @@ export function StoreFooter() {
             </p>
           </div>
 
-          <div>
+          <div className="order-1 lg:order-none">
             <h3 className="mb-4 font-semibold text-[#2f263c]">دسترسی سریع</h3>
             <ul className="space-y-2 text-xs sm:space-y-3 sm:text-sm">
               <li>
@@ -126,7 +113,7 @@ export function StoreFooter() {
             </ul>
           </div>
 
-          <div>
+          <div className="order-2 lg:order-none">
             <h3 className="mb-4 font-semibold text-[#2f263c]">خدمات مشتریان</h3>
             <ul className="space-y-2 text-xs sm:space-y-3 sm:text-sm">
               <li>
@@ -152,7 +139,7 @@ export function StoreFooter() {
             </ul>
           </div>
 
-          <div>
+          <div className="order-4 lg:order-none">
             <h3 className="mb-4 font-semibold text-[#2f263c]">تماس با ما</h3>
             <ul className="space-y-2 break-words text-[11px] sm:space-y-3 sm:text-sm">
               <li className="flex items-center gap-2">

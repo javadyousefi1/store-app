@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Heart, LogIn, Package, SearchCheck, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/use-auth";
-import { triggerAuthModal } from "@/lib/auth-modal-trigger";
 
 const accountLinks = [
   {
@@ -48,14 +47,13 @@ export default function AccountPage() {
         <p className="mt-2 text-sm leading-7 text-muted-foreground">
           برای مشاهده سفارش‌ها و اطلاعات حساب وارد شوید.
         </p>
-        <Button
-          type="button"
-          onClick={triggerAuthModal}
-          className="mt-5 h-11 gap-2 px-6"
+        <Link
+          href="/login?from=/account"
+          className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-brand-700"
         >
           <LogIn className="h-4 w-4" />
-          ورود یا ثبت‌نام
-        </Button>
+          ورود | ثبت‌نام
+        </Link>
       </div>
     );
   }

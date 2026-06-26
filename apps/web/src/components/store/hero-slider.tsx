@@ -7,14 +7,19 @@ import { cn } from "@/lib/utils";
 
 const slides = [
   {
-    mobileSrc: "",
-    desktopSrc: "",
-    label: "جایگاه تصویر هیرو اول",
+    mobileSrc: "/elina/hero/hero-blue-mobile.webp",
+    desktopSrc: "/elina/hero/hero-blue-desktop.webp",
+    label: "تیشرت سالیوان — انرژی کارتونی برای استایل تابستونی",
   },
   {
-    mobileSrc: "",
-    desktopSrc: "",
-    label: "جایگاه تصویر هیرو دوم",
+    mobileSrc: "/elina/hero/hero-linen-mobile.webp",
+    desktopSrc: "/elina/hero/hero-linen-desktop.webp",
+    label: "ست وست لنین شلوار ایتالیایی — مناسب هر روز، مناسب هر جا",
+  },
+  {
+    mobileSrc: "/elina/hero/hero-shomiz-mobile.webp",
+    desktopSrc: "/elina/hero/hero-shomiz-desktop.webp",
+    label: "شومیز مانتویی — ۴ رنگ برای انتخاب",
   },
 ] as const;
 
@@ -34,8 +39,10 @@ function SlideMedia({
 }) {
   const imageSrc = viewport === "mobile" ? slide.mobileSrc : slide.desktopSrc;
   const imageClassName = cn(
-    "object-cover",
-    viewport === "mobile" ? "object-[center_58%]" : "object-center",
+    "h-full w-full",
+    viewport === "mobile"
+      ? "object-cover object-[center_58%]"
+      : "object-cover object-center",
   );
 
   if (!imageSrc) {
@@ -55,8 +62,8 @@ function SlideMedia({
       fill
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : "auto"}
-      placeholder="blur"
-      blurDataURL={blurDataUrl}
+      placeholder={viewport === "mobile" ? "blur" : "empty"}
+      blurDataURL={viewport === "mobile" ? blurDataUrl : undefined}
       sizes="100vw"
       className={imageClassName}
     />
@@ -182,14 +189,14 @@ function MobileHeroCarousel() {
 
   return (
     <section
-      className="relative w-full bg-white pt-3 md:py-3 lg:hidden"
+      className="relative w-full bg-[#f8f6fb] pt-3 pb-2 md:py-3 lg:hidden"
       aria-label="پیشنهادهای ویژه"
     >
       <div
         ref={scrollerRef}
         onScroll={settleScroll}
         dir="ltr"
-        className="flex touch-pan-x snap-x snap-mandatory gap-3 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex touch-pan-x snap-x snap-mandatory gap-3 overflow-x-auto px-7 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {mobileSlides.map((slide, index) => (
           <div
@@ -224,24 +231,19 @@ function MobileHeroCarousel() {
 
 function DesktopHeroSlider() {
   const [active, setActive] = useState(0);
-  const [previous, setPrevious] = useState<number | null>(null);
-  const turnTimerRef = useRef<number | undefined>(undefined);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const isFirstActive = useRef(true);
 
-  const turnTo = (index: number) => {
-    const next = (index + slides.length) % slides.length;
+  useEffect(() => {
+    if (isFirstActive.current) {
+      isFirstActive.current = false;
+      return;
+    }
 
-    setActive((current) => {
-      if (current === next) return current;
-
-      window.clearTimeout(turnTimerRef.current);
-      setPrevious(current);
-      turnTimerRef.current = window.setTimeout(() => {
-        setPrevious(null);
-      }, 180);
-
-      return next;
-    });
-  };
+    setIsTransitioning(true);
+    const timer = window.setTimeout(() => setIsTransitioning(false), 320);
+    return () => window.clearTimeout(timer);
+  }, [active]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -249,29 +251,20 @@ function DesktopHeroSlider() {
     let interval: number | undefined;
     const startTimer = window.setTimeout(() => {
       interval = window.setInterval(() => {
-        setActive((current) => {
-          const next = (current + 1) % slides.length;
-
-          window.clearTimeout(turnTimerRef.current);
-          setPrevious(current);
-          turnTimerRef.current = window.setTimeout(() => {
-            setPrevious(null);
-          }, 180);
-
-          return next;
-        });
+        setActive((current) => (current + 1) % slides.length);
       }, 6000);
     }, 15_000);
 
     return () => {
       window.clearTimeout(startTimer);
       if (interval) window.clearInterval(interval);
-      window.clearTimeout(turnTimerRef.current);
     };
   }, []);
 
   const goTo = (index: number) => {
-    turnTo(index);
+    const next = (index + slides.length) % slides.length;
+    if (next === active) return;
+    setActive(next);
   };
 
   return (
@@ -279,27 +272,29 @@ function DesktopHeroSlider() {
       className="relative hidden w-full bg-white lg:block"
       aria-label="پیشنهادهای ویژه"
     >
-      <div className="relative aspect-[3/1] w-full overflow-hidden bg-white">
-        {slides.map((slide, index) => (
-          <div
-            key={slide.label}
-            className={cn(
-              "absolute inset-0",
-              index === active
-                ? "hero-page-turn z-10"
-                : index === previous
-                  ? "z-0"
-                  : "pointer-events-none hidden",
-            )}
-            aria-hidden={index !== active}
-          >
-            <SlideMedia
-              slide={slide}
-              viewport="desktop"
-              eager={index === 0}
-            />
-          </div>
-        ))}
+      <div className="relative h-[clamp(360px,38vw,500px)] w-full overflow-hidden bg-white">
+        <div
+          dir="ltr"
+          className={cn(
+            "flex h-full w-full transition-transform duration-[320ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] motion-reduce:transition-none",
+            isTransitioning && "will-change-transform",
+          )}
+          style={{ transform: `translate3d(-${active * 100}%, 0, 0)` }}
+        >
+          {slides.map((slide, index) => (
+            <div
+              key={slide.label}
+              className="relative h-full w-full shrink-0"
+              aria-hidden={index !== active}
+            >
+              <SlideMedia
+                slide={slide}
+                viewport="desktop"
+                eager={index === 0}
+              />
+            </div>
+          ))}
+        </div>
 
         <div
           className="absolute bottom-5 right-6 z-30 hidden items-center gap-3 lg:flex"
@@ -333,7 +328,7 @@ function DesktopHeroSlider() {
 
 export function HeroSlider() {
   return (
-    <div data-home-hero className="relative z-0 bg-white">
+    <div data-home-hero className="relative z-0 bg-[#f8f6fb] lg:bg-white">
       <MobileHeroCarousel />
       <DesktopHeroSlider />
     </div>

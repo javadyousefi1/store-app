@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Heart, ImageIcon } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Category, Product } from "@/types";
 
@@ -15,7 +15,6 @@ interface Props {
 
 export function BestsellersSection({ products, categories }: Props) {
   const [active, setActive] = useState(FILTER_ALL);
-  const [liked, setLiked] = useState<Set<string>>(new Set());
 
   const filtered = active === FILTER_ALL
     ? products
@@ -59,22 +58,6 @@ export function BestsellersSection({ products, categories }: Props) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
         {filtered.slice(0, 8).map((p) => (
           <div key={p.id} className="relative bg-white rounded-2xl border overflow-hidden group">
-            {/* Heart */}
-            <button
-              onClick={() =>
-                setLiked((prev) => {
-                  const next = new Set(prev);
-                  next.has(p.id) ? next.delete(p.id) : next.add(p.id);
-                  return next;
-                })
-              }
-              className="absolute top-2 start-2 z-10 p-1.5 rounded-full bg-white/80 backdrop-blur"
-            >
-              <Heart
-                className={cn("h-4 w-4 transition-colors", liked.has(p.id) ? "fill-red-500 text-red-500" : "text-zinc-400")}
-              />
-            </button>
-
             {/* Image */}
             <Link href={`/products/${p.id}`} className="block aspect-[3/4] bg-zinc-50 overflow-hidden">
               {p.coverUrl ? (

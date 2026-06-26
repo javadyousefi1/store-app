@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Heart, ShoppingBag } from "lucide-react";
+import { Check, ShoppingBag } from "lucide-react";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
 type HomeProduct = {
@@ -17,26 +18,16 @@ export function HomeProductGrid({
 }: {
   products: readonly HomeProduct[];
 }) {
-  const [liked, setLiked] = useState<Set<string>>(new Set());
   const [added, setAdded] = useState<Set<string>>(new Set());
-
-  const toggleLike = (name: string) => {
-    setLiked((current) => {
-      const next = new Set(current);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
-  };
 
   const addToCart = (name: string) => {
     setAdded((current) => new Set(current).add(name));
+    toast.success("به سبد خرید افزوده شد");
   };
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 lg:gap-4">
       {products.map((product) => {
-        const isLiked = liked.has(product.name);
         const isAdded = added.has(product.name);
 
         return (
@@ -44,22 +35,6 @@ export function HomeProductGrid({
             key={product.name}
             className="group relative overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(42,31,65,0.1)]"
           >
-            <button
-              type="button"
-              onClick={() => toggleLike(product.name)}
-              className="absolute right-2 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur"
-              aria-label={`${isLiked ? "حذف" : "افزودن"} ${product.name} ${
-                isLiked ? "از" : "به"
-              } علاقه‌مندی‌ها`}
-              aria-pressed={isLiked}
-            >
-              <Heart
-                className={cn(
-                  "h-4 w-4 transition",
-                  isLiked ? "fill-primary text-primary" : "text-[#625b67]",
-                )}
-              />
-            </button>
             <Link
               href="/products"
               className="relative block aspect-[3/4] overflow-hidden bg-muted"
@@ -98,7 +73,7 @@ export function HomeProductGrid({
                 {isAdded ? (
                   <>
                     <Check className="h-4 w-4" aria-hidden="true" />
-                    افزوده شد
+                    به سبد خرید افزوده شد
                   </>
                 ) : (
                   <>

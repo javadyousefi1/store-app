@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart, useRemoveFromCart, useClearCart } from "@/hooks/use-cart";
 import { useAttributeOptions } from "@/hooks/use-attribute-options";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 interface Props {
   open: boolean;
