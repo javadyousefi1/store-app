@@ -7,11 +7,15 @@ import {
   LayoutDashboard,
   Package,
   Tag,
+  Ticket,
   Users,
   Settings2,
   ShoppingCart,
   LogOut,
   SlidersHorizontal,
+  BookText,
+  BookOpenText,
+  GalleryHorizontalEnd,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,7 +26,11 @@ const navItems = [
   { href: "/panel", label: "داشبورد", icon: LayoutDashboard, exact: true },
   { href: "/panel/orders", label: "سفارشات", icon: ShoppingCart },
   { href: "/panel/products", label: "محصولات", icon: Package },
+  { href: "/panel/sliders", label: "اسلایدر لندینگ", icon: GalleryHorizontalEnd },
   { href: "/panel/categories", label: "دسته‌بندی‌ها", icon: Tag },
+  { href: "/panel/coupons", label: "کدهای تخفیف", icon: Ticket },
+  { href: "/panel/articles", label: "مقالات", icon: BookText },
+  { href: "/panel/article-categories", label: "دسته‌بندی مقالات", icon: BookOpenText },
   { href: "/panel/users", label: "کاربران", icon: Users },
   { href: "/panel/attribute-options", label: "ویژگی‌ها", icon: Settings2 },
   { href: "/panel/settings", label: "تنظیمات", icon: SlidersHorizontal },

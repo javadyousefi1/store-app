@@ -4,6 +4,12 @@ services:
       context: ../..
       dockerfile: apps/api/Dockerfile
       target: production
+      # Applied at BUILD time — bypasses docker's DNS for hosts that don't
+      # resolve inside the build sandbox (EAI_AGAIN). IPs taken from `ping`
+      # on the host.
+      extra_hosts:
+        - "mirror-npm.runflare.com:195.214.235.194"
+        - "payment.zarinpal.com:185.143.234.1"
     container_name: store_app
     restart: unless-stopped
     ports:
@@ -11,10 +17,16 @@ services:
     env_file:
       - .env
     environment:
-      # override host-only values from .env so app reaches services over the compose network
+      # override host-only values from .env.development so app reaches services over the compose network
       DB_HOST: postgres
       REDIS_HOST: redis
       MINIO_ENDPOINT: minio
+    # Applied at RUNTIME. payment.zarinpal.com is the gateway the API talks
+    # to on every checkout/verify — must resolve.
+    extra_hosts:
+      - "mirror-npm.runflare.com:195.214.235.194"
+      - "payment.zarinpal.com:185.143.234.1"
+      - "api.kavenegar.com:46.102.138.125"
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,7 +53,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      # real auth check: if .env password drifts from the password baked into the volume, container goes unhealthy
+      # real auth check: if .env.development password drifts from the password baked into the volume, container goes unhealthy
       # and the app refuses to start instead of failing silently mid-request.
       test:
         - 'CMD-SHELL'

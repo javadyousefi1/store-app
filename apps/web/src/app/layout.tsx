@@ -96,7 +96,7 @@ const structuredData = {
       alternateName: "Elina",
       url: siteUrl,
       logo: `${siteUrl}/elina/elina-logo-full.png`,
-      email: "info@elinaclothes.com",
+      email: "elina.clothesme@gmail.com",
     },
     {
       "@type": "WebSite",

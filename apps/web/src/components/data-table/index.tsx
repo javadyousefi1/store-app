@@ -99,7 +99,7 @@ export function DataTable<T>({
               onClick={() => pagination.onPageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
             >
-              <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
@@ -108,7 +108,7 @@ export function DataTable<T>({
               onClick={() => pagination.onPageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
             >
-              <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
           </div>
         </div>

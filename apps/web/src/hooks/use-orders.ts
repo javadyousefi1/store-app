@@ -6,12 +6,14 @@ import type { ApiResponse, Order, OrderDetail, OrderStatus, PaginatedResponse } 
 
 const QUERY_KEY = ["admin-orders"];
 
-export function useAdminOrders(page: number, status?: OrderStatus) {
+export function useAdminOrders(page: number, status?: OrderStatus, search?: string) {
+  const trimmed = search?.trim() ?? "";
   return useQuery({
-    queryKey: [...QUERY_KEY, page, status],
+    queryKey: [...QUERY_KEY, page, status, trimmed],
     queryFn: () => {
       const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (status) params.set("status", status);
+      if (trimmed) params.set("search", trimmed);
       return apiClient
         .get<ApiResponse<PaginatedResponse<Order>>>(`/admin/orders?${params}`)
         .then((r) => r.data.data);
@@ -35,7 +37,7 @@ export function useConfirmOrder() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      apiClient.patch<ApiResponse<Order>>(`/admin/orders/${id}/confirm`).then((r) => r.data.data),
+      apiClient.patch<ApiResponse<Order>>(`/admin/payments/${id}/confirm`).then((r) => r.data.data),
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: QUERY_KEY });
       qc.invalidateQueries({ queryKey: [...QUERY_KEY, id] });
@@ -48,7 +50,7 @@ export function useRejectOrder() {
   return useMutation({
     mutationFn: ({ id, adminNote }: { id: string; adminNote?: string }) =>
       apiClient
-        .patch<ApiResponse<Order>>(`/admin/orders/${id}/reject`, adminNote ? { adminNote } : {})
+        .patch<ApiResponse<Order>>(`/admin/payments/${id}/reject`, adminNote ? { adminNote } : {})
         .then((r) => r.data.data),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: QUERY_KEY });

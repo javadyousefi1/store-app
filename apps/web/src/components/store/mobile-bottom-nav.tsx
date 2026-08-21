@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   House,
   LayoutGrid,
   ShoppingBag,
-  SlidersHorizontal,
   Store,
   UserRound,
 } from "lucide-react";
@@ -18,13 +17,6 @@ import { CartCountBadge } from "./cart-count-badge";
 const MobileCategoryDrawer = dynamic(
   () =>
     import("./mobile-nav-overlays").then((mod) => mod.MobileCategoryDrawer),
-  { ssr: false },
-);
-const MobileProductFilterDialog = dynamic(
-  () =>
-    import("./mobile-nav-overlays").then(
-      (mod) => mod.MobileProductFilterDialog,
-    ),
   { ssr: false },
 );
 
@@ -37,15 +29,15 @@ const navItems = [
       path === "/" && hash !== "#home-categories",
   },
   {
-    action: "categories",
+    action: "categories" as const,
     label: "دسته‌بندی",
     icon: LayoutGrid,
     isActive: () => false,
   },
   {
-    action: "filters",
-    label: "فیلتر",
-    icon: SlidersHorizontal,
+    href: "/products",
+    label: "فروشگاه",
+    icon: Store,
     isActive: (path: string) => path.startsWith("/products"),
   },
   {
@@ -66,16 +58,8 @@ const navItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const [hash, setHash] = useState("");
   const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const isProductsPage = pathname.startsWith("/products");
-
-  const closeOverlays = () => {
-    setCategoriesOpen(false);
-    setFiltersOpen(false);
-  };
 
   useEffect(() => {
     const syncHash = () => setHash(window.location.hash);
@@ -86,11 +70,10 @@ export function MobileBottomNav() {
 
   useEffect(() => {
     setCategoriesOpen(false);
-    setFiltersOpen(false);
   }, [pathname]);
 
   const goHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    closeOverlays();
+    setCategoriesOpen(false);
     if (pathname !== "/") return;
     event.preventDefault();
     window.history.replaceState(null, "", "/");
@@ -107,34 +90,23 @@ export function MobileBottomNav() {
         <div className="mx-auto grid h-[68px] max-w-xl grid-cols-5">
           {navItems.map((item) => {
             const active = item.isActive(pathname, hash);
-            const isStoreLink =
-              "action" in item && item.action === "filters" && !isProductsPage;
-            const ItemIcon = isStoreLink ? Store : item.icon;
-            const itemLabel = isStoreLink ? "فروشگاه" : item.label;
             const className = cn(
               "flex min-w-0 touch-manipulation flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition",
-              active ||
-                (isStoreLink && pathname.startsWith("/products"))
-                ? "text-primary"
-                : "text-[#656771] hover:text-primary",
+              active ? "text-primary" : "text-[#656771] hover:text-primary",
             );
             const content = (
               <>
-                <span
-                  className={cn(
-                    "relative flex h-8 w-12 items-center justify-center rounded-full transition",
-                    active && "bg-secondary",
-                  )}
-                >
-                  <ItemIcon
-                    className={cn("h-5 w-5", active && "fill-primary/10")}
+                {/* Active = color + heavier stroke only. No background pill. */}
+                <span className="relative flex h-8 w-12 items-center justify-center">
+                  <item.icon
+                    className="h-5 w-5"
                     strokeWidth={active ? 2.2 : 1.8}
                   />
                   {"href" in item && item.href === "/cart" && (
                     <CartCountBadge className="-top-0.5 left-1/2 -translate-x-1/2" />
                   )}
                 </span>
-                <span className="max-w-full truncate px-1">{itemLabel}</span>
+                <span className="max-w-full truncate px-1">{item.label}</span>
               </>
             );
 
@@ -143,24 +115,9 @@ export function MobileBottomNav() {
                 <button
                   key={item.action}
                   type="button"
-                  onClick={() => {
-                    closeOverlays();
-
-                    if (item.action === "categories") {
-                      setCategoriesOpen(true);
-                    }
-
-                    if (item.action === "filters") {
-                      if (isProductsPage) setFiltersOpen(true);
-                      else router.push("/products");
-                    }
-                  }}
+                  onClick={() => setCategoriesOpen(true)}
                   className={className}
-                  aria-haspopup={
-                    item.action === "categories" || isProductsPage
-                      ? "dialog"
-                      : undefined
-                  }
+                  aria-haspopup="dialog"
                 >
                   {content}
                 </button>
@@ -174,9 +131,7 @@ export function MobileBottomNav() {
                 onClick={
                   item.href === "/"
                     ? goHome
-                    : () => {
-                        closeOverlays();
-                      }
+                    : () => setCategoriesOpen(false)
                 }
                 className={className}
               >
@@ -190,10 +145,6 @@ export function MobileBottomNav() {
       <MobileCategoryDrawer
         open={categoriesOpen}
         onOpenChange={setCategoriesOpen}
-      />
-      <MobileProductFilterDialog
-        open={filtersOpen}
-        onOpenChange={setFiltersOpen}
       />
     </>
   );

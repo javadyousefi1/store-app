@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../../entities/user.entity';
 import { CacheService } from '../../services/cache/cache.service';
+import { SmsService } from '../../services/sms/sms.service';
 
 const OTP_KEY = (phone: string) => `otp:${phone}`;
 const OTP_COOLDOWN_KEY = (phone: string) => `otp:cooldown:${phone}`;
@@ -24,9 +25,10 @@ export class AuthService {
     private jwtService: JwtService,
     private cacheService: CacheService,
     private configService: ConfigService,
+    private smsService: SmsService,
   ) {}
 
-  async sendOtp(phone: string): Promise<{ message: string , otp:string }> {
+  async sendOtp(phone: string): Promise<{ message: string }> {
     await this.enforceHourlyLimit(phone);
 
     const otp = this.generateOtp();
@@ -36,10 +38,12 @@ export class AuthService {
     await this.cacheService.set(OTP_KEY(phone), otp, ttl);
     await this.cacheService.set(OTP_COOLDOWN_KEY(phone), '1', cooldown);
 
-    // TODO: ارسال SMS از طریق سرویس پیامکی
-    this.logger.log(`OTP for ${phone}: ${otp}`);
+    // SMS goes out AFTER the OTP is cached. If Kavenegar fails, SmsService
+    // throws — the cached OTP just sits for `ttl` seconds (harmless) and
+    // the shopper retries via /resendOtp.
+    await this.smsService.sendOtp(phone, otp);
 
-    return { message: 'کد تأیید ارسال شد' ,otp };
+    return { message: 'کد تأیید ارسال شد' };
   }
 
   async verifyOtp(phone: string, otp: string): Promise<{ accessToken: string; isNew: boolean }> {
@@ -92,7 +96,7 @@ export class AuthService {
   }
 
   private generateOtp(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
   private signToken(user: User): string {

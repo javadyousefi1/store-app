@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <div className="hidden flex-col items-center justify-center gap-6 bg-primary p-10 text-primary-foreground md:flex md:w-1/2 lg:w-2/5">
+      <div className="hidden flex-col items-center justify-center gap-6 bg-primary p-10 text-primary-foreground md:w-1/2 lg:w-2/5">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-foreground/10">
             <ShoppingBag className="h-10 w-10" />
@@ -198,11 +198,11 @@ export default function AdminLoginPage() {
                   id="admin-otp"
                   type="text"
                   inputMode="numeric"
-                  placeholder="● ● ● ● ● ●"
+                  placeholder="● ● ● ●"
                   value={otp}
                   onChange={(event) =>
                     setOtp(
-                      event.target.value.replace(/[^0-9]/g, "").slice(0, 6),
+                      event.target.value.replace(/[^0-9]/g, "").slice(0, 4),
                     )
                   }
                   className="h-11 text-center text-lg tracking-[0.6em]"
@@ -213,7 +213,7 @@ export default function AdminLoginPage() {
               <Button
                 type="submit"
                 className="h-11 w-full"
-                disabled={verifyOtp.isPending || otp.length < 6}
+                disabled={verifyOtp.isPending || otp.length < 4}
               >
                 {verifyOtp.isPending ? "در حال بررسی..." : "تأیید و ورود"}
               </Button>

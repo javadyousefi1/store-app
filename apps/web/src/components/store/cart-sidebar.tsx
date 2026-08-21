@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, X, Trash2, ImageIcon } from "lucide-react";
+import { LogIn, ShoppingCart, X, Trash2, ImageIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { buttonVariants } from "@/components/ui/button";
 import { useCart, useRemoveFromCart, useClearCart } from "@/hooks/use-cart";
 import { useAttributeOptions } from "@/hooks/use-attribute-options";
+import { useAuthSession } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
+import { VariantAttributes } from "./variant-attributes";
 
 interface Props {
   open: boolean;
@@ -19,10 +20,13 @@ function storePrice(p: string | number) {
 }
 
 export function CartSidebar({ open, onClose }: Props) {
-  const { data: cart, isLoading } = useCart();
+  const { data: session, isLoading: sessionLoading } = useAuthSession();
+  const { data: cart, isLoading: cartLoading } = useCart();
   const removeItem = useRemoveFromCart();
   const clearCart = useClearCart();
-  const { data: attributes } = useAttributeOptions({ enabled: open });
+  const { data: attributes } = useAttributeOptions({ enabled: open && !!session });
+
+  const isLoading = sessionLoading || cartLoading;
 
   const valueLabels: Record<string, string> = {};
   for (const attr of attributes ?? []) {
@@ -61,6 +65,26 @@ export function CartSidebar({ open, onClose }: Props) {
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
             در حال بارگذاری...
           </div>
+        ) : !session ? (
+          <div className="flex-1 flex flex-col items-center justify-center gap-5 px-6 text-center">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <ShoppingCart className="h-7 w-7 text-primary" />
+            </span>
+            <div className="space-y-1.5">
+              <p className="font-semibold text-foreground">سبد خرید</p>
+              <p className="text-sm leading-6 text-muted-foreground">
+                برای مشاهده‌ی سبد خرید و تکمیل سفارش وارد شوید.
+              </p>
+            </div>
+            <Link
+              href="/login?from=/cart"
+              onClick={onClose}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <LogIn className="h-4 w-4" />
+              ورود | ثبت‌نام
+            </Link>
+          </div>
         ) : items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground">
             <ShoppingCart className="h-12 w-12 opacity-20" />
@@ -91,20 +115,11 @@ export function CartSidebar({ open, onClose }: Props) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
-                      <p className="text-sm font-medium leading-tight line-clamp-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                        {Object.entries(item.variant.attributes).map(([k, v]) => {
-                          const isHex = /^#[0-9A-Fa-f]{6}$/.test(v);
-                          return (
-                            <span key={k} className="flex items-center gap-1">
-                              <span className="text-muted-foreground">{k}:</span>
-                              {isHex && (
-                                <span className="inline-block w-3.5 h-3.5 rounded-full border border-border/50 shrink-0" style={{ backgroundColor: v }} />
-                              )}
-                              <span>{valueLabels[v] ?? v}</span>
-                            </span>
-                          );
-                        })}
-                      </p>
+                      <VariantAttributes
+                        attributes={item.variant.attributes}
+                        valueLabels={valueLabels}
+                        variant="row"
+                      />
                       <p className="text-xs text-muted-foreground font-mono" dir="ltr">
                         {item.variant.sku}
                       </p>

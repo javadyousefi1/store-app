@@ -34,6 +34,11 @@ export class Product {
   @Column({ length: 200 })
   name: string;
 
+  /** URL segment. `/products/<slug>` on the storefront. Unique. */
+  @ApiProperty({ example: 'iphone-16-pro' })
+  @Column({ length: 200 })
+  slug: string;
+
   @ApiProperty({ example: 'Latest Apple flagship', nullable: true })
   @Column({ type: 'text', nullable: true })
   description: string;

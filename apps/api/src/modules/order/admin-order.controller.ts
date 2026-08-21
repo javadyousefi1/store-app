@@ -1,12 +1,10 @@
 import {
-  Body, Controller, Get, Param, ParseUUIDPipe,
-  Patch, Query, UseGuards,
+  Controller, Get, Param, ParseUUIDPipe, Post, Query, UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth, ApiOperation, ApiResponse, ApiTags,
 } from '@nestjs/swagger';
 import { OrderService } from './order.service';
-import { RejectPaymentDto } from './dto/reject-payment.dto';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { JwtGuard } from '../../common/guards/jwt.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -38,24 +36,32 @@ export class AdminOrderController {
     return this.orderService.getOrder(orderId);
   }
 
-  @Patch(':id/confirm')
-  @RateLimit({ ttl: 60, limit: 20, keyPrefix: 'rl:admin:orders:confirm' })
-  @ApiOperation({ summary: 'Confirm payment — deducts stock', description: '**Admin only.**' })
-  @ApiResponse({ status: 400, description: 'Order is not in payment_uploaded status.' })
-  @ApiResponse({ status: 429, description: 'Too many requests.' })
-  confirmPayment(@Param('id', ParseUUIDPipe) orderId: string) {
-    return this.orderService.confirmPayment(orderId);
+  // ── Cod24 shipment lifecycle — one endpoint per Cod24 step ──────────────
+
+  @Post(':id/shipment/create')
+  @ApiOperation({
+    summary: 'Register the Cod24 shipment (addOrder)',
+    description: '**Admin only.** Cod24 returns a `serial` we persist on the order.',
+  })
+  createShipment(@Param('id', ParseUUIDPipe) orderId: string) {
+    return this.orderService.createShipment(orderId);
   }
 
-  @Patch(':id/reject')
-  @RateLimit({ ttl: 60, limit: 20, keyPrefix: 'rl:admin:orders:reject' })
-  @ApiOperation({ summary: 'Reject payment — cancels order and releases reserved stock', description: '**Admin only.**' })
-  @ApiResponse({ status: 400, description: 'Order is not in payment_uploaded status.' })
-  @ApiResponse({ status: 429, description: 'Too many requests.' })
-  rejectPayment(
-    @Param('id', ParseUUIDPipe) orderId: string,
-    @Body() dto: RejectPaymentDto,
-  ) {
-    return this.orderService.rejectPayment(orderId, dto);
+  @Post(':id/shipment/confirm')
+  @ApiOperation({
+    summary: 'Mark shipment ready-to-send (suspendOrder)',
+    description: '**Admin only.** Requires the shipment to already have a Cod24 serial.',
+  })
+  confirmShipment(@Param('id', ParseUUIDPipe) orderId: string) {
+    return this.orderService.confirmShipment(orderId);
+  }
+
+  @Post(':id/shipment/barcode')
+  @ApiOperation({
+    summary: 'Fetch the post-office barcode (getBarcodes)',
+    description: '**Admin only.** Persists postBarcode and marks shipment BARCODED.',
+  })
+  fetchShipmentBarcode(@Param('id', ParseUUIDPipe) orderId: string) {
+    return this.orderService.fetchShipmentBarcode(orderId);
   }
 }

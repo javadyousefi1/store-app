@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { FavoriteButton } from "@/components/store/favorite-button";
 import type { Product } from "@/types";
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
 export function ProductCard({ product }: Props) {
   return (
     <Link
-      href={`/products/${product.id}`}
-      className="group block rounded-2xl border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+      href={`/products/${product.slug}`}
+      className="group relative block rounded-2xl border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
     >
+      <FavoriteButton productId={product.id} size="sm" />
       {/* Image */}
       <div className="aspect-square bg-muted/50 overflow-hidden">
         {product.coverUrl ? (

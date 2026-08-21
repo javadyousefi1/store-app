@@ -3,6 +3,11 @@ services:
     build:
       context: ../..
       dockerfile: apps/web/Dockerfile
+      # Applied at BUILD time — bypasses docker's DNS for the npm mirror,
+      # which currently doesn't resolve inside the build sandbox (EAI_AGAIN).
+      # IP taken from `ping mirror-npm.runflare.com` on the host.
+      extra_hosts:
+        - "mirror-npm.runflare.com:195.214.235.194"
     image: store-frontend:latest
     container_name: store-frontend
     restart: unless-stopped
@@ -10,5 +15,8 @@ services:
       - "3001:3001"
     environment:
       - BACKEND_URL=http://host.docker.internal:3000
+    # Applied at RUNTIME.
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      - "mirror-npm.runflare.com:195.214.235.194"
+      - "storage.elinaclothes.com:95.38.167.54"

@@ -5,4 +5,4 @@ rsync -avz --progress \
     --exclude='.turbo' \
     --exclude='.next' \
     /Users/javadyousefi/me/store-app \
-    ubuntu@37.32.23.3:/home/ubuntu/project
+    ubuntu@185.206.94.230:/home/ubuntu/project

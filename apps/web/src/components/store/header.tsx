@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
+  BookOpen,
   ChevronDown,
   Heart,
+  House,
+  LayoutGrid,
   LogOut,
   Menu,
   Package,
@@ -17,9 +20,11 @@ import {
   ShoppingCart,
   Sparkles,
   Star,
+  Store,
   UserRound,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 import { registerCartSidebarTrigger } from "@/lib/cart-sidebar-trigger";
 import {
@@ -34,6 +39,11 @@ const CartSidebar = dynamic(
   () => import("./cart-sidebar").then((mod) => mod.CartSidebar),
   { ssr: false },
 );
+const MobileCategoryDrawer = dynamic(
+  () =>
+    import("./mobile-nav-overlays").then((mod) => mod.MobileCategoryDrawer),
+  { ssr: false },
+);
 
 const desktopLinks = [
   { href: "/products", label: "فروشگاه", icon: ShoppingBag },
@@ -42,6 +52,23 @@ const desktopLinks = [
 ] as const;
 
 function SearchBox({ compact = false }: { compact?: boolean }) {
+  // Wrap the search-params reader in Suspense so the header can be included
+  // on statically prerendered pages (/account, /favorites, etc). Falls back
+  // to an empty input during prerender.
+  return (
+    <Suspense fallback={<SearchBoxUI compact={compact} initial="" />}>
+      <SearchBoxWithParams compact={compact} />
+    </Suspense>
+  );
+}
+
+function SearchBoxWithParams({ compact }: { compact: boolean }) {
+  const searchParams = useSearchParams();
+  const initial = searchParams.get("search") ?? "";
+  return <SearchBoxUI compact={compact} initial={initial} />;
+}
+
+function SearchBoxUI({ compact, initial }: { compact: boolean; initial: string }) {
   return (
     <form action="/products" className="relative min-w-0 flex-1">
       <Search
@@ -51,8 +78,12 @@ function SearchBox({ compact = false }: { compact?: boolean }) {
         strokeWidth={2}
       />
       <input
+        // Re-mount when the URL's search value changes so `defaultValue`
+        // picks up the new value — otherwise React ignores it after mount.
+        key={initial}
         type="search"
         name="search"
+        defaultValue={initial}
         placeholder="جستجو"
         aria-label="جستجو در محصولات"
         className={`w-full rounded-xl border-0 bg-[#f0f0f1] text-[#3f4064] outline-none transition-colors focus:bg-white focus:ring-2 focus:ring-primary/20 ${
@@ -72,8 +103,21 @@ export function StoreHeader() {
   const queryClient = useQueryClient();
   const { data: session } = useAuthSession();
   const logout = useLogout();
+  const [hash, setHash] = useState("");
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   useEffect(() => registerCartSidebarTrigger(() => setCartOpen(true)), []);
+
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, []);
+
+  useEffect(() => {
+    setCategoriesOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -202,6 +246,15 @@ export function StoreHeader() {
     };
   }, [pathname]);
 
+  const goHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    setCategoriesOpen(false);
+    if (pathname !== "/") return;
+    event.preventDefault();
+    window.history.replaceState(null, "", "/");
+    setHash("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleLogout = async () => {
     try {
       await logout.mutateAsync();
@@ -273,7 +326,7 @@ export function StoreHeader() {
                 height={1254}
                 loading="eager"
                 fetchPriority="high"
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain bg-transparent"
               />
             </Link>
 
@@ -282,6 +335,14 @@ export function StoreHeader() {
             </div>
 
             <div className="mr-auto flex shrink-0 items-center gap-3">
+              <Link
+                href="/articles"
+                className="flex h-12 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-[#2f3045] transition-colors hover:bg-brand-50 hover:text-primary"
+              >
+                <BookOpen className="h-5 w-5" strokeWidth={1.8} />
+                مجله
+              </Link>
+
               {session ? (
                 <div ref={userMenuRef} className="relative">
                   <button
@@ -333,6 +394,14 @@ export function StoreHeader() {
                           <Heart className="h-5 w-5" strokeWidth={1.8} />
                           علاقه‌مندی‌ها
                         </Link>
+                        <Link
+                          href="/articles"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#4a4d68] transition-colors hover:bg-brand-50 hover:text-primary"
+                        >
+                          <BookOpen className="h-5 w-5" strokeWidth={1.8} />
+                          مجله الینا
+                        </Link>
                       </nav>
 
                       <div className="border-t border-[#eeeeF0] pt-1">
@@ -375,49 +444,51 @@ export function StoreHeader() {
             </div>
           </div>
 
-          <div
-            data-desktop-store-nav
-            className={`hidden overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:block ${
-              desktopNavVisible
-                ? "max-h-12 translate-y-0 opacity-100"
-                : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
-            }`}
-            aria-hidden={!desktopNavVisible}
-          >
-            <div
-              className={`${W} flex h-12 max-h-12 items-center gap-1 transition-[transform,opacity] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
-                desktopNavVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
-              }`}
-            >
-              <Link
-                href="/#home-categories"
-                className="flex h-9 cursor-pointer items-center gap-2 border-l border-[#e0e0e2] pl-4 text-sm font-bold text-[#2f3045] transition-colors hover:text-primary"
-              >
-                <Menu className="h-5 w-5" />
-                دسته‌بندی کالاها
-              </Link>
+          {/*<div*/}
+          {/*  data-desktop-store-nav*/}
+          {/*  className={`hidden overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:block ${*/}
+          {/*    desktopNavVisible*/}
+          {/*      ? "max-h-12 translate-y-0 opacity-100"*/}
+          {/*      : "pointer-events-none max-h-0 -translate-y-2 opacity-0"*/}
+          {/*  }`}*/}
+          {/*  aria-hidden={!desktopNavVisible}*/}
+          {/*>*/}
+          {/*  <div*/}
+          {/*    className={`${W} flex h-12 max-h-12 items-center gap-1 transition-[transform,opacity] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${*/}
+          {/*      desktopNavVisible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"*/}
+          {/*    }`}*/}
+          {/*  >*/}
+          {/*    <Link*/}
+          {/*      href="/#home-categories"*/}
+          {/*      className="flex h-9 cursor-pointer items-center gap-2 border-l border-[#e0e0e2] pl-4 text-sm font-bold text-[#2f3045] transition-colors hover:text-primary"*/}
+          {/*    >*/}
+          {/*      <Menu className="h-5 w-5" />*/}
+          {/*      دسته‌بندی کالاها*/}
+          {/*    </Link>*/}
 
-              {desktopLinks.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="flex h-9 cursor-pointer items-center gap-1.5 px-3 text-xs text-[#62666d] transition-colors hover:text-primary"
-                >
-                  <item.icon
-                    className="h-[18px] w-[18px] text-[#8a8d91]"
-                    strokeWidth={1.8}
-                  />
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
+          {/*    {desktopLinks.map((item) => (*/}
+          {/*      <Link*/}
+          {/*        key={item.label}*/}
+          {/*        href={item.href}*/}
+          {/*        className="flex h-9 cursor-pointer items-center gap-1.5 px-3 text-xs text-[#62666d] transition-colors hover:text-primary"*/}
+          {/*      >*/}
+          {/*        <item.icon*/}
+          {/*          className="h-[18px] w-[18px] text-[#8a8d91]"*/}
+          {/*          strokeWidth={1.8}*/}
+          {/*        />*/}
+          {/*        {item.label}*/}
+          {/*      </Link>*/}
+          {/*    ))}*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
           <div className={`${W} lg:hidden`}>
-            <div className="flex h-[60px] items-center gap-2 py-2">
+            <div className="flex h-[60px] items-center justify-between">
+              {/* Logo */}
               <Link
                 href="/"
-                className="flex h-11 w-11 shrink-0 items-center overflow-hidden"
+                onClick={goHome}
+                className="flex h-10 w-10 shrink-0 items-center overflow-hidden"
                 aria-label="صفحه اصلی الینا"
               >
                 <Image
@@ -431,17 +502,38 @@ export function StoreHeader() {
                 />
               </Link>
 
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <SearchBox compact />
-                {!session && (
-                  <Link
-                    href="/login"
-                    className="shrink-0 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-[#2f3045] transition-colors hover:bg-brand-50 hover:text-primary"
-                  >
-                    ورود <span className="text-[#d0d0d4]">|</span> ثبت‌نام
-                  </Link>
-                )}
-              </div>
+              {/* Nav icons */}
+              <nav className="flex items-center" aria-label="منوی اصلی موبایل">
+                <Link
+                  href="/cart"
+                  className={cn(
+                    "relative flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl transition-colors",
+                    pathname.startsWith("/cart") || pathname.startsWith("/checkout")
+                      ? "text-primary"
+                      : "text-[#656771]",
+                  )}
+                  aria-label="سبد خرید"
+                >
+                  <ShoppingBag
+                    className="h-5 w-5"
+                    strokeWidth={pathname.startsWith("/cart") || pathname.startsWith("/checkout") ? 2.2 : 1.8}
+                  />
+                  <CartCountBadge className="-top-0.5 -right-0.5" />
+                </Link>
+
+                <Link
+                  href="/account"
+                  className={cn(
+                    "flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl transition-colors",
+                    pathname.startsWith("/account") || pathname.startsWith("/orders")
+                      ? "text-primary"
+                      : "text-[#656771]",
+                  )}
+                  aria-label="حساب من"
+                >
+                  <UserRound className="h-5 w-5" strokeWidth={pathname.startsWith("/account") || pathname.startsWith("/orders") ? 2.2 : 1.8} />
+                </Link>
+              </nav>
             </div>
           </div>
         </header>
@@ -450,6 +542,7 @@ export function StoreHeader() {
       {cartOpen && (
         <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} />
       )}
+      <MobileCategoryDrawer open={categoriesOpen} onOpenChange={setCategoriesOpen} />
     </>
   );
 }

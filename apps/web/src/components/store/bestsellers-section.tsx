@@ -59,7 +59,7 @@ export function BestsellersSection({ products, categories }: Props) {
         {filtered.slice(0, 8).map((p) => (
           <div key={p.id} className="relative bg-white rounded-2xl border overflow-hidden group">
             {/* Image */}
-            <Link href={`/products/${p.id}`} className="block aspect-[3/4] bg-zinc-50 overflow-hidden">
+            <Link href={`/products/${p.slug}`} className="block aspect-[3/4] bg-zinc-50 overflow-hidden">
               {p.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID, Length, Matches } from 'class-validator';
+import { SLUG_PATTERN } from '../../article/dto/create-article-category.dto';
 
 export class UpdateProductDto {
   @ApiPropertyOptional()
@@ -12,6 +13,13 @@ export class UpdateProductDto {
   @IsString()
   @Length(2, 200)
   name?: string;
+
+  @ApiPropertyOptional({ example: 'iphone-16-pro-max', description: 'URL-safe slug' })
+  @IsOptional()
+  @IsString()
+  @Length(2, 200)
+  @Matches(SLUG_PATTERN, { message: 'slug باید حروف/اعداد و - باشد (بدون فاصله)' })
+  slug?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

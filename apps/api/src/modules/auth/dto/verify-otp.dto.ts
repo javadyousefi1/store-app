@@ -7,9 +7,9 @@ export class VerifyOtpDto {
   @Matches(/^09[0-9]{9}$/, { message: 'شماره موبایل باید با فرمت 09XXXXXXXXX وارد شود' })
   phone: string;
 
-  @ApiProperty({ example: '123456', description: '6-digit OTP code received via SMS' })
+  @ApiProperty({ example: '1234', description: '4-digit OTP code received via SMS' })
   @IsString()
-  @Length(6, 6, { message: 'کد OTP باید ۶ رقم باشد' })
-  @Matches(/^[0-9]{6}$/, { message: 'کد OTP فقط شامل اعداد است' })
+  @Length(4, 4, { message: 'کد OTP باید ۴ رقم باشد' })
+  @Matches(/^[0-9]{4}$/, { message: 'کد OTP فقط شامل اعداد است' })
   otp: string;
 }

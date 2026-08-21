@@ -7,6 +7,7 @@ import {
   ProductCardSkeleton,
 } from "@/components/store/product-card";
 import { CategoryFilter } from "@/components/store/category-filter";
+import { ProductsFilterFab } from "@/components/store/products-filter-fab";
 import { apiFetch } from "@/lib/server-fetch";
 import { cn } from "@/lib/utils";
 import type { Category, PaginatedResponse, Product } from "@/types";
@@ -69,14 +70,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-          فروشگاه پوشاک زنانه
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          جدیدترین محصولات الینا را بر اساس دسته‌بندی و قیمت پیدا کنید.
-        </p>
-      </div>
+      {/*<div>*/}
+      {/*  <h1 className="text-2xl font-bold text-foreground sm:text-3xl">*/}
+      {/*    فروشگاه پوشاک زنانه*/}
+      {/*  </h1>*/}
+      {/*  <p className="mt-2 text-sm text-muted-foreground">*/}
+      {/*    جدیدترین محصولات الینا را بر اساس دسته‌بندی و قیمت پیدا کنید.*/}
+      {/*  </p>*/}
+      {/*</div>*/}
 
       <Suspense fallback={null}>
         <CategoryFilter categories={categories} active={categoryId} />
@@ -96,6 +97,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           </p>
         )}
       </div>
+
+      {/* Mobile-only floating filter button — opens the category filter modal. */}
+      <Suspense fallback={null}>
+        <ProductsFilterFab />
+      </Suspense>
 
       {products.totalPages > 1 && (
         <div className="flex items-center justify-center gap-1 pt-4">

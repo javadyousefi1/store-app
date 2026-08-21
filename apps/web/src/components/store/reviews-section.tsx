@@ -58,7 +58,7 @@ export function ReviewsSection() {
       </div>
 
       <div className="mx-auto flex max-w-2xl items-center gap-3">
-        <div className="flex shrink-0 flex-col gap-3">
+        <div className="flex shrink-0 flex-col gap-3 hidden">
           <button
             type="button"
             onClick={() => goTo(active - 1)}

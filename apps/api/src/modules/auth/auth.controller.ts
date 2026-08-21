@@ -16,7 +16,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(RateLimitGuard)
   @RateLimit({ ttl: 3600, limit: 5, keyPrefix: 'rl:getOtp' })
-  @ApiOperation({ summary: 'Request OTP', description: 'Send a 6-digit OTP to the provided Iranian phone number. Limited to 5 requests per hour per phone.' })
+  @ApiOperation({ summary: 'Request OTP', description: 'Send a 4-digit OTP via SMS to the provided Iranian phone number. Limited to 5 requests per hour per phone.' })
   @ApiResponse({ status: 200, description: 'OTP sent successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid phone number format.' })
   @ApiResponse({ status: 429, description: 'Too many requests. Try again later.' })

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const W = "mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10";
@@ -58,9 +58,9 @@ function TelegramIcon({ className }: { className?: string }) {
 }
 
 const socialLinks = [
-  { label: "اینستاگرام", Icon: InstagramIcon },
-  { label: "واتساپ", Icon: WhatsAppIcon },
-  { label: "تلگرام", Icon: TelegramIcon },
+  { label: "اینستاگرام", Icon: InstagramIcon, href: "#" },
+  { label: "واتساپ", Icon: WhatsAppIcon, href: "https://wa.me/989967043323" },
+  { label: "تلگرام", Icon: TelegramIcon, href: "https://t.me/+989967043323" },
 ];
 
 export function StoreFooter() {
@@ -106,7 +106,7 @@ export function StoreFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-primary">
+                <Link href="/articles" className="hover:text-primary">
                   مجله الینا
                 </Link>
               </li>
@@ -142,17 +142,23 @@ export function StoreFooter() {
           <div className="order-4 lg:order-none">
             <h3 className="mb-4 font-semibold text-[#2f263c]">تماس با ما</h3>
             <ul className="space-y-2 break-words text-[11px] sm:space-y-3 sm:text-sm">
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-brand-600" />
-                ۰۲۱-۸۸۴۵۶۷۸
+              <li>
+                <a
+                  href="tel:+989967043323"
+                  className="inline-flex items-center gap-2 transition-colors hover:text-brand-700"
+                >
+                  <Phone className="h-4 w-4 text-brand-600" />
+                  <span dir="ltr" className="font-mono">۰۹۹۶ ۷۰۴ ۳۳۲۳</span>
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-brand-600" />
-                info@elinaclothes.com
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                تهران، خیابان ولیعصر، پلاک ۱۲۱
+              <li>
+                <a
+                  href="mailto:elina.clothesme@gmail.com"
+                  className="inline-flex items-center gap-2 break-all transition-colors hover:text-brand-700"
+                >
+                  <Mail className="h-4 w-4 shrink-0 text-brand-600" />
+                  elina.clothesme@gmail.com
+                </a>
               </li>
             </ul>
           </div>
@@ -162,17 +168,72 @@ export function StoreFooter() {
           <p className="text-xs text-[#6f6675]">
             تمامی حقوق برای Elina محفوظ است.
           </p>
-          <div className="flex gap-2">
-            {socialLinks.map(({ label, Icon }) => (
-              <Link
-                href="#"
-                key={label}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-brand-600 transition hover:bg-secondary"
-                aria-label={label}
-              >
-                <Icon className="h-4 w-4" />
-              </Link>
-            ))}
+          <div className="flex items-center gap-4">
+            <a
+              referrerPolicy="origin"
+              target="_blank"
+              rel="noreferrer"
+              href="https://trustseal.enamad.ir/?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
+              className="inline-flex shrink-0"
+              aria-label="نماد اعتماد الکترونیکی"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                referrerPolicy="origin"
+                src="https://trustseal.enamad.ir/logo.aspx?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
+                alt="نماد اعتماد الکترونیکی"
+                style={{ cursor: "pointer" }}
+                {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
+                className="h-16 w-auto"
+              />
+            </a>
+            <a
+              href="https://www.zarinpal.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex shrink-0"
+              aria-label="درگاه پرداخت معتبر زرین‌پال"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://cdn.zarinpal.com/badges/trustLogo/1.png"
+                alt="درگاه پرداخت معتبر زرین‌پال"
+                loading="lazy"
+                decoding="async"
+                className="h-16 w-auto"
+              />
+            </a>
+            <div className="flex gap-2">
+              {socialLinks.map(({ label, Icon, href }) => {
+                const isExternal = href.startsWith("http");
+                const className =
+                  "flex h-8 w-8 items-center justify-center rounded-full border border-border text-brand-600 transition hover:bg-secondary";
+                if (isExternal) {
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={className}
+                      aria-label={label}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  );
+                }
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    className={className}
+                    aria-label={label}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

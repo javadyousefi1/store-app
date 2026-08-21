@@ -13,6 +13,10 @@ import { CartItem } from '../entities/cart-item.entity';
 import { Order } from '../entities/order.entity';
 import { OrderItem } from '../entities/order-item.entity';
 import { Payment } from '../entities/payment.entity';
+import { Favorite } from '../entities/favorite.entity';
+import { Coupon } from '../entities/coupon.entity';
+import { CouponRedemption } from '../entities/coupon-redemption.entity';
+import { Slider } from '../entities/slider.entity';
 
 config();
 
@@ -23,7 +27,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASS || 'postgres',
   database: process.env.DB_NAME || 'store_db',
-  entities: [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment],
+  entities: [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Favorite, Coupon, CouponRedemption, Slider],
   migrations: [__dirname + '/migrations/*.{ts,js}'],
   migrationsTableName: 'migrations',
 });

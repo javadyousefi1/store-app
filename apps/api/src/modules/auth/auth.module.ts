@@ -8,11 +8,13 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { RateLimitGuard } from '../../common/guards/rate-limit.guard';
+import { SmsModule } from '../../services/sms/sms.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
+    SmsModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

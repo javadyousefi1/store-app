@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
+  BookOpen,
   Check,
   ChevronLeft,
   LayoutGrid,
   PackageSearch,
-  RotateCcw,
   SlidersHorizontal,
-  WalletCards,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -28,14 +27,6 @@ import {
 } from "@/components/ui/sheet";
 import { useCategories } from "@/hooks/use-categories";
 import { cn } from "@/lib/utils";
-
-type SortValue = "newest" | "price_asc" | "price_desc";
-
-const sortOptions: Array<{ value: SortValue; label: string }> = [
-  { value: "newest", label: "جدیدترین" },
-  { value: "price_asc", label: "ارزان‌ترین" },
-  { value: "price_desc", label: "گران‌ترین" },
-];
 
 const fallbackCategories = [
   { id: "fallback:tshirt", name: "تیشرت", query: "تیشرت" },
@@ -125,6 +116,18 @@ export function MobileCategoryDrawer({
               <ChevronLeft className="h-4 w-4" />
             </button>
 
+            <Link
+              href="/articles"
+              onClick={() => onOpenChange(false)}
+              className="flex h-13 w-full items-center justify-between rounded-xl px-4 text-right text-sm font-medium text-[#4a4d68] transition-colors hover:bg-muted"
+            >
+              <span className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                مجله الینا
+              </span>
+              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+            </Link>
+
             {categoryOptions.map((category) => {
               const active =
                 activeIds.includes(category.id) ||
@@ -157,6 +160,11 @@ export function MobileCategoryDrawer({
   );
 }
 
+/**
+ * Mobile product filter dialog — currently only exposes categories. Sort
+ * and price were intentionally removed; the URL contract still supports
+ * them so we can add UI back later without a schema change.
+ */
 export function MobileProductFilterDialog({
   open,
   onOpenChange,
@@ -173,21 +181,12 @@ export function MobileProductFilterDialog({
         name: category.name,
       }))
     : [...fallbackCategories];
-  const [sort, setSort] = useState<SortValue>("newest");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
 
   useEffect(() => {
     if (!open) return;
 
     const params = new URLSearchParams(searchParams.toString());
-    const currentSort = params.get("sort");
-    setSort(
-      currentSort === "price_asc" || currentSort === "price_desc"
-        ? currentSort
-        : "newest",
-    );
     const selectedIds = selectedCategoryIds(params);
     const fallbackMatch = fallbackCategories.find(
       (category) => category.query === params.get("search"),
@@ -199,11 +198,10 @@ export function MobileProductFilterDialog({
           ? [fallbackMatch.id]
           : [],
     );
-    setMinPrice(params.get("minPrice") ?? "");
-    setMaxPrice(params.get("maxPrice") ?? "");
   }, [open, searchParams]);
 
   function toggleCategory(id: string) {
+    // Fallback categories map to a `search` query and can't be combined.
     if (id.startsWith("fallback:")) {
       setCategoryIds((current) => (current.includes(id) ? [] : [id]));
       return;
@@ -217,10 +215,7 @@ export function MobileProductFilterDialog({
   }
 
   function clearFilters() {
-    setSort("newest");
     setCategoryIds([]);
-    setMinPrice("");
-    setMaxPrice("");
   }
 
   function applyFilters() {
@@ -242,7 +237,7 @@ export function MobileProductFilterDialog({
       if (backendCategoryIds.length) {
         params.set("categoryIds", backendCategoryIds.join(","));
       }
-
+      // Drop a stale fallback search left over from a previous filter apply.
       if (
         fallbackCategories.some(
           (category) => category.query === params.get("search"),
@@ -251,15 +246,6 @@ export function MobileProductFilterDialog({
         params.delete("search");
       }
     }
-
-    if (sort === "newest") params.delete("sort");
-    else params.set("sort", sort);
-
-    if (minPrice) params.set("minPrice", minPrice);
-    else params.delete("minPrice");
-
-    if (maxPrice) params.set("maxPrice", maxPrice);
-    else params.delete("maxPrice");
 
     const query = params.toString();
     router.push(query ? `/products?${query}` : "/products");
@@ -284,35 +270,11 @@ export function MobileProductFilterDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="min-h-0 space-y-4 overflow-y-auto bg-[#fcfbfd] px-4 py-4">
-          <section className="rounded-2xl border border-border bg-white p-4 shadow-[0_8px_24px_rgba(42,31,65,0.04)]">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold">
-              <RotateCcw className="h-4 w-4 text-primary" />
-              مرتب‌سازی
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
-              {sortOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setSort(option.value)}
-                  className={cn(
-                    "h-10 rounded-xl border px-2 text-xs font-medium transition-colors",
-                    sort === option.value
-                      ? "border-primary bg-secondary text-primary"
-                      : "border-border hover:border-primary/40",
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </section>
-
+        <div className="min-h-0 overflow-y-auto bg-[#fcfbfd] px-4 py-4">
           <section className="rounded-2xl border border-border bg-white p-4 shadow-[0_8px_24px_rgba(42,31,65,0.04)]">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-bold">
               <PackageSearch className="h-4 w-4 text-primary" />
-              نوع محصول
+              دسته‌بندی
             </h3>
             <div className="grid grid-cols-3 gap-2 min-[520px]:grid-cols-4">
               {categoryOptions.map((category) => {
@@ -337,44 +299,6 @@ export function MobileProductFilterDialog({
                   </label>
                 );
               })}
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-border bg-white p-4 shadow-[0_8px_24px_rgba(42,31,65,0.04)]">
-            <div className="mb-4">
-              <h3 className="flex items-center gap-2 text-sm font-bold">
-                <WalletCards className="h-4 w-4 text-primary" />
-                بازه قیمت
-              </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                مبلغ به تومان
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <label className="flex flex-col gap-2 text-xs font-medium text-muted-foreground">
-                <span>از قیمت</span>
-                <Input
-                  value={minPrice}
-                  onChange={(event) =>
-                    setMinPrice(event.target.value.replace(/\D/g, ""))
-                  }
-                  inputMode="numeric"
-                  placeholder="۰"
-                  className="h-12 rounded-xl bg-muted/30 px-3 text-sm"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-xs font-medium text-muted-foreground">
-                <span>تا قیمت</span>
-                <Input
-                  value={maxPrice}
-                  onChange={(event) =>
-                    setMaxPrice(event.target.value.replace(/\D/g, ""))
-                  }
-                  inputMode="numeric"
-                  placeholder="بدون محدودیت"
-                  className="h-12 rounded-xl bg-muted/30 px-3 text-sm"
-                />
-              </label>
             </div>
           </section>
         </div>

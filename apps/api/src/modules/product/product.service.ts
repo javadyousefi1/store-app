@@ -1,7 +1,7 @@
-import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {randomBytes} from 'crypto';
-import {Repository} from 'typeorm';
+import {IsNull, Repository} from 'typeorm';
 import {Product} from '../../entities/product.entity';
 import {ProductVariant} from '../../entities/product-variant.entity';
 import {AttributeService} from '../attribute/attribute.service';
@@ -113,14 +113,38 @@ export class ProductService {
         return product;
     }
 
-    create(dto: CreateProductDto): Promise<Product> {
+    async findBySlug(slug: string): Promise<Product> {
+        const product = await this.productRepo.findOne({
+            where: {slug},
+            relations: ['category', 'cover', 'variants'],
+            order: {variants: {createdAt: 'ASC'}},
+        });
+        if (!product) throw new NotFoundException('Product not found');
+        await this.attachCoverUrl(product);
+        await this.attachVariantImageUrls(product);
+        return product;
+    }
+
+    async create(dto: CreateProductDto): Promise<Product> {
+        await this.assertSlugFree(dto.slug);
         return this.productRepo.save(this.productRepo.create(dto));
     }
 
     async update(id: string, dto: UpdateProductDto): Promise<Product> {
         const product = await this.findOne(id);
+        if (dto.slug && dto.slug !== product.slug) {
+            await this.assertSlugFree(dto.slug);
+        }
         Object.assign(product, dto);
         return this.productRepo.save(product);
+    }
+
+    private async assertSlugFree(slug: string): Promise<void> {
+        const exists = await this.productRepo.findOne({
+            where: {slug, deletedAt: IsNull()},
+            select: ['id'],
+        });
+        if (exists) throw new BadRequestException(`محصول با slug «${slug}» قبلاً وجود دارد`);
     }
 
     async remove(id: string): Promise<void> {

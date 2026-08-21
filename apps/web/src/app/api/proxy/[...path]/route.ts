@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3000";
-
+console.log(BACKEND_URL);
 type RouteParams = { params: Promise<{ path: string[] }> };
 
 async function handler(req: NextRequest, { params }: RouteParams) {
@@ -42,7 +42,9 @@ async function handler(req: NextRequest, { params }: RouteParams) {
   const data = await res.text();
   console.log(`[PROXY] backend response status: ${res.status}`);
 
-  return new NextResponse(data, {
+  const nullBodyStatus = res.status === 204 || res.status === 205 || res.status === 304;
+
+  return new NextResponse(nullBodyStatus ? null : data, {
     status: res.status,
     headers: { "Content-Type": res.headers.get("content-type") ?? "application/json" },
   });

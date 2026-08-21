@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/lib/toast";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { CategoryModal, ConfirmDeleteModal } from "@/components/modals";
@@ -47,6 +47,25 @@ export default function CategoriesPage() {
   }
 
   const columns: Column<Category>[] = [
+    {
+      key: "cover",
+      header: "کاور",
+      className: "w-16",
+      cell: (row) => (
+        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md border bg-muted">
+          {row.coverUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={row.coverUrl}
+              alt={row.name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+          )}
+        </div>
+      ),
+    },
     {
       key: "name",
       header: "نام دسته‌بندی",

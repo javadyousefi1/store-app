@@ -202,11 +202,11 @@ export function StoreLoginForm() {
                   id="store-otp"
                   type="text"
                   inputMode="numeric"
-                  placeholder="● ● ● ● ● ●"
+                  placeholder="● ● ● ●"
                   value={otp}
                   onChange={(event) =>
                     setOtp(
-                      event.target.value.replace(/[^0-9]/g, "").slice(0, 6),
+                      event.target.value.replace(/[^0-9]/g, "").slice(0, 4),
                     )
                   }
                   className="h-11 text-center text-lg tracking-[0.6em]"
@@ -217,7 +217,7 @@ export function StoreLoginForm() {
               <Button
                 type="submit"
                 className="h-11 w-full"
-                disabled={verifyOtp.isPending || otp.length < 6}
+                disabled={verifyOtp.isPending || otp.length < 4}
               >
                 {verifyOtp.isPending ? "در حال بررسی..." : "تأیید و ورود"}
               </Button>

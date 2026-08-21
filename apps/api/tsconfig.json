@@ -23,5 +23,8 @@
       "@entities/*": ["src/entities/*"],
       "@config/*": ["src/config/*"]
     }
+  },
+  "ts-node": {
+    "transpileOnly": true
   }
 }

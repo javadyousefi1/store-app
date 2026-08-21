@@ -26,14 +26,18 @@ export default function ProductsPage() {
   const formModal = useModal<Product>();
   const deleteModal = useModal<Product>();
 
-  async function handleSubmit(form: { name: string; categoryId: string; description: string; isActive: boolean }) {
+  async function handleSubmit(form: { name: string; slug: string; categoryId: string; description: string; isActive: boolean }) {
     try {
       if (formModal.data) {
-        await updateProduct.mutateAsync({ id: formModal.data.id, data: { ...form, description: form.description || undefined } });
+        await updateProduct.mutateAsync({
+          id: formModal.data.id,
+          data: { ...form, description: form.description || undefined },
+        });
         toast.success("محصول ویرایش شد");
       } else {
         await createProduct.mutateAsync({
           name: form.name,
+          slug: form.slug,
           categoryId: form.categoryId,
           description: form.description || undefined,
           isActive: form.isActive,
@@ -41,8 +45,9 @@ export default function ProductsPage() {
         toast.success("محصول ایجاد شد");
       }
       formModal.close();
-    } catch {
-      toast.error("خطا در ذخیره");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? "خطا در ذخیره");
     }
   }
 

@@ -30,6 +30,14 @@ export class ProductController {
     return this.productService.findAll(dto);
   }
 
+  @Get('by-slug/:slug')
+  @ApiOperation({ summary: 'Get product by slug — SEO storefront lookup', description: 'Public endpoint. Returns the same shape as GET /products/:id.' })
+  @ApiResponse({ status: 200 })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
+  findBySlug(@Param('slug') slug: string) {
+    return this.productService.findBySlug(slug);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get product with variants and cover URL' })
   @ApiResponse({ status: 200 })

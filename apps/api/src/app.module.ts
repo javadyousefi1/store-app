@@ -16,6 +16,12 @@ import { OrderItem } from './entities/order-item.entity';
 import { Payment } from './entities/payment.entity';
 import { Settings } from './entities/settings.entity';
 import { RestockNotification } from './entities/restock-notification.entity';
+import { Favorite } from './entities/favorite.entity';
+import { Coupon } from './entities/coupon.entity';
+import { CouponRedemption } from './entities/coupon-redemption.entity';
+import { Article } from './entities/article.entity';
+import { ArticleCategory } from './entities/article-category.entity';
+import { Slider } from './entities/slider.entity';
 import { CacheModule } from './services/cache/cache.module';
 import { StorageModule } from './services/storage/storage.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -26,14 +32,21 @@ import { AttributeModule } from './modules/attribute/attribute.module';
 import { MediaModule } from './modules/media/media.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
+import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.module';
+import { PaymentModule } from './modules/payment/payment.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { BaleModule } from './modules/bale/bale.module';
 import { HealthModule } from './modules/health/health.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { RestockNotificationModule } from './modules/restock-notification/restock-notification.module';
+import { FavoriteModule } from './modules/favorite/favorite.module';
+import { CouponModule } from './modules/coupon/coupon.module';
+import { ArticleModule } from './modules/article/article.module';
+import { SliderModule } from './modules/slider/slider.module';
+import { ShippingModule } from './modules/shipping/shipping.module';
 import { SeedService } from './database/seed.service';
 
-const entities = [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Settings, RestockNotification];
+const entities = [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Settings, RestockNotification, Favorite, Coupon, CouponRedemption, Article, ArticleCategory, Slider];
 
 @Module({
   imports: [
@@ -84,11 +97,18 @@ const entities = [User, Category, Product, ProductVariant, Attribute, AttributeV
     MediaModule,
     CartModule,
     OrderModule,
+    PaymentGatewayModule,
+    PaymentModule,
     SettingsModule,
     BaleModule,
     HealthModule,
     DashboardModule,
     RestockNotificationModule,
+    FavoriteModule,
+    CouponModule,
+    ArticleModule,
+    SliderModule,
+    ShippingModule,
     TypeOrmModule.forFeature([User]),
   ],
   providers: [SeedService],

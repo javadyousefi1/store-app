@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ImageGallery } from "./image-gallery";
 import { VariantSelector } from "./variant-selector";
 import { AddToCart } from "./add-to-cart";
+import { FavoriteButton } from "./favorite-button";
 import { useNotifyMe, useRegisterNotifyMe } from "@/hooks/use-variants";
 import type { ProductDetail, ProductVariant } from "@/types";
 
@@ -69,7 +70,10 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
       <div className="space-y-5">
         <div className="space-y-2">
           <Badge variant="secondary">{product.category?.name}</Badge>
-          <h1 className="text-2xl font-bold leading-tight">{product.name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="text-2xl font-bold leading-tight">{product.name}</h1>
+            <FavoriteButton productId={product.id} variant="ghost" size="lg" />
+          </div>
         </div>
 
         {/* Variant selector */}

@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   Trash2,
 } from "lucide-react";
+import { useMemo } from "react";
 import { toast } from "@/lib/toast";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -17,6 +18,8 @@ import {
   useRemoveFromCart,
   useUpdateCartQuantity,
 } from "@/hooks/use-cart";
+import { useAttributeOptions } from "@/hooks/use-attribute-options";
+import { VariantAttributes } from "@/components/store/variant-attributes";
 import { cn } from "@/lib/utils";
 
 function formatPrice(value: string | number) {
@@ -28,6 +31,18 @@ export default function CartPage() {
   const removeItem = useRemoveFromCart();
   const updateQuantity = useUpdateCartQuantity();
   const clearCart = useClearCart();
+  const { data: attributes } = useAttributeOptions();
+
+  // Translate hex color codes to friendly labels for VariantAttributes.
+  const valueLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    for (const attr of attributes ?? []) {
+      for (const v of attr.values) {
+        if (v.label) labels[v.value] = v.label;
+      }
+    }
+    return labels;
+  }, [attributes]);
 
   const items = cart?.items ?? [];
   const total = items.reduce(
@@ -130,14 +145,13 @@ export default function CartPage() {
                   <h2 className="truncate text-sm font-bold sm:text-base">
                     {item.variant.product?.name ?? "محصول"}
                   </h2>
-                  <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                    {Object.entries(item.variant.attributes).map(
-                      ([key, value]) => (
-                        <span key={key}>
-                          {key}: {value}
-                        </span>
-                      ),
-                    )}
+                  <div className="mt-2">
+                    <VariantAttributes
+                      attributes={item.variant.attributes}
+                      valueLabels={valueLabels}
+                      variant="row"
+                      size="sm"
+                    />
                   </div>
                   <p className="mt-2 text-sm font-bold text-primary">
                     {formatPrice(item.variant.price)}

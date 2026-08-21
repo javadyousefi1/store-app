@@ -209,7 +209,7 @@ function RevenueChart({ data }: { data: RevenueChartItem[] }) {
                   active,
                   payload,
                   label,
-                }: TooltipContentProps<number, string>) => {
+                }: TooltipContentProps) => {
                   if (!active || !payload?.length) return null;
                   const item = payload[0].payload as RevenueChartItem;
                   return (
@@ -294,7 +294,7 @@ function OrdersDonut({ data }: { data: OrdersByStatus[] }) {
                 content={({
                   active,
                   payload,
-                }: TooltipContentProps<number, string>) => {
+                }: TooltipContentProps) => {
                   if (!active || !payload?.length) return null;
                   const d = payload[0].payload as OrdersByStatus;
                   const cfg = ORDER_STATUS_CONFIG[d.status];
@@ -457,7 +457,7 @@ function NewUsersChart({ data }: { data: NewUsersChartItem[] }) {
                   active,
                   payload,
                   label,
-                }: TooltipContentProps<number, string>) => {
+                }: TooltipContentProps) => {
                   if (!active || !payload?.length) return null;
                   return (
                     <div className={TOOLTIP_STYLE}>

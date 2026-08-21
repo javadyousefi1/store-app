@@ -1,96 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ShoppingBag, ChevronLeft, Eye } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { PackageSearch, ShoppingBag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserOrders } from "@/hooks/use-user-orders";
-import { ORDER_STATUS_CONFIG } from "@/lib/order-status";
-import { formatDate, formatPrice } from "@/lib/format";
+import { OrderCard } from "@/components/store/orders/order-card";
 import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/types";
+
+type Tab = "all" | OrderStatus;
+
+const TABS: { value: Tab; label: string }[] = [
+  { value: "all",              label: "همه" },
+  { value: "pending_payment",  label: "در انتظار پرداخت" },
+  { value: "payment_uploaded", label: "در حال بررسی" },
+  { value: "confirmed",        label: "تأیید شده" },
+  { value: "cancelled",        label: "لغو شده" },
+];
 
 export default function UserOrdersPage() {
   const [page, setPage] = useState(1);
+  const [tab, setTab] = useState<Tab>("all");
   const { data, isLoading } = useUserOrders(page);
 
-  const orders = data?.data ?? [];
-
-  if (isLoading) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!orders.length && page === 1) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <ShoppingBag className="h-12 w-12 text-muted-foreground/30 mx-auto" />
-        <p className="text-lg font-medium">هنوز سفارشی ثبت نشده</p>
-        <Link href="/products">
-          <Button variant="outline" className="gap-2">
-            <ChevronLeft className="h-4 w-4" />
-            شروع خرید
-          </Button>
-        </Link>
-      </div>
-    );
-  }
+  const allOrders = data?.data ?? [];
+  const filtered = useMemo(
+    () => (tab === "all" ? allOrders : allOrders.filter((o) => o.status === tab)),
+    [allOrders, tab],
+  );
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
-      <div>
+    <div className="mx-auto w-full max-w-3xl space-y-5 px-4 pt-5 pb-8 sm:px-6">
+      {/* Header */}
+      <header className="space-y-1">
         <h1 className="text-xl font-bold">سفارشات من</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
-          {data?.total.toLocaleString("fa-IR")} سفارش
+        <p className="text-xs text-muted-foreground">
+          {data ? `${data.total.toLocaleString("fa-IR")} سفارش` : " "}
         </p>
-      </div>
+      </header>
 
-      <div className="space-y-3">
-        {orders.map((order) => {
-          const cfg = ORDER_STATUS_CONFIG[order.status];
+      {/* Status tabs */}
+      <div className="scrollbar-none -mx-4 flex gap-1 overflow-x-auto border-b border-border px-4 sm:mx-0 sm:px-0">
+        {TABS.map((t) => {
+          const active = tab === t.value;
           return (
-            <Link
-              key={order.id}
-              href={`/orders/${order.id}`}
-              className="flex items-center gap-4 p-4 rounded-xl border bg-card hover:shadow-sm hover:border-primary/20 transition-all group"
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => setTab(t.value)}
+              className={cn(
+                "relative shrink-0 px-3 py-2.5 text-sm font-medium transition-colors",
+                active
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
             >
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs text-muted-foreground" dir="ltr">
-                    #{order.id.slice(0, 8)}
-                  </span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border",
-                      cfg.className
-                    )}
-                  >
-                    {order.status === "payment_uploaded" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    )}
-                    {cfg.label}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 text-sm flex-wrap">
-                  <span className="font-semibold">{formatPrice(order.totalAmount)} ریال</span>
-                  <span className="text-muted-foreground">{order.items.length} قلم</span>
-                  <span className="text-muted-foreground">{formatDate(order.createdAt)}</span>
-                </div>
-              </div>
-              <Eye className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-            </Link>
+              {t.label}
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute inset-x-2 -bottom-px h-0.5 rounded-full transition-colors",
+                  active ? "bg-primary" : "bg-transparent",
+                )}
+              />
+            </button>
           );
         })}
       </div>
 
+      {/* Content */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-[92px] rounded-lg" />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <EmptyState hasOrders={allOrders.length > 0} tab={tab} />
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((order) => (
+            <OrderCard key={order.id} order={order} />
+          ))}
+        </div>
+      )}
+
       {/* Pagination */}
-      {(data?.totalPages ?? 1) > 1 && (
-        <div className="flex justify-center gap-2 pt-2">
+      {(data?.totalPages ?? 1) > 1 && filtered.length > 0 && (
+        <div className="flex items-center justify-center gap-2 pt-2">
           <Button
             variant="outline"
             size="sm"
@@ -99,7 +99,7 @@ export default function UserOrdersPage() {
           >
             قبلی
           </Button>
-          <span className="flex items-center px-3 text-sm text-muted-foreground">
+          <span className="px-3 text-sm text-muted-foreground">
             {page.toLocaleString("fa-IR")} از {data?.totalPages.toLocaleString("fa-IR")}
           </span>
           <Button
@@ -113,5 +113,46 @@ export default function UserOrdersPage() {
         </div>
       )}
     </div>
+  );
+}
+
+/* ─────────────────────────── Empty state ─────────────────────────── */
+
+function EmptyState({ hasOrders, tab }: { hasOrders: boolean; tab: Tab }) {
+  // Two flavors: no orders at all vs no orders matching the active filter.
+  if (!hasOrders) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center gap-4 px-6 py-14 text-center">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <ShoppingBag className="h-7 w-7 text-primary" />
+          </span>
+          <div className="space-y-1">
+            <p className="text-base font-semibold">هنوز سفارشی ثبت نکرده‌اید</p>
+            <p className="text-sm text-muted-foreground">
+              با اولین خرید خود، تاریخچه‌ی سفارش‌ها اینجا نمایش داده می‌شود.
+            </p>
+          </div>
+          <Link href="/products">
+            <Button className="gap-1.5">
+              <ShoppingBag className="h-4 w-4" />
+              مشاهده فروشگاه
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardContent className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+        <PackageSearch className="h-10 w-10 text-muted-foreground/40" />
+        <p className="text-sm font-medium">در این وضعیت سفارشی ندارید</p>
+        <p className="text-xs text-muted-foreground">
+          فیلتر «{TABS.find((t) => t.value === tab)?.label}» فعال است.
+        </p>
+      </CardContent>
+    </Card>
   );
 }

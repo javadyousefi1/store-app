@@ -3,3 +3,6 @@ export { CategoryModal } from "./category-modal";
 export { AttributeOptionModal } from "./attribute-option-modal";
 export { ProductModal } from "./product-modal";
 export { VariantModal } from "./variant-modal";
+export { CouponModal } from "./coupon-modal";
+export { ArticleCategoryModal } from "./article-category-modal";
+export { SliderModal } from "./slider-modal";

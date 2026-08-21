@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { Slider as SliderType } from "@/types";
 
-const slides = [
+interface Slide {
+  mobileSrc: string;
+  desktopSrc: string;
+  label: string;
+  href?: string | null;
+}
+
+const fallbackSlides: Slide[] = [
   {
     mobileSrc: "/elina/hero/hero-blue-mobile.webp",
     desktopSrc: "/elina/hero/hero-blue-desktop.webp",
@@ -21,9 +30,8 @@ const slides = [
     desktopSrc: "/elina/hero/hero-shomiz-desktop.webp",
     label: "شومیز مانتویی — ۴ رنگ برای انتخاب",
   },
-] as const;
+];
 
-type Slide = (typeof slides)[number];
 type HeroViewport = "mobile" | "desktop";
 const blurDataUrl =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmMGY2Ii8+PC9zdmc+";
@@ -55,6 +63,24 @@ function SlideMedia({
     );
   }
 
+  // MinIO-served slider images live on a runtime-configurable host — bypass
+  // next/image (which would need remotePatterns entries per env) and go with
+  // a plain <img>. Local `/elina/...` fallbacks still use next/image.
+  const isRemote = /^https?:\/\//.test(imageSrc);
+  if (isRemote) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={imageSrc}
+        alt={slide.label}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        decoding="async"
+        className={cn("absolute inset-0", imageClassName)}
+      />
+    );
+  }
+
   return (
     <Image
       src={imageSrc}
@@ -70,12 +96,12 @@ function SlideMedia({
   );
 }
 
-const mobileSlides = [slides[slides.length - 1], ...slides, slides[0]];
-
 function SliderPagination({
+  slides,
   active,
   onSelect,
 }: {
+  slides: Slide[];
   active: number;
   onSelect: (index: number) => void;
 }) {
@@ -83,7 +109,7 @@ function SliderPagination({
     <div className="flex items-center justify-center gap-2" dir="ltr">
       {slides.map((slide, index) => (
         <button
-          key={slide.label}
+          key={`${slide.label}-${index}`}
           type="button"
           onClick={() => onSelect(index)}
           className="flex h-5 w-5 items-center justify-center rounded-full"
@@ -102,7 +128,35 @@ function SliderPagination({
   );
 }
 
-function MobileHeroCarousel() {
+function SlideLink({
+  href,
+  className,
+  children,
+}: {
+  href?: string | null;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (!href) return <>{children}</>;
+  if (/^https?:\/\//.test(href)) {
+    return (
+      <a href={href} className={className} aria-label="مشاهده" target="_blank" rel="noopener noreferrer">
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className} aria-label="مشاهده">
+      {children}
+    </Link>
+  );
+}
+
+function MobileHeroCarousel({ slides }: { slides: Slide[] }) {
+  const mobileSlides = useMemo(
+    () => (slides.length ? [slides[slides.length - 1], ...slides, slides[0]] : []),
+    [slides],
+  );
   const scrollerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollTimerRef = useRef<number | undefined>(undefined);
@@ -127,6 +181,7 @@ function MobileHeroCarousel() {
   }, []);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let interval: number | undefined;
@@ -144,7 +199,7 @@ function MobileHeroCarousel() {
       window.clearTimeout(startTimer);
       if (interval) window.clearInterval(interval);
     };
-  }, []);
+  }, [slides.length]);
 
   const settleScroll = () => {
     window.clearTimeout(scrollTimerRef.current);
@@ -168,12 +223,14 @@ function MobileHeroCarousel() {
 
       setPosition(nearest);
 
-      if (nearest === 0) {
-        setPosition(slides.length);
-        scrollToPosition(slides.length, false);
-      } else if (nearest === mobileSlides.length - 1) {
-        setPosition(1);
-        scrollToPosition(1, false);
+      if (mobileSlides.length > 1) {
+        if (nearest === 0) {
+          setPosition(slides.length);
+          scrollToPosition(slides.length, false);
+        } else if (nearest === mobileSlides.length - 1) {
+          setPosition(1);
+          scrollToPosition(1, false);
+        }
       }
     }, 120);
   };
@@ -184,6 +241,8 @@ function MobileHeroCarousel() {
     },
     [],
   );
+
+  if (!slides.length) return null;
 
   const activeSlide = (position - 1 + slides.length) % slides.length;
 
@@ -206,17 +265,16 @@ function MobileHeroCarousel() {
             }}
             className="relative aspect-[9/4.6] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
           >
-            <SlideMedia
-              slide={slide}
-              viewport="mobile"
-              eager={index === 1}
-            />
+            <SlideLink href={slide.href} className="absolute inset-0 block">
+              <SlideMedia slide={slide} viewport="mobile" eager={index === 1} />
+            </SlideLink>
           </div>
         ))}
       </div>
 
       <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 md:flex">
         <SliderPagination
+          slides={slides}
           active={activeSlide}
           onSelect={(index) => {
             const nextPosition = index + 1;
@@ -229,7 +287,7 @@ function MobileHeroCarousel() {
   );
 }
 
-function DesktopHeroSlider() {
+function DesktopHeroSlider({ slides }: { slides: Slide[] }) {
   const [active, setActive] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const isFirstActive = useRef(true);
@@ -246,6 +304,7 @@ function DesktopHeroSlider() {
   }, [active]);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let interval: number | undefined;
@@ -259,7 +318,9 @@ function DesktopHeroSlider() {
       window.clearTimeout(startTimer);
       if (interval) window.clearInterval(interval);
     };
-  }, []);
+  }, [slides.length]);
+
+  if (!slides.length) return null;
 
   const goTo = (index: number) => {
     const next = (index + slides.length) % slides.length;
@@ -283,15 +344,13 @@ function DesktopHeroSlider() {
         >
           {slides.map((slide, index) => (
             <div
-              key={slide.label}
+              key={`${slide.label}-${index}`}
               className="relative h-full w-full shrink-0"
               aria-hidden={index !== active}
             >
-              <SlideMedia
-                slide={slide}
-                viewport="desktop"
-                eager={index === 0}
-              />
+              <SlideLink href={slide.href} className="absolute inset-0 block">
+                <SlideMedia slide={slide} viewport="desktop" eager={index === 0} />
+              </SlideLink>
             </div>
           ))}
         </div>
@@ -319,18 +378,36 @@ function DesktopHeroSlider() {
         </div>
 
         <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 lg:block">
-          <SliderPagination active={active} onSelect={goTo} />
+          <SliderPagination slides={slides} active={active} onSelect={goTo} />
         </div>
       </div>
     </section>
   );
 }
 
-export function HeroSlider() {
+interface HeroSliderProps {
+  sliders?: SliderType[] | null;
+}
+
+export function HeroSlider({ sliders }: HeroSliderProps = {}) {
+  const slides: Slide[] = useMemo(() => {
+    if (!sliders?.length) return fallbackSlides;
+    return sliders
+      .filter((s) => s.desktopImageUrl || s.mobileImageUrl)
+      .map((s) => ({
+        label: s.title,
+        href: s.linkUrl,
+        desktopSrc: s.desktopImageUrl ?? s.mobileImageUrl ?? "",
+        mobileSrc: s.mobileImageUrl ?? s.desktopImageUrl ?? "",
+      }));
+  }, [sliders]);
+
+  if (!slides.length) return null;
+
   return (
     <div data-home-hero className="relative z-0 bg-[#f8f6fb] lg:bg-white">
-      <MobileHeroCarousel />
-      <DesktopHeroSlider />
+      <MobileHeroCarousel slides={slides} />
+      <DesktopHeroSlider slides={slides} />
     </div>
   );
 }
