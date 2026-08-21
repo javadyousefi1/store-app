@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowLeft,
+  ChevronDown,
   Headphones,
   PackageCheck,
   RefreshCcw,
@@ -10,49 +11,59 @@ import {
 import { HeroSlider } from "./hero-slider";
 import { HomeHeroScrollArea } from "./home-hero-scroll-area";
 import { HomeProductGrid } from "./home-product-grid";
+import { HomeCatalogGateway } from "./home-catalog-gateway";
 import { NewsletterSignup } from "./newsletter-signup";
 import { ReviewsSection } from "./reviews-section";
+import type { Category, Product, Slider } from "@/types";
 
-const categories = [
-  { label: "تیشرت", image: "/elina/category-tshirt.webp" },
-  { label: "مانتو", image: "/elina/category-coat.webp" },
-  { label: "ست", image: "/elina/category-set.webp" },
-  { label: "شلوار", image: "/elina/category-pants.webp" },
-  { label: "کفش", image: "/elina/category-shoes.webp" },
-];
+const faqItems = [
+  {
+    q: "آیا امکان بازگشت کالا وجود دارد؟",
+    a: "بله، تا ۲۴ ساعت پس از تحویل، در صورتی که کالا استفاده نشده باشد و شرایط اولیه بسته‌بندی حفظ شده باشد، امکان بازگشت یا تعویض کالا از طریق پنل کاربری فراهم است.",
+  },
+  {
+    q: "هزینه و زمان ارسال چقدر است؟",
+    a: "ارسال به سراسر ایران با پست پیشتاز طی ۲ تا ۵ روز کاری انجام می‌شود. برای خریدهای بالای ۲.۵ میلیون تومان، ارسال کاملاً رایگان است.",
+  },
+  {
+    q: "چطور می‌توانم سفارش خود را پیگیری کنم؟",
+    a: "پس از ثبت سفارش، کد رهگیری از طریق پیامک برای شما ارسال می‌شود. همچنین در بخش «سفارش‌های من» در حساب کاربری، وضعیت لحظه‌ای سفارش قابل مشاهده است.",
+  },
+  {
+    q: "آیا خرید از الینا امن است؟",
+    a: "بله، تمامی تراکنش‌ها از طریق درگاه امن بانکی و با رمزنگاری SSL انجام می‌شود. اطلاعات شخصی و بانکی شما هرگز روی سرور ما ذخیره نمی‌شود.",
+  },
+  {
+    q: "چگونه می‌توانم با پشتیبانی الینا در تماس باشم؟",
+    a: "تیم پشتیبانی الینا ۷ روز هفته آماده پاسخگویی است. می‌توانید از طریق چت آنلاین سایت، پیام‌رسان‌ها یا شماره تماس درج شده در بخش تماس با ما با کارشناسان ما صحبت کنید.",
+  },
+] as const;
 
-const products = [
-  {
-    name: "دامن لینن کمربندی",
-    price: "۳۹۹,۰۰۰",
-    image: "/elina/product-skirt.webp",
-  },
-  {
-    name: "تی‌شرت نخی طرح‌دار",
-    price: "۳۹۹,۰۰۰",
-    image: "/elina/product-pink-tee.webp",
-  },
-  {
-    name: "پیراهن لینن تابستانی",
-    price: "۵۹۹,۰۰۰",
-    image: "/elina/product-white-tee.webp",
-  },
-  {
-    name: "ست لینن دو تکه",
-    price: "۶۹۹,۰۰۰",
-    image: "/elina/product-linen-set.webp",
-  },
-  {
-    name: "شلوار لینن آزاد",
-    price: "۵۱۹,۰۰۰",
-    image: "/elina/product-floral-pants.webp",
-  },
-  {
-    name: "شلوار جین نیمه‌آزاد",
-    price: "۴۸۹,۰۰۰",
-    image: "/elina/product-jeans.jpg",
-  },
-];
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "OnlineStore",
+  name: "الینا",
+  alternateName: "Elina",
+  url: "https://elina.ir",
+  description:
+    "فروشگاه آنلاین پوشاک زنانه الینا؛ جدیدترین کالکشن مانتو، تیشرت، شومیز، ست، شلوار و کفش با ارسال سریع به سراسر ایران.",
+  areaServed: "IR",
+  currenciesAccepted: "IRR",
+  paymentAccepted: "درگاه بانکی آنلاین",
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
 
 const promoBlurDataUrl =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjNmMGY2Ii8+PC9zdmc+";
@@ -152,39 +163,69 @@ const trustItems = [
   { title: "ارسال سریع", text: "ارسال به سراسر ایران", icon: PackageCheck },
 ];
 
-export function ElinaHome() {
+interface ElinaHomeProps {
+  categories: Category[];
+  bestsellers: Product[];
+  sliders?: Slider[];
+}
+
+export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) {
   return (
     <div className="w-full pb-8">
-      <h1 className="sr-only">فروشگاه آنلاین لباس زنانه الینا</h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <h1 className="sr-only">
+        الینا | فروشگاه آنلاین لباس زنانه — مانتو، تیشرت، شومیز، ست و شلوار
+      </h1>
       <HomeHeroScrollArea
-        hero={<HeroSlider />}
+        hero={<HeroSlider sliders={sliders} />}
         categories={
           <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
             <section
               id="home-categories"
               className="scroll-mt-24 pt-2 pb-9 sm:py-12"
             >
-              <h2 className="mb-5 text-right text-xl font-bold text-brand-800 sm:text-2xl">
-                دسته‌بندی
-              </h2>
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
+                  دسته‌بندی
+                </h2>
+                <Link
+                  href="/products"
+                  className="flex items-center gap-1 text-xs text-brand-600 sm:text-sm"
+                >
+                  مشاهده همه
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </div>
               <div className="grid grid-cols-3 gap-3 lg:grid-cols-5 lg:gap-4">
                 {categories.map((category) => (
                   <Link
-                    key={category.label}
-                    href="/products"
+                    key={category.id}
+                    href={`/products?categoryId=${category.id}`}
                     className="group overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)]"
                   >
-                    <div className="relative aspect-[5/6] overflow-hidden">
-                      <Image
-                        src={category.image}
-                        alt=""
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                        className="object-cover transition duration-500 group-hover:scale-[1.035]"
-                      />
+                    <div className="relative aspect-[5/6] overflow-hidden bg-muted">
+                      {category.coverUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={category.coverUrl}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+                      )}
                     </div>
                     <p className="py-3.5 text-center text-sm font-semibold text-[#342b3d]">
-                      {category.label}
+                      {category.name}
                     </p>
                   </Link>
                 ))}
@@ -209,8 +250,10 @@ export function ElinaHome() {
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
-            <HomeProductGrid products={products} />
+            <HomeProductGrid products={bestsellers} />
           </section>
+
+          <HomeCatalogGateway products={bestsellers} />
 
           <section className="content-auto grid gap-4 pb-10 sm:gap-5 sm:pb-14 md:grid-cols-2 md:grid-rows-2">
             {promoCards.map((card) => (
@@ -231,22 +274,8 @@ export function ElinaHome() {
               </Link>
             ))}
           </section>
-        </div>
-      </div>
 
-      <section className="relative z-10 w-full overflow-hidden bg-gradient-to-l from-brand-400 via-brand-500 to-brand-700 shadow-[0_10px_28px_rgba(83,58,147,0.14)]">
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-center px-4 py-5 sm:px-8 sm:py-6 lg:px-12">
-          <NewsletterSignup />
-        </div>
-      </section>
-
-      <div className="relative z-10 bg-white">
-        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-          <div className="content-auto">
-            <ReviewsSection />
-          </div>
-
-          <section className="content-auto mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <section className="content-auto mb-10 grid grid-cols-2 gap-3 pb-4 sm:mb-14 md:grid-cols-4">
             {trustItems.map((item) => (
               <div
                 key={item.title}
@@ -266,6 +295,96 @@ export function ElinaHome() {
                 </div>
               </div>
             ))}
+          </section>
+        </div>
+      </div>
+
+      <section className="relative z-10 w-full overflow-hidden bg-gradient-to-l from-brand-400 via-brand-500 to-brand-700 shadow-[0_10px_28px_rgba(83,58,147,0.14)]">
+        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] items-center justify-center px-4 py-5 sm:px-8 sm:py-6 lg:px-12">
+          <NewsletterSignup />
+        </div>
+      </section>
+
+      <div className="relative z-10 bg-white">
+        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
+          <div className="content-auto">
+            <ReviewsSection />
+          </div>
+
+          <section
+            id="faq"
+            aria-labelledby="faq-heading"
+            className="content-auto pb-10 sm:pb-14"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <h2
+                id="faq-heading"
+                className="text-xl font-bold text-brand-800 sm:text-2xl"
+              >
+                سوالات متداول
+              </h2>
+            </div>
+            <div className="grid gap-3">
+              {faqItems.map((item) => (
+                <details
+                  key={item.q}
+                  className="group rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_7px_22px_rgba(45,32,67,0.04)] transition sm:px-5"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#342b3d] marker:hidden sm:text-base [&::-webkit-details-marker]:hidden">
+                    <span>{item.q}</span>
+                    <ChevronDown
+                      className="h-5 w-5 shrink-0 text-brand-600 transition-transform duration-200 group-open:rotate-180"
+                      strokeWidth={2}
+                    />
+                  </summary>
+                  <p className="mt-3 text-sm leading-7 text-[#5a5266] sm:text-[15px]">
+                    {item.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="about-elina-heading"
+            className="content-auto mb-8 rounded-3xl border border-border bg-gradient-to-l from-brand-50 via-white to-white p-6 shadow-[0_10px_28px_rgba(45,32,67,0.04)] sm:p-8 md:p-10"
+          >
+            <h2
+              id="about-elina-heading"
+              className="mb-4 text-xl font-bold text-brand-800 sm:text-2xl"
+            >
+              درباره فروشگاه اینترنتی الینا
+            </h2>
+            <div className="space-y-3 text-sm leading-7 text-[#5a5266] sm:text-[15px] sm:leading-8">
+              <p>
+                <strong className="text-[#342b3d]">فروشگاه آنلاین الینا</strong>{" "}
+                مقصد امن شما برای{" "}
+                <strong className="text-[#342b3d]">
+                  خرید پوشاک زنانه
+                </strong>{" "}
+                با طراحی روز و پارچه‌های باکیفیت است. مجموعه‌ای گسترده از{" "}
+                <Link
+                  href="/products"
+                  className="text-brand-600 underline-offset-4 hover:underline"
+                >
+                  مانتو، تیشرت، شومیز، ست، شلوار و کفش‌های اسپرت
+                </Link>{" "}
+                را در الینا پیدا می‌کنید — همراه با ارسال سریع به سراسر ایران و
+                امکان بازگشت آسان.
+              </p>
+              <p>
+                از تازه‌های فصل تا استایل‌های همیشه‌کاربردی، هر آنچه برای
+                ست‌کردن یک تیپ کامل نیاز دارید در الینا مهیاست. تیم ما جدیدترین
+                ترندهای پوشاک زنانه را برای شما گلچین می‌کند تا هر روز با اعتماد
+                به نفس بیشتری استایل بزنید و ست موردعلاقه‌تان را با یک کلیک به
+                خانه بیاورید.
+              </p>
+              <p>
+                خرید امن با درگاه بانکی مطمئن، پشتیبانی ۷ روز هفته، ضمانت اصالت
+                کالا و امکان بازگشت تا ۷ روز — اینها تعهدهای الینا برای یک تجربه
+                خرید بدون دغدغه هستند.
+              </p>
+            </div>
           </section>
         </div>
       </div>
