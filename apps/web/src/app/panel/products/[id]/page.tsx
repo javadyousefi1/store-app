@@ -215,9 +215,22 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {Object.entries(variant.attributes).map(([k, v]) => (
-                          <Badge key={k} variant="outline">{k}: {v}</Badge>
-                        ))}
+                        {Object.entries(variant.attributes).map(([k, v]) => {
+                          const label = attrOptions?.find((a) => a.name === k)?.values.find((val) => val.value === v)?.label;
+                          const isHex = /^#[0-9a-fA-F]{3,8}$/.test(v);
+                          return (
+                            <Badge key={k} variant="outline" className="gap-1.5">
+                              <span className="text-muted-foreground">{k}:</span>
+                              {isHex && (
+                                <span
+                                  className="inline-block w-3 h-3 rounded-full border shrink-0"
+                                  style={{ backgroundColor: v }}
+                                />
+                              )}
+                              <span>{label ?? v}</span>
+                            </Badge>
+                          );
+                        })}
                         <span className="text-xs text-muted-foreground font-mono" dir="ltr">{variant.sku}</span>
                       </div>
                       <div className="flex gap-4 text-sm flex-wrap">

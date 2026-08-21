@@ -31,8 +31,8 @@ interface Props {
 export function VariantModal({ open, onClose, onSubmit, isPending, initial, attrOptions }: Props) {
   const [form, setForm] = useState<VariantForm>({ price: "", stock: "", attributes: {} });
 
-  const attrGroups = attrOptions.reduce<Record<string, string[]>>((acc, attr) => {
-    acc[attr.name] = attr.values.map((v) => v.value);
+  const attrGroups = attrOptions.reduce<Record<string, { value: string; label?: string }[]>>((acc, attr) => {
+    acc[attr.name] = attr.values.map((v) => ({ value: v.value, label: v.label }));
     return acc;
   }, {});
 
@@ -95,20 +95,30 @@ export function VariantModal({ open, onClose, onSubmit, isPending, initial, attr
             <div key={attr} className="space-y-2">
               <Label>{attr}</Label>
               <div className="flex flex-wrap gap-2">
-                {values.map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    onClick={() => toggleAttr(attr, val)}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                      form.attributes[attr] === val
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "border-border hover:bg-muted"
-                    }`}
-                  >
-                    {val}
-                  </button>
-                ))}
+                {values.map(({ value, label }) => {
+                  const isHex = /^#[0-9a-fA-F]{3,8}$/.test(value);
+                  const selected = form.attributes[attr] === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => toggleAttr(attr, value)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm border transition-colors ${
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border hover:bg-muted"
+                      }`}
+                    >
+                      {isHex && (
+                        <span
+                          className="inline-block w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
+                          style={{ backgroundColor: value }}
+                        />
+                      )}
+                      <span>{label ?? value}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
