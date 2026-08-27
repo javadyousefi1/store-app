@@ -14,7 +14,8 @@ import { HomeProductGrid } from "./home-product-grid";
 import { HomeCatalogGateway } from "./home-catalog-gateway";
 import { NewsletterSignup } from "./newsletter-signup";
 import { ReviewsSection } from "./reviews-section";
-import type { Category, Product, Slider } from "@/types";
+import { StoriesBar } from "./stories-bar";
+import type { Category, Product, Slider, Story } from "@/types";
 
 const faqItems = [
   {
@@ -44,7 +45,7 @@ const organizationJsonLd = {
   "@type": "OnlineStore",
   name: "الینا",
   alternateName: "Elina",
-  url: "https://elina.ir",
+  url: "https://elina.com",
   description:
     "فروشگاه آنلاین پوشاک زنانه الینا؛ جدیدترین کالکشن مانتو، تیشرت، شومیز، ست، شلوار و کفش با ارسال سریع به سراسر ایران.",
   areaServed: "IR",
@@ -163,13 +164,92 @@ const trustItems = [
   { title: "ارسال سریع", text: "ارسال به سراسر ایران", icon: PackageCheck },
 ];
 
+function TrustBadgesSection() {
+  return (
+    <section
+      aria-labelledby="trust-badges-heading"
+      className="content-auto mb-10 rounded-3xl border border-border bg-gradient-to-bl from-brand-50 via-white to-white p-5 shadow-[0_10px_28px_rgba(45,32,67,0.05)] sm:mb-14 sm:p-7"
+    >
+      <div className="flex flex-col items-center gap-5 md:flex-row md:items-center md:justify-between md:gap-8">
+        <div className="text-center md:max-w-md md:text-right">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-100/70 px-3 py-1 text-[11px] font-medium text-brand-700">
+            <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} />
+            خرید امن با پشتوانه رسمی
+          </div>
+          <h2
+            id="trust-badges-heading"
+            className="mt-3 text-lg font-bold text-brand-800 sm:text-xl"
+          >
+            با خیال راحت خرید کنید
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#5a5266] sm:text-[15px]">
+            الینا دارای نماد اعتماد الکترونیکی از وزارت صمت است و تمامی پرداخت‌ها
+            از طریق درگاه امن زرین‌پال با رمزنگاری بانکی انجام می‌شود.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4 sm:gap-6">
+          <a
+            href="https://trustseal.enamad.ir/?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
+            target="_blank"
+            rel="noreferrer"
+            referrerPolicy="origin"
+            aria-label="نماد اعتماد الکترونیکی"
+            className="group flex flex-col items-center gap-2"
+          >
+            <div className="rounded-2xl border border-border bg-white p-3 shadow-[0_6px_18px_rgba(45,32,67,0.06)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(45,32,67,0.1)] sm:p-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                referrerPolicy="origin"
+                src="https://trustseal.enamad.ir/logo.aspx?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
+                alt="نماد اعتماد الکترونیکی"
+                {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
+                loading="lazy"
+                decoding="async"
+                className="h-20 w-auto sm:h-24"
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+            <span className="text-[11px] font-medium text-[#5a5266]">
+              نماد اعتماد
+            </span>
+          </a>
+
+          <a
+            href="https://www.zarinpal.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="درگاه پرداخت معتبر زرین‌پال"
+            className="group flex flex-col items-center gap-2"
+          >
+            <div className="rounded-2xl border border-border bg-white p-3 shadow-[0_6px_18px_rgba(45,32,67,0.06)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(45,32,67,0.1)] sm:p-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://cdn.zarinpal.com/badges/trustLogo/1.png"
+                alt="درگاه پرداخت معتبر زرین‌پال"
+                loading="lazy"
+                decoding="async"
+                className="h-20 w-auto sm:h-24"
+              />
+            </div>
+            <span className="text-[11px] font-medium text-[#5a5266]">
+              درگاه پرداخت
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 interface ElinaHomeProps {
   categories: Category[];
   bestsellers: Product[];
   sliders?: Slider[];
+  stories?: Story[];
 }
 
-export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) {
+export function ElinaHome({ categories, bestsellers, sliders, stories }: ElinaHomeProps) {
   return (
     <div className="w-full pb-8">
       <script
@@ -183,6 +263,7 @@ export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) 
       <h1 className="sr-only">
         الینا | فروشگاه آنلاین لباس زنانه — مانتو، تیشرت، شومیز، ست و شلوار
       </h1>
+      <StoriesBar stories={stories ?? []} />
       <HomeHeroScrollArea
         hero={<HeroSlider sliders={sliders} />}
         categories={
@@ -203,12 +284,18 @@ export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) 
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
               </div>
-              <div className="grid grid-cols-3 gap-3 lg:grid-cols-5 lg:gap-4">
+              {/* Mobile: horizontal snap-scroll rail so many categories don't
+                  balloon the page height. Desktop keeps the roomy 5-col grid. */}
+              <div
+                className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+                style={{ scrollSnapType: "x mandatory" }}
+              >
                 {categories.map((category) => (
                   <Link
                     key={category.id}
                     href={`/products?categoryId=${category.id}`}
-                    className="group overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)]"
+                    className="group w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)] sm:w-44 lg:w-auto"
+                    style={{ scrollSnapAlign: "start" }}
                   >
                     <div className="relative aspect-[5/6] overflow-hidden bg-muted">
                       {category.coverUrl ? (
@@ -237,7 +324,7 @@ export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) 
 
       <div className="relative z-10 bg-white">
         <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-          <section id="bestsellers" className="scroll-mt-24 pb-10 sm:pb-14">
+          <section id="bestsellers" className="scroll-mt-24 pb-4 sm:pb-6">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
                 پرفروش‌ها
@@ -275,7 +362,7 @@ export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) 
             ))}
           </section>
 
-          <section className="content-auto mb-10 grid grid-cols-2 gap-3 pb-4 sm:mb-14 md:grid-cols-4">
+          <section className="content-auto mb-6 grid grid-cols-2 gap-3 pb-4 sm:mb-8 md:grid-cols-4">
             {trustItems.map((item) => (
               <div
                 key={item.title}
@@ -296,6 +383,8 @@ export function ElinaHome({ categories, bestsellers, sliders }: ElinaHomeProps) 
               </div>
             ))}
           </section>
+
+          <TrustBadgesSection />
         </div>
       </div>
 

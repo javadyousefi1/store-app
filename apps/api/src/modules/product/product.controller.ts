@@ -24,7 +24,7 @@ export class ProductController {
   // ── Public ────────────────────────────────────────────────────────────────
 
   @Get()
-  @ApiOperation({ summary: 'List products', description: 'Paginated. Supports category, price, search, and sorting filters. Cover image returned as presigned URL.' })
+  @ApiOperation({ summary: 'List products', description: 'Paginated. Supports category, price, search, and sorting filters. Cover image returned as a public (non-signed) URL.' })
   @ApiResponse({ status: 200, description: 'Paginated product list.' })
   findAll(@Query() dto: GetProductsDto) {
     return this.productService.findAll(dto);
@@ -160,7 +160,7 @@ export class ProductController {
   @Get(':productId/variants/:variantId/images')
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
-  @ApiOperation({ summary: 'Get variant images with presigned URLs' })
+  @ApiOperation({ summary: 'Get variant images with public URLs' })
   getVariantImages(
     @Param('productId', ParseUUIDPipe) productId: string,
     @Param('variantId', ParseUUIDPipe) variantId: string,

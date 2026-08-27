@@ -78,7 +78,7 @@ export default function CheckoutPage() {
     stateName: "",
     cityCode: null as number | null,
     cityName: "",
-    deliveryType: "in_person" as DeliveryType,
+    deliveryType: "iran_post" as DeliveryType,
     paymentMethod: "online_gateway" as PaymentMethod,
   });
 
@@ -372,14 +372,14 @@ export default function CheckoutPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2.5">
-                <OptionCard
-                  selected={form.deliveryType === "in_person"}
-                  onClick={() => setForm((f) => ({ ...f, deliveryType: "in_person" }))}
-                  disabled={busy}
-                  icon={<Home className="h-4 w-4" />}
-                  title="تحویل حضوری"
-                  description="تحویل در محل فروشگاه — بدون هزینه ارسال"
-                />
+                {/*<OptionCard*/}
+                {/*  selected={form.deliveryType === "in_person"}*/}
+                {/*  onClick={() => setForm((f) => ({ ...f, deliveryType: "in_person" }))}*/}
+                {/*  disabled={busy}*/}
+                {/*  icon={<Home className="h-4 w-4" />}*/}
+                {/*  title="تحویل حضوری"*/}
+                {/*  description="تحویل در محل فروشگاه — بدون هزینه ارسال"*/}
+                {/*/>*/}
                 <OptionCard
                   selected={form.deliveryType === "iran_post"}
                   onClick={() => setForm((f) => ({ ...f, deliveryType: "iran_post" }))}
@@ -501,14 +501,14 @@ export default function CheckoutPage() {
                   description="انتقال به درگاه امن زرین‌پال و پرداخت با کارت بانکی"
                   badge="سریع"
                 />
-                <OptionCard
-                  selected={form.paymentMethod === "card_to_card"}
-                  onClick={() => setForm((f) => ({ ...f, paymentMethod: "card_to_card" }))}
-                  disabled={busy}
-                  icon={<Landmark className="h-4 w-4" />}
-                  title="کارت به کارت"
-                  description="واریز مستقیم و ارسال تصویر رسید — تأیید توسط ادمین"
-                />
+                {/*<OptionCard*/}
+                {/*  selected={form.paymentMethod === "card_to_card"}*/}
+                {/*  onClick={() => setForm((f) => ({ ...f, paymentMethod: "card_to_card" }))}*/}
+                {/*  disabled={busy}*/}
+                {/*  icon={<Landmark className="h-4 w-4" />}*/}
+                {/*  title="کارت به کارت"*/}
+                {/*  description="واریز مستقیم و ارسال تصویر رسید — تأیید توسط ادمین"*/}
+                {/*/>*/}
               </CardContent>
             </Card>
 

@@ -15,7 +15,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all categories', description: 'Returns categories with `coverUrl` (presigned, ~1h) when a cover is set.' })
+  @ApiOperation({ summary: 'Get all categories', description: 'Returns categories with a public (non-signed) `coverUrl` when a cover is set.' })
   @ApiResponse({ status: 200, description: 'List of active categories.' })
   findAll() {
     return this.categoryService.findAll();

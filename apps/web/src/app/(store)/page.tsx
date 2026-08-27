@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ElinaHome } from "@/components/store/elina-home";
 import { apiFetch } from "@/lib/server-fetch";
-import type { Category, PaginatedResponse, Product, Slider } from "@/types";
+import type { Category, PaginatedResponse, Product, Slider, Story } from "@/types";
 
 export const metadata: Metadata = {
   title: "الینا | فروشگاه آنلاین لباس زنانه — مانتو، تیشرت، شومیز و ست",
@@ -35,12 +35,13 @@ export const metadata: Metadata = {
 const REVALIDATE = { next: { revalidate: 300 } };
 
 export default async function LandingPage() {
-  const [categories, bestsellersPage, sliders] = await Promise.all([
+  const [categories, bestsellersPage, sliders, stories] = await Promise.all([
     apiFetch<Category[]>("/categories", REVALIDATE).catch(() => [] as Category[]),
     apiFetch<PaginatedResponse<Product>>("/products?sort=newest&limit=6", REVALIDATE).catch(
       () => ({ data: [] }) as { data: Product[] },
     ),
     apiFetch<Slider[]>("/sliders", REVALIDATE).catch(() => [] as Slider[]),
+    apiFetch<Story[]>("/stories", REVALIDATE).catch(() => [] as Story[]),
   ]);
 
   return (
@@ -48,6 +49,7 @@ export default async function LandingPage() {
       categories={categories}
       bestsellers={bestsellersPage.data}
       sliders={sliders}
+      stories={stories}
     />
   );
 }

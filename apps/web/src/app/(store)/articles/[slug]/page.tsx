@@ -12,6 +12,7 @@ import { apiFetch } from "@/lib/server-fetch";
 import { formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { ArticleCard } from "@/components/store/article-card";
+import { ArticleScrollProgress } from "@/components/store/article-scroll-progress";
 import type { Article, PaginatedResponse } from "@/types";
 
 interface PageProps {
@@ -129,6 +130,9 @@ export default async function ArticleDetailPage({ params }: PageProps) {
   const url = `${siteUrl}/articles/${article.slug}`;
   const coverAlt = article.coverAlt || article.title;
 
+  const featured = article.featuredProduct;
+  const featuredUrl = featured ? `${siteUrl}/products/${featured.slug}` : null;
+
   // BlogPosting JSON-LD — the primary schema Google uses to render rich
   // article results (headline, author, date, image, publisher).
   const articleLd = {
@@ -156,6 +160,27 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     keywords: article.keywords?.length ? article.keywords.join(", ") : undefined,
     wordCount: article.readTimeMinutes * 200,
     inLanguage: "fa-IR",
+    // Featured product surfaces as a `mentions` node — Google reads this
+    // as a topical signal that this article is about this product (no
+    // interstitial penalty; the card renders inline in the body).
+    mentions: featured && featuredUrl
+      ? {
+          "@type": "Product",
+          "@id": featuredUrl,
+          name: featured.name,
+          url: featuredUrl,
+          image: featured.coverUrl ?? undefined,
+          offers: featured.minPrice != null
+            ? {
+                "@type": "Offer",
+                price: featured.minPrice,
+                priceCurrency: "IRR",
+                availability: "https://schema.org/InStock",
+                url: featuredUrl,
+              }
+            : undefined,
+        }
+      : undefined,
   };
 
   const breadcrumbLd = {
@@ -190,6 +215,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+      <ArticleScrollProgress />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -291,6 +317,64 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
+
+        {featured && (
+          <aside
+            aria-label="محصول پیشنهادی"
+            className="not-prose relative overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-l from-brand-50 via-white to-white p-4 shadow-[0_10px_28px_rgba(45,32,67,0.05)] sm:p-5"
+          >
+            <p className="mb-3 text-[11px] font-medium tracking-[0.18em] text-brand-700">
+              محصول پیشنهادی
+            </p>
+            <Link
+              href={`/products/${featured.slug}`}
+              className="group flex items-stretch gap-4"
+            >
+              <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:w-28">
+                {featured.coverUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={featured.coverUrl}
+                    alt={featured.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+                )}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+                <div>
+                  <h3 className="line-clamp-2 text-sm font-bold text-brand-800 transition-colors group-hover:text-brand-600 sm:text-base">
+                    {featured.name}
+                  </h3>
+                  {featured.category?.name && (
+                    <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">
+                      {featured.category.name}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  {featured.minPrice != null ? (
+                    <p className="text-sm font-bold text-primary sm:text-base">
+                      {featured.minPrice.toLocaleString("fa-IR")}
+                      <span className="mr-1 text-[10px] font-normal text-muted-foreground">
+                        ریال
+                      </span>
+                    </p>
+                  ) : (
+                    <span />
+                  )}
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform duration-300 group-hover:-translate-x-1 sm:text-sm">
+                    مشاهده محصول
+                    <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </aside>
+        )}
 
         {article.keywords?.length > 0 && (
           <footer className="flex flex-wrap items-center gap-2 border-t border-border pt-6">

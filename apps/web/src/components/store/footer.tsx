@@ -58,7 +58,7 @@ function TelegramIcon({ className }: { className?: string }) {
 }
 
 const socialLinks = [
-  { label: "اینستاگرام", Icon: InstagramIcon, href: "#" },
+  { label: "اینستاگرام", Icon: InstagramIcon, href: "https://instagram.com/elina.clothes_" },
   { label: "واتساپ", Icon: WhatsAppIcon, href: "https://wa.me/989967043323" },
   { label: "تلگرام", Icon: TelegramIcon, href: "https://t.me/+989967043323" },
 ];

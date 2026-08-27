@@ -64,6 +64,23 @@ export class StorageService implements OnModuleInit {
     } catch (err) {
       this.logger.error(`MinIO connection failed: ${err.message}. Storage will be unavailable.`);
     }
+
+    // Grant anonymous read on every prefix whose objects the browser fetches
+    // directly (category/product/slider covers, article images embedded in
+    // HTML). Without this, MinIO returns 403 AccessDenied on the image URLs.
+    // Idempotent — safe on every boot; `setPublicReadPrefix` de-duplicates.
+    if (this.ready) {
+      for (const prefix of ['articles', 'sliders', 'categories', 'products']) {
+        try {
+          await this.setPublicReadPrefix(prefix);
+        } catch (err: any) {
+          this.logger.warn(
+            `couldn't grant public read on "${prefix}/*": ${err?.message ?? err}. ` +
+              `Set it manually with \`mc anonymous set download myminio/${this.bucket}/${prefix}\`.`,
+          );
+        }
+      }
+    }
   }
 
   async upload(key: string, buffer: Buffer, mimeType: string): Promise<void> {

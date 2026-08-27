@@ -9,6 +9,7 @@ import { ImageGallery } from "./image-gallery";
 import { VariantSelector } from "./variant-selector";
 import { AddToCart } from "./add-to-cart";
 import { FavoriteButton } from "./favorite-button";
+import { useCart } from "@/hooks/use-cart";
 import { useNotifyMe, useRegisterNotifyMe } from "@/hooks/use-variants";
 import type { ProductDetail, ProductVariant } from "@/types";
 
@@ -39,6 +40,11 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
       Object.entries(selected).every(([k, val]) => v.attributes[k] === val)
     ) ?? null;
 
+  const { data: cart } = useCart();
+  const inCart = matched
+    ? !!cart?.items.some((i) => i.variantId === matched.id)
+    : false;
+
   const isOutOfStock = matched !== null && available(matched) <= 0;
   const { data: notifyStatus } = useNotifyMe(isOutOfStock ? (matched?.id ?? null) : null);
   const registerNotify = useRegisterNotifyMe(matched?.id ?? "");
@@ -58,92 +64,125 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
     setSelected((prev) => ({ ...prev, [key]: val }));
   }
 
+  const notifyButton = (
+    <Button
+      variant="outline"
+      className="w-full gap-2"
+      disabled={notifyStatus?.registered || registerNotify.isPending}
+      onClick={handleNotifyMe}
+    >
+      {registerNotify.isPending ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : notifyStatus?.registered ? (
+        <BellOff className="h-4 w-4" />
+      ) : (
+        <Bell className="h-4 w-4" />
+      )}
+      {notifyStatus?.registered ? "درخواست ثبت شده" : "اطلاع بده موجود شد"}
+    </Button>
+  );
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-      {/* Gallery */}
-      <ImageGallery
-        variantImageUrls={matched?.imageUrls ?? []}
-        coverUrl={product.coverUrl}
-      />
-
-      {/* Details */}
-      <div className="space-y-5">
-        <div className="space-y-2">
-          <Badge variant="secondary">{product.category?.name}</Badge>
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="text-2xl font-bold leading-tight">{product.name}</h1>
-            <FavoriteButton productId={product.id} variant="ghost" size="lg" />
-          </div>
-        </div>
-
-        {/* Variant selector */}
-        <VariantSelector
-          variants={variants}
-          selected={selected}
-          onChange={handleAttrChange}
-          valueLabels={valueLabels}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 pb-28 md:pb-0">
+        {/* Gallery */}
+        <ImageGallery
+          variantImageUrls={matched?.imageUrls ?? []}
+          coverUrl={product.coverUrl}
         />
 
-        {/* Price + stock */}
-        {matched ? (
-          <div className="space-y-1.5">
-            <p className="text-2xl font-bold text-primary">
-              {Number(matched.price).toLocaleString("fa-IR")}{" "}
-              <span className="text-base font-normal text-muted-foreground">تومان</span>
-            </p>
-            <div className="flex items-center gap-1.5 text-sm">
-              {available(matched) > 0 ? (
+        {/* Details */}
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <Badge variant="secondary">{product.category?.name}</Badge>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-2xl font-bold leading-tight">{product.name}</h1>
+              <FavoriteButton productId={product.id} variant="ghost" size="lg" />
+            </div>
+          </div>
+
+          {/* Variant selector */}
+          <VariantSelector
+            variants={variants}
+            selected={selected}
+            onChange={handleAttrChange}
+            valueLabels={valueLabels}
+          />
+
+          {/* Price + stock — desktop inline. On mobile we move this into the
+              fixed bottom bar so the CTA stays reachable without scrolling. */}
+          {matched ? (
+            <div className="hidden space-y-1.5 md:block">
+              <p className="text-2xl font-bold text-primary">
+                {Number(matched.price).toLocaleString("fa-IR")}{" "}
+                <span className="text-base font-normal text-muted-foreground">تومان</span>
+              </p>
+              <div className="flex items-center gap-1.5 text-sm">
+                {available(matched) > 0 ? (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                    <span className="text-green-700">موجود</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-red-500" />
+                    <span className="text-red-600">ناموجود</span>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p className="hidden text-xl font-bold text-muted-foreground md:block">—</p>
+          )}
+
+          {/* Add to cart / notify — desktop inline. Mobile version lives in the sticky bar below. */}
+          <div className="hidden md:block">
+            {isOutOfStock ? notifyButton : <AddToCart variant={matched} />}
+          </div>
+
+          {/* Description */}
+          {product.description && (
+            <div className="pt-4 border-t space-y-1.5">
+              <p className="text-sm font-medium">توضیحات محصول</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {product.description}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile sticky purchase bar — price on the right (RTL start), CTA on the left.
+          `env(safe-area-inset-bottom)` respects the iOS home-indicator gutter. */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-white/95 shadow-[0_-8px_24px_rgba(45,32,67,0.08)] backdrop-blur md:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <div className="flex items-center gap-3 px-4 py-3">
+          {/* Hide the price stack once the item is in the cart — AddToCart
+              expands to give the "پرداخت" CTA enough room to breathe. */}
+          {!inCart && (
+            <div className="flex min-w-0 flex-1 flex-col">
+              {matched ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-green-700">
-                    {available(matched) > 10
-                      ? "موجود"
-                      : `موجود (${available(matched).toLocaleString("fa-IR")} عدد)`}
+                  <span className="text-[11px] text-muted-foreground">قیمت</span>
+                  <span className="truncate text-base font-bold text-primary">
+                    {Number(matched.price).toLocaleString("fa-IR")}
+                    <span className="mr-1 text-[11px] font-normal text-muted-foreground">
+                      تومان
+                    </span>
                   </span>
                 </>
               ) : (
-                <>
-                  <span className="w-2 h-2 rounded-full bg-red-500" />
-                  <span className="text-red-600">ناموجود</span>
-                </>
+                <span className="text-sm text-muted-foreground">—</span>
               )}
             </div>
+          )}
+          <div className="min-w-0 flex-1">
+            {isOutOfStock ? notifyButton : <AddToCart variant={matched} />}
           </div>
-        ) : (
-          <p className="text-xl font-bold text-muted-foreground">—</p>
-        )}
-
-        {/* Add to cart / notify */}
-        {isOutOfStock ? (
-          <Button
-            variant="outline"
-            className="w-full gap-2"
-            disabled={notifyStatus?.registered || registerNotify.isPending}
-            onClick={handleNotifyMe}
-          >
-            {registerNotify.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : notifyStatus?.registered ? (
-              <BellOff className="h-4 w-4" />
-            ) : (
-              <Bell className="h-4 w-4" />
-            )}
-            {notifyStatus?.registered ? "درخواست ثبت شده" : "اطلاع بده موجود شد"}
-          </Button>
-        ) : (
-          <AddToCart variant={matched} />
-        )}
-
-        {/* Description */}
-        {product.description && (
-          <div className="pt-4 border-t space-y-1.5">
-            <p className="text-sm font-medium">توضیحات محصول</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {product.description}
-            </p>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

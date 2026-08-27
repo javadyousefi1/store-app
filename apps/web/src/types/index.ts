@@ -92,6 +92,27 @@ export interface CreateSliderRequest {
 
 export type UpdateSliderRequest = Partial<CreateSliderRequest>;
 
+// Story
+export interface Story {
+  id: string;
+  title: string;
+  linkUrl: string | null;
+  imageUrl: string | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateStoryRequest {
+  title: string;
+  linkUrl?: string | null;
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
+export type UpdateStoryRequest = Partial<CreateStoryRequest>;
+
 // Attributes (new structure)
 export interface AttributeValue {
   id: string;
@@ -485,6 +506,8 @@ export interface Article {
   readTimeMinutes: number;
   viewCount: number;
   publishedAt: string | null;
+  featuredProductId: string | null;
+  featuredProduct: Product | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -510,5 +533,6 @@ export interface CreateArticleRequest {
   metaDescription?: string;
   keywords?: string[];
   publishedAt?: string | null;
+  featuredProductId?: string | null;
 }
 export type UpdateArticleRequest = Partial<CreateArticleRequest>;

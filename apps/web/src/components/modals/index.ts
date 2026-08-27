@@ -6,3 +6,4 @@ export { VariantModal } from "./variant-modal";
 export { CouponModal } from "./coupon-modal";
 export { ArticleCategoryModal } from "./article-category-modal";
 export { SliderModal } from "./slider-modal";
+export { StoryModal } from "./story-modal";

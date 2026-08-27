@@ -22,6 +22,7 @@ import { CouponRedemption } from './entities/coupon-redemption.entity';
 import { Article } from './entities/article.entity';
 import { ArticleCategory } from './entities/article-category.entity';
 import { Slider } from './entities/slider.entity';
+import { Story } from './entities/story.entity';
 import { CacheModule } from './services/cache/cache.module';
 import { StorageModule } from './services/storage/storage.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -43,10 +44,11 @@ import { FavoriteModule } from './modules/favorite/favorite.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { ArticleModule } from './modules/article/article.module';
 import { SliderModule } from './modules/slider/slider.module';
+import { StoryModule } from './modules/story/story.module';
 import { ShippingModule } from './modules/shipping/shipping.module';
 import { SeedService } from './database/seed.service';
 
-const entities = [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Settings, RestockNotification, Favorite, Coupon, CouponRedemption, Article, ArticleCategory, Slider];
+const entities = [User, Category, Product, ProductVariant, Attribute, AttributeValue, Media, Cart, CartItem, Order, OrderItem, Payment, Settings, RestockNotification, Favorite, Coupon, CouponRedemption, Article, ArticleCategory, Slider, Story];
 
 @Module({
   imports: [
@@ -108,6 +110,7 @@ const entities = [User, Category, Product, ProductVariant, Attribute, AttributeV
     CouponModule,
     ArticleModule,
     SliderModule,
+    StoryModule,
     ShippingModule,
     TypeOrmModule.forFeature([User]),
   ],

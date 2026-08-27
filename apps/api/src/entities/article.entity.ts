@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ArticleCategory } from './article-category.entity';
+import { Product } from './product.entity';
 
 /**
  * Item stored inside `Article.media` — one row per image the admin uploaded
@@ -110,6 +111,24 @@ export class Article {
   @ApiProperty({ nullable: true })
   @Column({ type: 'timestamp', nullable: true })
   publishedAt: Date | null;
+
+  /**
+   * Optional product recommendation embedded inside the article body.
+   * Renders as an inline card at the end of the article and appears as
+   * `mentions` in the BlogPosting JSON-LD (topical link Google reads
+   * as a signal that this article is about this product).
+   */
+  @ApiProperty({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
+  featuredProductId: string | null;
+
+  @ManyToOne(() => Product, {
+    onDelete: 'SET NULL',
+    nullable: true,
+    eager: false,
+  })
+  @JoinColumn({ name: 'featuredProductId' })
+  featuredProduct: Product | null;
 
   @ApiProperty()
   @CreateDateColumn()

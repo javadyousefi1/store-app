@@ -74,4 +74,13 @@ export class CreateArticleDto {
   @IsOptional()
   @IsDateString()
   publishedAt?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'Optional product to feature inline at the end of the article. Set to null to clear.',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsUUID()
+  featuredProductId?: string | null;
 }

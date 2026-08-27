@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LayoutGrid, Shirt } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -104,13 +103,14 @@ function CategoryChip({ selected, label, coverUrl, icon, onClick }: ChipProps) {
         )}
       >
         {coverUrl ? (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={coverUrl}
             alt=""
-            fill
-            sizes="(min-width: 640px) 72px, 56px"
+            loading="lazy"
+            decoding="async"
             className={cn(
-              "object-cover transition-transform duration-300",
+              "absolute inset-0 h-full w-full object-cover transition-transform duration-300",
               "group-hover:scale-[1.06]",
               selected && "scale-[1.02]",
             )}

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Minus, Plus, CreditCard } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { buttonVariants } from "@/components/ui/button";
-import { useAddToCart, useCart } from "@/hooks/use-cart";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  useAddToCart,
+  useCart,
+  useRemoveFromCart,
+  useUpdateCartQuantity,
+} from "@/hooks/use-cart";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { ProductVariant } from "@/types";
@@ -19,23 +22,39 @@ function available(v: ProductVariant & { reserved?: number }) {
 }
 
 export function AddToCart({ variant }: Props) {
-  const [qty, setQty] = useState(1);
   const addToCart = useAddToCart();
+  const updateQty = useUpdateCartQuantity();
+  const removeItem = useRemoveFromCart();
   const { data: cart } = useCart();
 
   const avail = variant ? available(variant) : 0;
   const inStock = avail > 0;
-  const inCart = variant ? (cart?.items.some((i) => i.variantId === variant.id) ?? false) : false;
+  const cartItem = variant
+    ? cart?.items.find((i) => i.variantId === variant.id) ?? null
+    : null;
+  const inCart = !!cartItem;
+  const currentQty = cartItem?.quantity ?? 0;
 
   async function handleAdd() {
     if (!variant || !inStock) return;
     try {
-      await addToCart.mutateAsync({ variantId: variant.id, qty });
+      await addToCart.mutateAsync({ variantId: variant.id, qty: 1 });
       toast.success("به سبد خرید افزوده شد");
-      setQty(1);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      const msg = (err as { response?: { data?: { message?: string } } })
+        ?.response?.data?.message;
       toast.error(msg ?? "خطا در افزودن به سبد");
+    }
+  }
+
+  async function handleQtyChange(next: number) {
+    if (!variant) return;
+    if (next < 1) return;
+    if (next > avail) return;
+    try {
+      await updateQty.mutateAsync({ variantId: variant.id, quantity: next });
+    } catch {
+      toast.error("خطا در به‌روزرسانی تعداد");
     }
   }
 
@@ -56,59 +75,93 @@ export function AddToCart({ variant }: Props) {
     );
   }
 
-  return (
-    <div className="space-y-3">
-      {/* Qty selector */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center border rounded-lg overflow-hidden">
-          <button
-            onClick={() => setQty((q) => Math.max(1, q - 1))}
-            className="px-3 py-2 hover:bg-muted transition-colors"
-            disabled={qty <= 1}
-          >
-            <Minus className="h-3.5 w-3.5" />
-          </button>
-          <span className="px-4 py-2 text-sm font-medium min-w-[2.5rem] text-center border-x">
-            {qty.toLocaleString("fa-IR")}
-          </span>
-          <button
-            onClick={() => setQty((q) => Math.min(avail, q + 1))}
-            className="px-3 py-2 hover:bg-muted transition-colors"
-            disabled={qty >= avail}
-          >
-            <Plus className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {avail > 10 ? "موجود" : `تنها ${avail.toLocaleString("fa-IR")} عدد باقی‌مانده`}
-        </p>
-      </div>
-
-      <div className={cn("grid gap-2", inCart ? "grid-cols-2" : "grid-cols-1")}>
-        <Button
-          className="h-11 text-base gap-2"
-          onClick={handleAdd}
-          disabled={addToCart.isPending}
-          variant={inCart ? "outline" : "default"}
-        >
-          {addToCart.isPending ? (
-            <div className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
-          ) : (
-            <ShoppingCart className="h-4 w-4" />
-          )}
-          {inCart ? "افزودن مجدد" : "افزودن به سبد خرید"}
-        </Button>
-
-        {inCart && (
-          <Link
-            href="/checkout"
-            className={cn(buttonVariants({ variant: "default" }), "h-11 text-base gap-2")}
-          >
-            <CreditCard className="h-4 w-4" />
-            پرداخت
-          </Link>
+  // Not in cart yet — one clean button, no qty controls.
+  if (!inCart) {
+    return (
+      <Button
+        className="w-full h-11 gap-2 text-base"
+        onClick={handleAdd}
+        disabled={addToCart.isPending}
+      >
+        {addToCart.isPending ? (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          <ShoppingCart className="h-4 w-4" />
         )}
+        افزودن به سبد خرید
+      </Button>
+    );
+  }
+
+  // In cart — qty controls only.
+  // When qty is 1, the minus becomes a trash icon that removes the item entirely.
+  const busy = updateQty.isPending || removeItem.isPending;
+  const canDecrement = currentQty > 1;
+
+  async function handleDecrementOrRemove() {
+    if (!variant) return;
+    try {
+      if (canDecrement) {
+        await updateQty.mutateAsync({
+          variantId: variant.id,
+          quantity: currentQty - 1,
+        });
+      } else {
+        await removeItem.mutateAsync(variant.id);
+        toast.success("از سبد حذف شد");
+      }
+    } catch {
+      toast.error("خطا در به‌روزرسانی سبد");
+    }
+  }
+
+  return (
+    <div className="flex h-11 w-full items-center gap-2">
+      {/* Qty controls — compact, fixed width so the checkout CTA stays dominant */}
+      <div className="flex h-full w-[7.25rem] shrink-0 items-center justify-between overflow-hidden rounded-lg border bg-background">
+        <button
+          type="button"
+          onClick={() => handleQtyChange(currentQty + 1)}
+          disabled={busy || currentQty >= avail}
+          className="flex h-full flex-1 items-center justify-center transition-colors hover:bg-muted disabled:opacity-40"
+          aria-label="افزایش تعداد"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+        <span className="min-w-[2rem] border-x px-2 text-center text-sm font-semibold tabular-nums">
+          {currentQty.toLocaleString("fa-IR")}
+        </span>
+        <button
+          type="button"
+          onClick={handleDecrementOrRemove}
+          disabled={busy}
+          className={
+            "flex h-full flex-1 items-center justify-center transition-colors disabled:opacity-40 " +
+            (canDecrement
+              ? "hover:bg-muted"
+              : "text-destructive hover:bg-destructive/10")
+          }
+          aria-label={canDecrement ? "کاهش تعداد" : "حذف از سبد"}
+        >
+          {canDecrement ? (
+            <Minus className="h-4 w-4" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
+        </button>
       </div>
+
+      {/* Checkout CTA — primary action once the item is in the cart */}
+      <Link
+        href="/checkout"
+        className={cn(
+          buttonVariants({ variant: "default" }),
+          "h-11 flex-1 gap-2 text-sm",
+        )}
+      >
+        <CreditCard className="h-4 w-4" />
+        پرداخت
+      </Link>
     </div>
   );
 }

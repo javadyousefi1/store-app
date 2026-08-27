@@ -25,6 +25,7 @@ import {
   useUploadArticleMedia,
 } from "@/hooks/use-articles";
 import { useAdminArticleCategories } from "@/hooks/use-article-categories";
+import { useProducts } from "@/hooks/use-products";
 import { useModal } from "@/hooks/use-modal";
 import { formatDate } from "@/lib/format";
 import { slugifyForUrl } from "@/lib/slugify";
@@ -43,6 +44,7 @@ interface FormState {
   metaDescription: string;
   keywords: string[];
   published: boolean;
+  featuredProductId: string | null;
 }
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -76,6 +78,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       metaDescription: article.metaDescription ?? "",
       keywords:        article.keywords,
       published:       !!article.publishedAt,
+      featuredProductId: article.featuredProductId ?? null,
     });
     setDirty(false);
   }, [article]);
@@ -103,6 +106,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           metaTitle:       form.metaTitle.trim() || undefined,
           metaDescription: form.metaDescription.trim() || undefined,
           keywords:        form.keywords,
+          featuredProductId: form.featuredProductId,
           // Only send publishedAt when the toggle actually changed — avoids
           // overwriting the original publish date on every save.
           publishedAt: form.published
@@ -335,6 +339,13 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
               </Field>
             </CardContent>
           </Card>
+
+          {/* Featured product — inline recommendation embedded at the end
+              of the article body + a `mentions` node in the JSON-LD. */}
+          <FeaturedProductPicker
+            value={form.featuredProductId}
+            onChange={(v) => patch("featuredProductId", v)}
+          />
 
           {/* Cover image */}
           <Card>
@@ -700,4 +711,127 @@ async function copyToClipboard(text: string): Promise<void> {
   } catch {
     // clipboard API may be blocked in some browsers — swallow, caller can toast
   }
+}
+
+/* ─────────────────────────── Featured product picker ─────────────────────────── */
+
+/**
+ * Small searchable picker for the "featured product" a public article
+ * embeds as an inline recommendation. Kept minimal: type-to-filter over
+ * the first page of products, click to select. The selected product
+ * gets a preview card with a "حذف" button.
+ */
+function FeaturedProductPicker({
+  value,
+  onChange,
+}: {
+  value: string | null;
+  onChange: (v: string | null) => void;
+}) {
+  const { data: page, isLoading } = useProducts(1);
+  const products = page?.data ?? [];
+  const [query, setQuery] = useState("");
+
+  const selected = products.find((p) => p.id === value) ?? null;
+
+  const filtered = query.trim()
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(query.trim().toLowerCase()),
+      )
+    : products;
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm">محصول پیشنهادی</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 pt-1">
+        <p className="text-[11px] text-muted-foreground">
+          یک کارت محصول در انتهای مقاله نمایش داده می‌شود و در JSON-LD به‌عنوان
+          <span className="mx-1 font-mono">mentions</span>
+          ثبت می‌شود — گوگل این ارجاع را به‌عنوان سیگنال ارتباط موضوعی می‌خواند.
+        </p>
+
+        {selected ? (
+          <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-2">
+            {selected.coverUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={selected.coverUrl}
+                alt=""
+                className="h-14 w-14 shrink-0 rounded-md object-cover"
+              />
+            ) : (
+              <div className="h-14 w-14 shrink-0 rounded-md bg-muted" />
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">{selected.name}</p>
+              <p className="truncate font-mono text-[11px] text-muted-foreground" dir="ltr">
+                /products/{selected.slug}
+              </p>
+            </div>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-destructive hover:text-destructive"
+              onClick={() => onChange(null)}
+              aria-label="حذف محصول پیشنهادی"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            هیچ محصولی انتخاب نشده است.
+          </p>
+        )}
+
+        <div className="space-y-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={selected ? "تغییر محصول — نام محصول را بنویس" : "نام محصول را بنویس"}
+            className="h-9 text-sm"
+          />
+          <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border bg-background p-1">
+            {isLoading ? (
+              <p className="p-2 text-xs text-muted-foreground">در حال بارگذاری...</p>
+            ) : filtered.length === 0 ? (
+              <p className="p-2 text-xs text-muted-foreground">محصولی یافت نشد.</p>
+            ) : (
+              filtered.map((p) => {
+                const isPicked = p.id === value;
+                return (
+                  <button
+                    type="button"
+                    key={p.id}
+                    onClick={() => onChange(p.id)}
+                    className={
+                      "flex w-full items-center gap-2 rounded-md p-1.5 text-right text-xs transition-colors " +
+                      (isPicked
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-muted")
+                    }
+                  >
+                    {p.coverUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.coverUrl}
+                        alt=""
+                        className="h-8 w-8 shrink-0 rounded object-cover"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 shrink-0 rounded bg-muted" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate">{p.name}</span>
+                    {isPicked && <Check className="h-3.5 w-3.5 shrink-0" />}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

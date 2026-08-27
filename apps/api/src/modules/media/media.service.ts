@@ -121,7 +121,7 @@ export class MediaService {
   }
 
   async getUrl(media: Media): Promise<string> {
-    return this.storageService.presignedGetUrl(media.key);
+    return this.storageService.publicUrl(media.key);
   }
 
   async enrichWithUrl<T extends { media: Media }>(item: T): Promise<T & { url: string }> {

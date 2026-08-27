@@ -88,7 +88,7 @@ export class ArticleService implements OnModuleInit {
   async findPublishedBySlug(slug: string): Promise<Article> {
     const article = await this.repo.findOne({
       where: { slug, publishedAt: Not(IsNull()) },
-      relations: ['category'],
+      relations: ['category', 'featuredProduct'],
     });
     if (!article) throw new NotFoundException('Article not found');
     // Fire-and-forget view count bump — never fails the read.
@@ -107,7 +107,7 @@ export class ArticleService implements OnModuleInit {
 
     return paginate(this.repo, dto.page, dto.limit, {
       where,
-      relations: ['category'],
+      relations: ['category', 'featuredProduct'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -115,7 +115,7 @@ export class ArticleService implements OnModuleInit {
   async findById(id: string): Promise<Article> {
     const article = await this.repo.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ['category', 'featuredProduct'],
     });
     if (!article) throw new NotFoundException('Article not found');
     return article;
@@ -128,6 +128,7 @@ export class ArticleService implements OnModuleInit {
     const article = this.repo.create({
       ...dto,
       publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : null,
+      featuredProductId: dto.featuredProductId ?? null,
       readTimeMinutes: this.computeReadTime(dto.content),
       keywords: dto.keywords ?? [],
       media: [],
