@@ -40,19 +40,6 @@ const faqItems = [
   },
 ] as const;
 
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "OnlineStore",
-  name: "الینا",
-  alternateName: "Elina",
-  url: "https://elina.com",
-  description:
-    "فروشگاه آنلاین پوشاک زنانه الینا؛ جدیدترین کالکشن مانتو، تیشرت، شومیز، ست، شلوار و کفش با ارسال سریع به سراسر ایران.",
-  areaServed: "IR",
-  currenciesAccepted: "IRR",
-  paymentAccepted: "درگاه بانکی آنلاین",
-};
-
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -252,10 +239,6 @@ interface ElinaHomeProps {
 export function ElinaHome({ categories, bestsellers, sliders, stories }: ElinaHomeProps) {
   return (
     <div className="w-full pb-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}

@@ -90,13 +90,18 @@ const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Organization",
+      "@type": ["Organization", "OnlineStore"],
       "@id": `${siteUrl}/#organization`,
       name: "الینا",
       alternateName: "Elina",
       url: siteUrl,
       logo: `${siteUrl}/elina/elina-logo-full.png`,
       email: "elina.clothesme@gmail.com",
+      description:
+        "فروشگاه آنلاین پوشاک زنانه الینا؛ جدیدترین کالکشن مانتو، تیشرت، شومیز، ست، شلوار و کفش با ارسال سریع به سراسر ایران.",
+      areaServed: "IR",
+      currenciesAccepted: "IRR",
+      paymentAccepted: "درگاه بانکی آنلاین",
     },
     {
       "@type": "WebSite",
