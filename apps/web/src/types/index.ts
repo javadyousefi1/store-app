@@ -234,7 +234,7 @@ export interface Product {
   name: string;
   description: string | null;
   categoryId: string;
-  category: Pick<Category, "id" | "name">;
+  category: Pick<Category, "id" | "name" | "slug">;
   coverUrl: string | null;
   minPrice: number | null;
   colors: string[];
