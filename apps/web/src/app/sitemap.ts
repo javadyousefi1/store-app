@@ -1,6 +1,11 @@
 import type { MetadataRoute } from "next";
 import { apiFetch } from "@/lib/server-fetch";
-import type { Article, ArticleCategory, PaginatedResponse, Product } from "@/types";
+import type {
+  Article,
+  Category,
+  PaginatedResponse,
+  Product,
+} from "@/types";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -30,11 +35,9 @@ async function fetchAllPublishedArticles(): Promise<Article[]> {
   return all;
 }
 
-async function fetchArticleCategories(): Promise<ArticleCategory[]> {
+async function fetchProductCategories(): Promise<Category[]> {
   try {
-    return await apiFetch<ArticleCategory[]>("/article-categories", {
-      revalidate: 3600,
-    });
+    return await apiFetch<Category[]>("/categories", { revalidate: 3600 });
   } catch {
     return [];
   }
@@ -65,9 +68,9 @@ async function fetchAllProducts(): Promise<Product[]> {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [articles, categories, products] = await Promise.all([
+  const [articles, productCategories, products] = await Promise.all([
     fetchAllPublishedArticles(),
-    fetchArticleCategories(),
+    fetchProductCategories(),
     fetchAllProducts(),
   ]);
 
@@ -93,15 +96,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const categoryEntries: MetadataRoute.Sitemap = categories.map((category) => ({
-    url: `${siteUrl}/articles?category=${category.slug}`,
-    lastModified: category.updatedAt ?? now,
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
+  // Article "category" was previously written as a query string
+  // (`/articles?category=slug`) — Google devalues query-based URLs. Drop
+  // those entries here; introduce a dedicated `/articles/category/[slug]`
+  // route if we want them back.
+
+  const productCategoryEntries: MetadataRoute.Sitemap = productCategories.map(
+    (category) => ({
+      url: `${siteUrl}/category/${encodeURIComponent(category.slug)}`,
+      lastModified: category.updatedAt ?? now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      images: category.coverUrl ? [category.coverUrl] : undefined,
+    }),
+  );
 
   const articleEntries: MetadataRoute.Sitemap = articles.map((article) => ({
-    url: `${siteUrl}/articles/${article.slug}`,
+    url: `${siteUrl}/articles/${encodeURIComponent(article.slug)}`,
     lastModified: article.updatedAt ?? article.publishedAt ?? now,
     changeFrequency: "weekly",
     priority: 0.7,
@@ -109,12 +120,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${siteUrl}/products/${product.slug}`,
+    url: `${siteUrl}/products/${encodeURIComponent(product.slug)}`,
     lastModified: product.updatedAt ?? now,
     changeFrequency: "weekly",
     priority: 0.8,
     images: product.coverUrl ? [product.coverUrl] : undefined,
   }));
 
-  return [...staticEntries, ...categoryEntries, ...articleEntries, ...productEntries];
+  return [
+    ...staticEntries,
+    ...productCategoryEntries,
+    ...articleEntries,
+    ...productEntries,
+  ];
 }

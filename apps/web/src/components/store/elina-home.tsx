@@ -276,7 +276,11 @@ export function ElinaHome({ categories, bestsellers, sliders, stories }: ElinaHo
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    href={`/products?categoryId=${category.id}`}
+                    href={
+                      category.slug
+                        ? `/category/${encodeURIComponent(category.slug)}`
+                        : `/products?categoryId=${category.id}`
+                    }
                     className="group w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)] sm:w-44 lg:w-auto"
                     style={{ scrollSnapAlign: "start" }}
                   >
