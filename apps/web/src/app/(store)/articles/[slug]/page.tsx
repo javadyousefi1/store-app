@@ -66,7 +66,8 @@ export async function generateMetadata({
 
   const title = article.metaTitle || article.title;
   const description = article.metaDescription || article.excerpt;
-  const url = `${siteUrl}/articles/${article.slug}`;
+  const encodedSlug = encodeURIComponent(article.slug);
+  const url = `${siteUrl}/articles/${encodedSlug}`;
 
   // Admin-provided metaTitle usually already carries the brand, and article
   // titles are long enough that the "| الینا" template suffix pushes past
@@ -77,7 +78,7 @@ export async function generateMetadata({
     keywords: article.keywords?.length ? article.keywords : undefined,
     authors: article.authorName ? [{ name: article.authorName }] : undefined,
     alternates: {
-      canonical: `/articles/${article.slug}`,
+      canonical: `/articles/${encodedSlug}`,
     },
     openGraph: {
       type: "article",
@@ -127,11 +128,13 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     .filter((a) => a.id !== article.id)
     .slice(0, 3);
 
-  const url = `${siteUrl}/articles/${article.slug}`;
+  const url = `${siteUrl}/articles/${encodeURIComponent(article.slug)}`;
   const coverAlt = article.coverAlt || article.title;
 
   const featured = article.featuredProduct;
-  const featuredUrl = featured ? `${siteUrl}/products/${featured.slug}` : null;
+  const featuredUrl = featured
+    ? `${siteUrl}/products/${encodeURIComponent(featured.slug)}`
+    : null;
 
   // BlogPosting JSON-LD — the primary schema Google uses to render rich
   // article results (headline, author, date, image, publisher).
