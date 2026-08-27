@@ -35,6 +35,11 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
     return first ? { ...first.attributes } : {};
   });
 
+  const selectedColorValue = selected["رنگ"];
+  const colorLabel = selectedColorValue
+    ? valueLabels[selectedColorValue] ?? selectedColorValue
+    : null;
+
   const matched =
     variants.find((v) =>
       Object.entries(selected).every(([k, val]) => v.attributes[k] === val)
@@ -89,6 +94,8 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
         <ImageGallery
           variantImageUrls={matched?.imageUrls ?? []}
           coverUrl={product.coverUrl}
+          productName={product.name}
+          colorLabel={colorLabel}
         />
 
         {/* Details */}

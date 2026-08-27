@@ -6,16 +6,26 @@ import { ImageIcon } from "lucide-react";
 interface Props {
   variantImageUrls: string[];
   coverUrl: string | null;
+  productName: string;
+  colorLabel?: string | null;
 }
 
-export function ImageGallery({ variantImageUrls, coverUrl }: Props) {
+export function ImageGallery({
+  variantImageUrls,
+  coverUrl,
+  productName,
+  colorLabel,
+}: Props) {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
     setActive(variantImageUrls[0] ?? coverUrl ?? null);
   }, [variantImageUrls, coverUrl]);
 
-  const thumbs = variantImageUrls.length > 0 ? variantImageUrls : coverUrl ? [coverUrl] : [];
+  const thumbs =
+    variantImageUrls.length > 0 ? variantImageUrls : coverUrl ? [coverUrl] : [];
+
+  const baseAlt = colorLabel ? `${productName} — رنگ ${colorLabel}` : productName;
 
   return (
     <div className="space-y-3">
@@ -25,7 +35,7 @@ export function ImageGallery({ variantImageUrls, coverUrl }: Props) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={active}
-            alt=""
+            alt={baseAlt}
             loading="eager"
             decoding="async"
             className="w-full h-full object-contain"
@@ -49,11 +59,12 @@ export function ImageGallery({ variantImageUrls, coverUrl }: Props) {
                   ? "border-primary ring-2 ring-primary/30"
                   : "border-border hover:border-foreground/30 opacity-70 hover:opacity-100"
               }`}
+              aria-label={`نمایش تصویر ${i + 1} از ${productName}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={url}
-                alt=""
+                alt={`${baseAlt} — تصویر ${i + 1}`}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"
