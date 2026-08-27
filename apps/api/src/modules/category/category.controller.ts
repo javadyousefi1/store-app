@@ -21,6 +21,14 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @Get('by-slug/:slug')
+  @ApiOperation({ summary: 'Get category by slug — SEO storefront lookup', description: 'Public endpoint. Returns the same shape as the list endpoint items.' })
+  @ApiResponse({ status: 200 })
+  @ApiResponse({ status: 404, description: 'Category not found.' })
+  findBySlug(@Param('slug') slug: string) {
+    return this.categoryService.findBySlug(slug);
+  }
+
   @Post()
   @ApiBearerAuth()
   @UseGuards(JwtGuard, RolesGuard)

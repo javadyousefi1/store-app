@@ -17,6 +17,17 @@ export function useCategories(enabled = true) {
   });
 }
 
+export function useCategoryBySlug(slug: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: ["categories", "by-slug", slug],
+    queryFn: () =>
+      apiClient
+        .get<ApiResponse<Category>>(`/categories/by-slug/${slug}`)
+        .then((r) => r.data.data),
+    enabled: !!slug && enabled,
+  });
+}
+
 export function useCreateCategory() {
   const qc = useQueryClient();
   return useMutation({

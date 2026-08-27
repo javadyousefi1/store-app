@@ -56,6 +56,7 @@ export interface User {
 export interface Category {
   id: string;
   name: string;
+  slug: string;
   coverId?: string | null;
   coverUrl?: string | null;
   createdAt: string;
@@ -64,10 +65,12 @@ export interface Category {
 
 export interface CreateCategoryRequest {
   name: string;
+  slug: string;
 }
 
 export interface UpdateCategoryRequest {
-  name: string;
+  name?: string;
+  slug?: string;
 }
 
 // Slider

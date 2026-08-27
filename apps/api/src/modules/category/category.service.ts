@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Category } from '../../entities/category.entity';
 import { Product } from '../../entities/product.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -30,14 +30,32 @@ export class CategoryService {
     return category;
   }
 
-  create(dto: CreateCategoryDto): Promise<Category> {
+  async findBySlug(slug: string): Promise<Category> {
+    const category = await this.repo.findOne({ where: { slug }, relations: ['cover'] });
+    if (!category) throw new NotFoundException('Category not found');
+    return this.attachCoverUrl(category);
+  }
+
+  async create(dto: CreateCategoryDto): Promise<Category> {
+    await this.assertSlugFree(dto.slug);
     return this.repo.save(this.repo.create(dto));
   }
 
   async update(id: string, dto: UpdateCategoryDto): Promise<Category> {
     const category = await this.findOneOrFail(id);
+    if (dto.slug && dto.slug !== category.slug) {
+      await this.assertSlugFree(dto.slug);
+    }
     Object.assign(category, dto);
     return this.repo.save(category);
+  }
+
+  private async assertSlugFree(slug: string): Promise<void> {
+    const exists = await this.repo.findOne({
+      where: { slug, deletedAt: IsNull() },
+      select: ['id'],
+    });
+    if (exists) throw new BadRequestException(`دسته‌بندی با slug «${slug}» قبلاً وجود دارد`);
   }
 
   async remove(id: string): Promise<void> {

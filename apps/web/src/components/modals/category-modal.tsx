@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
+import { slugifyForUrl } from "@/lib/slugify";
 import {
   COVER_ALLOWED_MIME,
   useRemoveCategoryCover,
@@ -23,24 +24,42 @@ import type { Category } from "@/types";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (name: string) => Promise<void>;
+  onSubmit: (data: { name: string; slug: string }) => Promise<void>;
   isPending?: boolean;
   initial?: Category;
 }
 
 export function CategoryModal({ open, onClose, onSubmit, isPending, initial }: Props) {
   const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  // While false, slug auto-tracks name. Flips to true once the admin edits
+  // slug directly (or when opening an existing category that already has one).
+  const [slugTouched, setSlugTouched] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadCover = useUploadCategoryCover();
   const removeCover = useRemoveCategoryCover();
 
   useEffect(() => {
-    if (open) setName(initial?.name ?? "");
+    if (open) {
+      setName(initial?.name ?? "");
+      setSlug(initial?.slug ?? "");
+      setSlugTouched(!!initial?.slug);
+    }
   }, [open, initial]);
+
+  function updateName(value: string) {
+    setName(value);
+    if (!slugTouched) setSlug(slugifyForUrl(value));
+  }
+
+  function updateSlug(value: string) {
+    setSlugTouched(true);
+    setSlug(slugifyForUrl(value));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await onSubmit(name);
+    await onSubmit({ name, slug });
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -66,6 +85,7 @@ export function CategoryModal({ open, onClose, onSubmit, isPending, initial }: P
   }
 
   const coverBusy = uploadCover.isPending || removeCover.isPending;
+  const canSubmit = name.trim().length >= 2 && slug.trim().length >= 2;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -78,10 +98,28 @@ export function CategoryModal({ open, onClose, onSubmit, isPending, initial }: P
             <Label>نام</Label>
             <Input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => updateName(e.target.value)}
               placeholder="موبایل"
               autoFocus
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>
+              اسلاگ (URL){" "}
+              <span className="text-muted-foreground text-xs" dir="ltr">
+                /categories/{slug || "..."}
+              </span>
+            </Label>
+            <Input
+              value={slug}
+              onChange={(e) => updateSlug(e.target.value)}
+              dir="ltr"
+              placeholder="mobile"
+            />
+            <p className="text-xs text-muted-foreground">
+              حروف/اعداد لاتین یا فارسی و <code>-</code>. از نام دسته‌بندی خودکار ساخته می‌شود؛ می‌توانید تغییر دهید.
+            </p>
           </div>
 
           {initial && (
@@ -149,7 +187,7 @@ export function CategoryModal({ open, onClose, onSubmit, isPending, initial }: P
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
               انصراف
             </Button>
-            <Button type="submit" disabled={isPending || !name.trim()}>
+            <Button type="submit" disabled={isPending || !canSubmit}>
               {isPending ? "در حال ذخیره..." : "ذخیره"}
             </Button>
           </DialogFooter>

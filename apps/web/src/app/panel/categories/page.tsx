@@ -19,18 +19,19 @@ export default function CategoriesPage() {
   const formModal = useModal<Category>();
   const deleteModal = useModal<Category>();
 
-  async function handleSubmit(name: string) {
+  async function handleSubmit({ name, slug }: { name: string; slug: string }) {
     try {
       if (formModal.data) {
-        await updateCategory.mutateAsync({ id: formModal.data.id, data: { name } });
+        await updateCategory.mutateAsync({ id: formModal.data.id, data: { name, slug } });
         toast.success("دسته‌بندی ویرایش شد");
       } else {
-        await createCategory.mutateAsync({ name });
+        await createCategory.mutateAsync({ name, slug });
         toast.success("دسته‌بندی ایجاد شد");
       }
       formModal.close();
-    } catch {
-      toast.error("خطا در ذخیره");
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? "خطا در ذخیره");
     }
   }
 
@@ -70,6 +71,15 @@ export default function CategoriesPage() {
       key: "name",
       header: "نام دسته‌بندی",
       cell: (row) => <span className="font-medium">{row.name}</span>,
+    },
+    {
+      key: "slug",
+      header: "اسلاگ",
+      cell: (row) => (
+        <code className="text-xs text-muted-foreground" dir="ltr">
+          {row.slug}
+        </code>
+      ),
     },
     {
       key: "createdAt",

@@ -21,6 +21,11 @@ export class Category {
   @Column({ length: 100 })
   name: string;
 
+  /** URL segment. `/categories/<slug>` on the storefront. Unique. */
+  @ApiProperty({ example: 'electronics' })
+  @Column({ length: 160 })
+  slug: string;
+
   @Column({ type: 'uuid', nullable: true })
   coverId: string | null;
 
