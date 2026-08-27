@@ -1,5 +1,10 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { PaymentCallbackClient } from "./client";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 // useSearchParams needs a Suspense boundary in Next 16 — see docs.
 export default function PaymentCallbackPage() {
