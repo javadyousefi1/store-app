@@ -24,17 +24,43 @@ interface PageProps {
   }>;
 }
 
-export const metadata: Metadata = {
-  title: "فروشگاه پوشاک زنانه",
-  description:
-    "مشاهده و خرید آنلاین محصولات زنانه الینا؛ جدیدترین مانتو، تیشرت، ست و شلوار.",
-  alternates: {
-    canonical: "/products",
-  },
-};
-
 function first(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const rawParams = await searchParams;
+  const page = first(rawParams.page) ?? "1";
+  const pageNum = Math.max(1, Number(page) || 1);
+
+  // Any filter/search/sort presence → noindex,follow so Google indexes
+  // the clean /products (and category pages) rather than every filter
+  // permutation.
+  const hasFilter = Boolean(
+    first(rawParams.categoryId) ||
+      first(rawParams.categoryIds) ||
+      first(rawParams.minPrice) ||
+      first(rawParams.maxPrice) ||
+      first(rawParams.search) ||
+      first(rawParams.sort),
+  );
+
+  // Pagination: self-canonical to the current page (?page=n). Page 1
+  // canonicalises to the bare /products.
+  const canonical =
+    pageNum > 1 ? `/products?page=${pageNum}` : "/products";
+
+  return {
+    title: "فروشگاه پوشاک زنانه",
+    description:
+      "مشاهده و خرید آنلاین محصولات زنانه الینا؛ جدیدترین مانتو، تیشرت، ست و شلوار.",
+    alternates: {
+      canonical,
+    },
+    robots: hasFilter ? { index: false, follow: true } : undefined,
+  };
 }
 
 export default async function ProductsPage({ searchParams }: PageProps) {
