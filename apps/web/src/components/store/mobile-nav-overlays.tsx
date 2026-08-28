@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   BookOpen,
@@ -39,6 +39,7 @@ const fallbackCategories = [
 type MobileCategoryOption = {
   id: string;
   name: string;
+  slug?: string;
   query?: string;
 };
 
@@ -59,11 +60,13 @@ export function MobileCategoryDrawer({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { data: categories } = useCategories(open);
   const categoryOptions: MobileCategoryOption[] = categories?.length
     ? categories.map((category) => ({
         id: category.id,
         name: category.name,
+        slug: category.slug,
       }))
     : [...fallbackCategories];
   const activeIds = useMemo(
@@ -71,6 +74,10 @@ export function MobileCategoryDrawer({
     [searchParams],
   );
   const activeSearch = searchParams.get("search") ?? "";
+  const activeCategorySlug = useMemo(() => {
+    const match = pathname?.match(/^\/category\/([^/?]+)/);
+    return match ? decodeURIComponent(match[1]) : "";
+  }, [pathname]);
 
   function selectCategory(category?: MobileCategoryOption) {
     const params = new URLSearchParams(searchParams.toString());
@@ -78,12 +85,37 @@ export function MobileCategoryDrawer({
     params.delete("categoryId");
     params.delete("page");
 
-    if (category?.query) params.set("search", category.query);
-    else if (category) params.set("categoryId", category.id);
-    else params.delete("search");
+    // "همه محصولات" — drop the fallback search too.
+    if (!category) {
+      params.delete("search");
+      const query = params.toString();
+      router.push(query ? `/products?${query}` : "/products");
+      onOpenChange(false);
+      return;
+    }
 
-    const query = params.toString();
-    router.push(query ? `/products?${query}` : "/products");
+    // Fallback categories map onto a `search` query — no dedicated slug page.
+    if (category.query) {
+      params.set("search", category.query);
+      const query = params.toString();
+      router.push(query ? `/products?${query}` : "/products");
+      onOpenChange(false);
+      return;
+    }
+
+    // Real category — prefer the SEO-friendly /category/<slug> route.
+    if (category.slug) {
+      params.delete("search");
+      const query = params.toString();
+      const base = `/category/${encodeURIComponent(category.slug)}`;
+      router.push(query ? `${base}?${query}` : base);
+      onOpenChange(false);
+      return;
+    }
+
+    // Legacy path: category without slug (shouldn't happen after migration).
+    params.set("categoryId", category.id);
+    router.push(`/products?${params}`);
     onOpenChange(false);
   }
 
@@ -107,7 +139,7 @@ export function MobileCategoryDrawer({
               onClick={() => selectCategory()}
               className={cn(
                 "flex h-13 w-full items-center justify-between rounded-xl px-4 text-right text-sm font-medium transition-colors",
-                activeIds.length === 0 && !activeSearch
+                activeIds.length === 0 && !activeSearch && !activeCategorySlug
                   ? "bg-secondary text-primary"
                   : "hover:bg-muted",
               )}
@@ -131,7 +163,8 @@ export function MobileCategoryDrawer({
             {categoryOptions.map((category) => {
               const active =
                 activeIds.includes(category.id) ||
-                category.query === activeSearch;
+                category.query === activeSearch ||
+                (!!category.slug && category.slug === activeCategorySlug);
               return (
                 <button
                   key={category.id}
@@ -179,6 +212,7 @@ export function MobileProductFilterDialog({
     ? categories.map((category) => ({
         id: category.id,
         name: category.name,
+        slug: category.slug,
       }))
     : [...fallbackCategories];
   const [categoryIds, setCategoryIds] = useState<string[]>([]);

@@ -24,14 +24,31 @@ export function CategoryFilter({ categories, active }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  function select(id?: string) {
+  function selectAll() {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("categoryIds");
-    if (id) params.set("categoryId", id);
-    else params.delete("categoryId");
+    params.delete("categoryId");
     params.delete("page");
     const query = params.toString();
     router.push(query ? `/products?${query}` : "/products");
+  }
+
+  function selectCategory(category: Category) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("categoryIds");
+    params.delete("categoryId");
+    params.delete("page");
+    const query = params.toString();
+
+    if (category.slug) {
+      const base = `/category/${encodeURIComponent(category.slug)}`;
+      router.push(query ? `${base}?${query}` : base);
+    } else {
+      // Backfilled/legacy categories without a real slug — fall back to the
+      // old query-string filter so the shopper still sees products.
+      params.set("categoryId", category.id);
+      router.push(`/products?${params}`);
+    }
   }
 
   return (
@@ -52,16 +69,16 @@ export function CategoryFilter({ categories, active }: Props) {
           selected={!active}
           label="همه"
           icon={LayoutGrid}
-          onClick={() => select()}
+          onClick={selectAll}
         />
 
         {categories.map((category) => (
           <CategoryChip
             key={category.id}
-            selected={active === category.id}
+            selected={active === category.id || active === category.slug}
             label={category.name}
             coverUrl={category.coverUrl ?? null}
-            onClick={() => select(category.id)}
+            onClick={() => selectCategory(category)}
           />
         ))}
       </div>
