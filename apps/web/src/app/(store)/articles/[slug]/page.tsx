@@ -69,6 +69,16 @@ export async function generateMetadata({
   const encodedSlug = encodeURIComponent(article.slug);
   const url = `${siteUrl}/articles/${encodedSlug}`;
 
+  // Article-specific hero image for social/search cards. Falls back to the
+  // first uploaded body-image when the admin forgot a cover, then to null.
+  // Never inherit the layout OG image (site logo) — Google Search was
+  // picking that up on cover-less articles.
+  const heroImage =
+    article.coverUrl ??
+    article.media?.find((m) => m.url)?.url ??
+    null;
+  const heroAlt = article.coverAlt || article.title;
+
   // Admin-provided metaTitle usually already carries the brand, and article
   // titles are long enough that the "| الینا" template suffix pushes past
   // Google's snippet limit. Use `absolute` for either case.
@@ -92,20 +102,15 @@ export async function generateMetadata({
       authors: article.authorName ? [article.authorName] : undefined,
       section: article.category?.name,
       tags: article.keywords,
-      images: article.coverUrl
-        ? [
-            {
-              url: article.coverUrl,
-              alt: article.coverAlt || article.title,
-            },
-          ]
-        : undefined,
+      // Setting an empty array on the cover-less path prevents the parent
+      // layout's logo image from being inherited as this article's card.
+      images: heroImage ? [{ url: heroImage, alt: heroAlt }] : [],
     },
     twitter: {
-      card: "summary_large_image",
+      card: heroImage ? "summary_large_image" : "summary",
       title,
       description,
-      images: article.coverUrl ? [article.coverUrl] : undefined,
+      images: heroImage ? [heroImage] : [],
     },
   };
 }
@@ -136,6 +141,17 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     ? `${siteUrl}/products/${encodeURIComponent(featured.slug)}`
     : null;
 
+  // Ordered image list for BlogPosting JSON-LD. Cover first, then body
+  // images. Google prefers article-specific imagery over the site logo when
+  // rendering rich search cards. Dedupe by URL.
+  const articleImages = Array.from(
+    new Set(
+      [article.coverUrl, ...(article.media ?? []).map((m) => m.url)].filter(
+        (u): u is string => !!u,
+      ),
+    ),
+  );
+
   // BlogPosting JSON-LD — the primary schema Google uses to render rich
   // article results (headline, author, date, image, publisher).
   const articleLd = {
@@ -144,7 +160,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     headline: article.title,
     description: article.metaDescription || article.excerpt,
-    image: article.coverUrl ? [article.coverUrl] : undefined,
+    image: articleImages.length ? articleImages : undefined,
     datePublished: article.publishedAt ?? article.createdAt,
     dateModified: article.updatedAt,
     author: {
