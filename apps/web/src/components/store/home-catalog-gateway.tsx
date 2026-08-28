@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
 interface HomeCatalogGatewayProps {
@@ -72,44 +73,73 @@ export function HomeCatalogGateway({ products }: HomeCatalogGatewayProps) {
           style={{ scrollSnapType: "x mandatory" }}
         >
           <div className="flex gap-3 pb-5 pt-2 sm:gap-4 sm:pb-6">
-            {tiles.map((product) => (
-              <article
-                key={product.id}
-                className="group relative w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(42,31,65,0.12)] sm:w-44 lg:w-52"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                <Link
-                  href={`/products/${product.slug}`}
-                  className="relative block aspect-[3/4] overflow-hidden bg-muted"
-                  aria-label={`مشاهده ${product.name}`}
+            {tiles.map((product) => {
+              const outOfStock = !product.inStock;
+              return (
+                <article
+                  key={product.id}
+                  className={cn(
+                    "group relative w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.05)] transition duration-300 sm:w-44 lg:w-52",
+                    outOfStock
+                      ? "hover:shadow-[0_10px_26px_rgba(42,31,65,0.08)]"
+                      : "hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(42,31,65,0.12)]",
+                  )}
+                  style={{ scrollSnapAlign: "start" }}
                 >
-                  {product.coverUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={product.coverUrl}
-                      alt={product.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
-                  )}
-                </Link>
-                <div className="flex items-center justify-between gap-2 p-3">
-                  <h3 className="min-w-0 truncate text-right text-xs font-medium text-[#37303d] sm:text-sm">
-                    {product.name}
-                  </h3>
-                  {product.minPrice != null && (
-                    <p className="shrink-0 text-xs font-bold text-primary sm:text-sm">
-                      <span className="sr-only">قیمت </span>
-                      {formatPrice(product.minPrice)}
-                      <span className="mr-0.5 text-[10px] font-normal">ت</span>
-                    </p>
-                  )}
-                </div>
-              </article>
-            ))}
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="relative block aspect-[3/4] overflow-hidden bg-muted"
+                    aria-label={
+                      outOfStock
+                        ? `مشاهده ${product.name} — ناموجود`
+                        : `مشاهده ${product.name}`
+                    }
+                  >
+                    {product.coverUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.coverUrl}
+                        alt={product.name}
+                        loading="lazy"
+                        decoding="async"
+                        className={cn(
+                          "absolute inset-0 h-full w-full object-cover transition duration-500",
+                          outOfStock
+                            ? "grayscale opacity-75"
+                            : "group-hover:scale-[1.035]",
+                        )}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+                    )}
+                    {outOfStock && (
+                      <span className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-[#2f2938]/85 py-1.5 text-[11px] font-semibold tracking-wide text-white backdrop-blur-sm">
+                        ناموجود
+                      </span>
+                    )}
+                  </Link>
+                  <div className="flex items-center justify-between gap-2 p-3">
+                    <h3 className="min-w-0 truncate text-right text-xs font-medium text-[#37303d] sm:text-sm">
+                      {product.name}
+                    </h3>
+                    {product.minPrice != null && (
+                      <p
+                        className={cn(
+                          "shrink-0 text-xs font-bold sm:text-sm",
+                          outOfStock
+                            ? "text-muted-foreground line-through decoration-1"
+                            : "text-primary",
+                        )}
+                      >
+                        <span className="sr-only">قیمت </span>
+                        {formatPrice(product.minPrice)}
+                        <span className="mr-0.5 text-[10px] font-normal">ت</span>
+                      </p>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </div>

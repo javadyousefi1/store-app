@@ -323,11 +323,12 @@ export class ProductService {
             .createQueryBuilder('v')
             .select('v.productId', 'productId')
             .addSelect('MIN(v.price)', 'minPrice')
+            .addSelect('SUM(GREATEST(v.stock - v.reserved, 0))', 'available')
             .addSelect(`array_agg(DISTINCT v.attributes->>'رنگ') FILTER (WHERE v.attributes->>'رنگ' IS NOT NULL)`, 'colors')
             .where('v.productId IN (:...ids)', {ids: products.map((p) => p.id)})
             .andWhere('v.deletedAt IS NULL')
             .groupBy('v.productId')
-            .getRawMany<{ productId: string; minPrice: string; colors: string[] | null }>();
+            .getRawMany<{ productId: string; minPrice: string; available: string | null; colors: string[] | null }>();
 
         const summaryMap = new Map(rows.map((r) => [r.productId, r]));
 
@@ -335,6 +336,7 @@ export class ProductService {
             const row = summaryMap.get(product.id);
             (product as any).minPrice = row ? Number(row.minPrice) : null;
             (product as any).colors = row?.colors ?? [];
+            (product as any).inStock = row ? Number(row.available ?? 0) > 0 : false;
         }
     }
 

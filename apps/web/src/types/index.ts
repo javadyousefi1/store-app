@@ -238,6 +238,7 @@ export interface Product {
   coverUrl: string | null;
   minPrice: number | null;
   colors: string[];
+  inStock: boolean;
   notified: boolean;
   isActive: boolean;
   createdAt: string;

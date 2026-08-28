@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/store/favorite-button";
+import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
 interface Props {
@@ -9,14 +10,24 @@ interface Props {
 }
 
 export function ProductCard({ product }: Props) {
+  const outOfStock = !product.inStock;
+
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group relative block rounded-2xl border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+      aria-label={
+        outOfStock ? `${product.name} — ناموجود` : product.name
+      }
+      className={cn(
+        "group relative block rounded-2xl border bg-card overflow-hidden transition-all duration-200",
+        outOfStock
+          ? "hover:shadow-md"
+          : "hover:shadow-lg hover:-translate-y-0.5",
+      )}
     >
       <FavoriteButton productId={product.id} size="sm" />
       {/* Image */}
-      <div className="aspect-square bg-muted/50 overflow-hidden">
+      <div className="relative aspect-square bg-muted/50 overflow-hidden">
         {product.coverUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -24,12 +35,23 @@ export function ProductCard({ product }: Props) {
             alt={product.name}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className={cn(
+              "w-full h-full object-cover transition-transform duration-300",
+              outOfStock
+                ? "grayscale opacity-70"
+                : "group-hover:scale-105",
+            )}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
           </div>
+        )}
+
+        {outOfStock && (
+          <span className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-foreground/85 py-1.5 text-[11px] font-semibold tracking-wide text-background backdrop-blur-sm">
+            ناموجود
+          </span>
         )}
       </div>
 
@@ -44,7 +66,10 @@ export function ProductCard({ product }: Props) {
             {product.colors.slice(0, 6).map((c) => (
               <span
                 key={c}
-                className="w-4 h-4 rounded-full border border-black/10 shrink-0"
+                className={cn(
+                  "w-4 h-4 rounded-full border border-black/10 shrink-0",
+                  outOfStock && "opacity-60",
+                )}
                 style={{ backgroundColor: c }}
                 title={c}
               />
@@ -57,9 +82,23 @@ export function ProductCard({ product }: Props) {
           </div>
         )}
         {product.minPrice != null ? (
-          <p className="text-sm font-bold text-primary">
+          <p
+            className={cn(
+              "text-sm font-bold",
+              outOfStock
+                ? "text-muted-foreground line-through decoration-1"
+                : "text-primary",
+            )}
+          >
             از {product.minPrice.toLocaleString("fa-IR")}{" "}
-            <span className="text-xs font-normal text-muted-foreground">تومان</span>
+            <span
+              className={cn(
+                "text-xs font-normal",
+                outOfStock ? "text-muted-foreground/70" : "text-muted-foreground",
+              )}
+            >
+              تومان
+            </span>
           </p>
         ) : (
           <p className="text-xs text-muted-foreground">قیمت تعیین نشده</p>
