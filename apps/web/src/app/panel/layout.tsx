@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Sidebar } from "@/components/panel/sidebar";
+import { PanelSidebar } from "@/components/panel/sidebar";
 import { MobileHeader } from "@/components/panel/mobile-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default async function PanelLayout({
   children,
@@ -12,14 +14,16 @@ export default async function PanelLayout({
   if (!cookieStore.get("access_token")) redirect("/admin/login");
 
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/20">
-      <Sidebar />
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <MobileHeader />
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <TooltipProvider delay={100}>
+      <SidebarProvider>
+        <PanelSidebar />
+        <SidebarInset className="min-w-0 bg-muted/20">
+          <MobileHeader />
+          <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }

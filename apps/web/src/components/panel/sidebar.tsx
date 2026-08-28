@@ -1,9 +1,12 @@
+"use client";
+
+import { Sidebar as UISidebar } from "@/components/ui/sidebar";
 import { NavContent } from "./nav-content";
 
-export function Sidebar() {
+export function PanelSidebar() {
   return (
-    <aside className="hidden md:flex w-60 shrink-0 flex-col border-l bg-card h-full">
+    <UISidebar side="right" collapsible="offcanvas">
       <NavContent />
-    </aside>
+    </UISidebar>
   );
 }
