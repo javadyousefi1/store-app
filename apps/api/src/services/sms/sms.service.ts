@@ -51,6 +51,29 @@ export class SmsService {
   }
 
   /**
+   * "Product is back in stock" notification. Sent when a variant a
+   * shopper subscribed to becomes available again. Template variable
+   * is passed through Kavenegar's `token10` slot because a URL contains
+   * `:` and `/`, which the plain `token` slot rejects. IMPORTANT —
+   * the Kavenegar template (`restock-elina`) must reference `%token10`,
+   * not `%token`, or Kavenegar will drop the URL.
+   *
+   * Non-critical — callers should fire-and-forget so a Kavenegar hiccup
+   * doesn't take down the restock sweep.
+   */
+  async sendRestockNotification(phone: string, productUrl: string): Promise<void> {
+    const tpl = this.config.get<string>('kavenegar.restockTemplate');
+    // `token` still needs to be non-empty (Kavenegar validation), so we
+    // pass a placeholder — the actual variable used in the template is
+    // `%token10`.
+    return this.sendLookup(phone, {
+      template: tpl,
+      token: '_',
+      token10: productUrl,
+    });
+  }
+
+  /**
    * Low-level Kavenegar `/verify/lookup.json` call. Throws
    * BadRequestException on any failure. Empty API key = dev mode: skip the
    * HTTP call and log instead (so devs can develop without an account).

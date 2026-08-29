@@ -53,6 +53,7 @@ export default () => ({
     // Lookup template names registered in the Kavenegar panel.
     otpTemplate: process.env.KAVENEGAR_OTP_TEMPLATE || 'otp-elina',
     orderCreatedTemplate: process.env.KAVENEGAR_ORDER_CREATED_TEMPLATE || 'order-created-elina',
+    restockTemplate: process.env.KAVENEGAR_RESTOCK_TEMPLATE || 'restock-elina',
   },
 
   cod24: {
