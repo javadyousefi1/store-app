@@ -4,7 +4,20 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { apiFetch } from "@/lib/server-fetch";
 import { ProductDetailClient } from "@/components/store/product-detail-client";
-import type { Attribute, ProductDetail } from "@/types";
+import { RelatedProducts } from "@/components/store/related-products";
+import type {
+  Attribute,
+  PaginatedResponse,
+  Product,
+  ProductDetail,
+} from "@/types";
+
+/**
+ * How many neighbours to show in the "محصولات مشابه" rail. We pull one
+ * extra so we can filter the current product out and still fill the
+ * grid on desktop (4 cols).
+ */
+const RELATED_LIMIT = 9;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -60,9 +73,15 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  const attributes = await apiFetch<Attribute[]>("/attributes").catch(
-    () => [] as Attribute[],
-  );
+  const [attributes, relatedRes] = await Promise.all([
+    apiFetch<Attribute[]>("/attributes").catch(() => [] as Attribute[]),
+    product.categoryId
+      ? apiFetch<PaginatedResponse<Product>>(
+          `/products?categoryId=${product.categoryId}&limit=${RELATED_LIMIT}`,
+          { revalidate: 300 },
+        ).catch(() => null)
+      : Promise.resolve(null),
+  ]);
 
   // Build value → label lookup for all attributes that have a label
   const valueLabels: Record<string, string> = {};
@@ -71,6 +90,12 @@ export default async function ProductPage({ params }: PageProps) {
       if (v.label) valueLabels[v.value] = v.label;
     }
   }
+
+  // Drop the current product from its own related rail, cap at 8 so
+  // the desktop grid stays a clean 2×4 (mobile just scrolls through).
+  const relatedProducts = (relatedRes?.data ?? [])
+    .filter((p) => p.id !== product.id)
+    .slice(0, 8);
 
   const canonicalUrl = `${siteUrl}/products/${encodeURIComponent(slug)}`;
   const categorySlug = product.category?.slug;
@@ -213,6 +238,13 @@ export default async function ProductPage({ params }: PageProps) {
           product as Parameters<typeof ProductDetailClient>[0]["product"]
         }
         valueLabels={valueLabels}
+      />
+
+      <RelatedProducts
+        products={relatedProducts}
+        categoryName={product.category?.name}
+        categorySlug={categorySlug}
+        categoryId={product.categoryId}
       />
     </div>
   );
