@@ -9,20 +9,24 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { UserRole } from '../../entities/user.entity';
 
 @ApiTags('Attributes')
-@ApiBearerAuth()
-@UseGuards(JwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
 @Controller('attributes')
 export class AttributeController {
   constructor(private readonly service: AttributeService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List all attributes with their values', description: '**Admin only.**' })
+  @ApiOperation({
+    summary: 'List all attributes with their values',
+    description:
+      'Public — the storefront needs this to resolve variant attribute labels (e.g. color chips) on the product page.',
+  })
   findAll() {
     return this.service.findAll();
   }
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create attribute', description: '**Admin only.** Name must be unique.' })
   @ApiResponse({ status: 409, description: 'Attribute already exists.' })
   create(@Body() dto: CreateAttributeDto) {
@@ -30,6 +34,9 @@ export class AttributeController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Soft delete attribute and all its values', description: '**Admin only.**' })
   @ApiResponse({ status: 404, description: 'Attribute not found.' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -37,6 +44,9 @@ export class AttributeController {
   }
 
   @Post(':id/values')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Add value to attribute', description: '**Admin only.**' })
   @ApiResponse({ status: 409, description: 'Value already exists for this attribute.' })
   @ApiResponse({ status: 404, description: 'Attribute not found.' })
@@ -48,6 +58,9 @@ export class AttributeController {
   }
 
   @Delete(':id/values/:valueId')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Soft delete a value', description: '**Admin only.**' })
   @ApiResponse({ status: 404, description: 'Value not found.' })
   removeValue(
