@@ -304,10 +304,22 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
                 <p className="text-xs text-muted-foreground">
                   خاموش = پیش‌نویس. روشن = برای عموم قابل مشاهده.
                 </p>
+                {!form.coverUrl.trim() && (
+                  <p className="text-xs text-amber-700">
+                    برای انتشار، ابتدا تصویر کاور را ست کن.
+                  </p>
+                )}
               </div>
               <Switch
                 checked={form.published}
-                onCheckedChange={(v) => patch("published", v)}
+                onCheckedChange={(v) => {
+                  if (v && !form.coverUrl.trim()) {
+                    toast.error("برای انتشار، ابتدا تصویر کاور را ست کن");
+                    return;
+                  }
+                  patch("published", v);
+                }}
+                disabled={!form.coverUrl.trim() && !form.published}
               />
             </CardContent>
           </Card>
@@ -350,12 +362,18 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           {/* Cover image */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm">تصویر کاور</CardTitle>
+              <CardTitle className="text-sm">
+                تصویر کاور <span className="text-destructive">*</span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 pt-1">
               <Field
                 label="URL کاور"
-                hint={<span className="text-[11px] text-muted-foreground">از پنل مدیا یکی را کپی کن</span>}
+                hint={
+                  <span className="text-[11px] text-muted-foreground">
+                    برای انتشار الزامی است — از پنل مدیا یکی را کپی کن
+                  </span>
+                }
               >
                 <Input
                   value={form.coverUrl}

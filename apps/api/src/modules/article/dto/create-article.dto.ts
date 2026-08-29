@@ -31,7 +31,10 @@ export class CreateArticleDto {
   @Length(50, 200_000)
   content: string;
 
-  @ApiPropertyOptional({ description: 'Public URL for cover image' })
+  @ApiPropertyOptional({
+    description:
+      'Public URL for cover image. Optional when creating a draft, **required to publish** — Google Search cards use this and fall back to the site logo when missing.',
+  })
   @IsOptional()
   @IsUrl({ require_protocol: true })
   coverUrl?: string;

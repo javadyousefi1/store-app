@@ -125,6 +125,14 @@ export class ArticleService implements OnModuleInit {
     await this.categoryService.findById(dto.categoryId); // 404 if bad
     await this.assertSlugFree(dto.slug);
 
+    // Publishing on create → must ship with a cover so Google's card
+    // isn't seeded with our site logo.
+    if (dto.publishedAt && !dto.coverUrl?.trim()) {
+      throw new BadRequestException(
+        'برای انتشار مقاله، تصویر کاور الزامی است',
+      );
+    }
+
     const article = this.repo.create({
       ...dto,
       publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : null,
@@ -146,6 +154,11 @@ export class ArticleService implements OnModuleInit {
       await this.assertSlugFree(dto.slug);
     }
 
+    // Cover is required — reject explicit removal via PATCH.
+    if ('coverUrl' in dto && !dto.coverUrl?.trim()) {
+      throw new BadRequestException('coverUrl الزامی است و نمی‌تواند حذف شود');
+    }
+
     Object.assign(article, {
       ...dto,
       publishedAt: dto.publishedAt !== undefined
@@ -154,6 +167,15 @@ export class ArticleService implements OnModuleInit {
     });
     if (dto.content !== undefined) {
       article.readTimeMinutes = this.computeReadTime(dto.content);
+    }
+
+    // Backstop for legacy rows: if we end up published without a cover
+    // (older draft that never had one), refuse rather than emit a
+    // logo-only Google card.
+    if (article.publishedAt && !article.coverUrl?.trim()) {
+      throw new BadRequestException(
+        'برای انتشار مقاله، تصویر کاور الزامی است',
+      );
     }
 
     return this.repo.save(article);
