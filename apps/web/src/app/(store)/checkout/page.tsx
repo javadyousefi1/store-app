@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useCart } from "@/hooks/use-cart";
+import { useAuthSession } from "@/hooks/use-auth";
 import { useCheckout, useUploadReceipt, useCancelOrder } from "@/hooks/use-user-orders";
 import { useQuoteCoupon } from "@/hooks/use-coupons";
 import { useSettings } from "@/hooks/use-settings";
@@ -47,7 +48,21 @@ type Phase = "idle" | "placing" | "uploading" | "redirecting";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { data: session, isFetched: sessionFetched } = useAuthSession();
   const { data: cart, isLoading: cartLoading } = useCart();
+
+  // Gate the whole page — checkout is user-only. Guests are bounced to
+  // login with a `next` back to here so they land right back on the
+  // form after OTP verify (which also runs the guest-cart merge).
+  // Ref-guarded so React 19's dev-only double-invoke doesn't fire the
+  // toast + push twice.
+  const guestRedirected = useRef(false);
+  useEffect(() => {
+    if (!sessionFetched || session || guestRedirected.current) return;
+    guestRedirected.current = true;
+    toast.info("برای ثبت سفارش، وارد حساب کاربری شوید");
+    router.replace("/login?next=/checkout");
+  }, [sessionFetched, session, router]);
   const { data: settings } = useSettings();
   const { data: attributes } = useAttributeOptions();
 
@@ -299,7 +314,10 @@ export default function CheckoutPage() {
     }
   }
 
-  if (cartLoading) {
+  // While auth is unknown OR we've decided guest and are about to
+  // redirect, show a spinner instead of the form (which would flash
+  // empty state / fire the submit-time 401 fallback).
+  if (!sessionFetched || !session || cartLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />

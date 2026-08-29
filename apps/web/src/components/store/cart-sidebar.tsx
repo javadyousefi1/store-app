@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { LogIn, ShoppingCart, X, Trash2, ImageIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, X, Trash2, ImageIcon, LogIn } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useCart, useRemoveFromCart, useClearCart } from "@/hooks/use-cart";
 import { useAttributeOptions } from "@/hooks/use-attribute-options";
 import { useAuthSession } from "@/hooks/use-auth";
 import { toast } from "@/lib/toast";
+import { cn } from "@/lib/utils";
 import { VariantAttributes } from "./variant-attributes";
 
 interface Props {
@@ -20,13 +22,15 @@ function storePrice(p: string | number) {
 }
 
 export function CartSidebar({ open, onClose }: Props) {
+  const router = useRouter();
   const { data: session, isLoading: sessionLoading } = useAuthSession();
   const { data: cart, isLoading: cartLoading } = useCart();
   const removeItem = useRemoveFromCart();
   const clearCart = useClearCart();
-  const { data: attributes } = useAttributeOptions({ enabled: open && !!session });
+  const { data: attributes } = useAttributeOptions({ enabled: open });
 
   const isLoading = sessionLoading || cartLoading;
+  const isGuest = !sessionLoading && !session;
 
   const valueLabels: Record<string, string> = {};
   for (const attr of attributes ?? []) {
@@ -44,6 +48,14 @@ export function CartSidebar({ open, onClose }: Props) {
     } catch {
       toast.error("خطا در حذف");
     }
+  }
+
+  function handlePayClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (!isGuest) return;
+    e.preventDefault();
+    toast.info("برای ادامه و پرداخت، وارد حساب کاربری شوید");
+    onClose();
+    router.push("/login?next=/checkout");
   }
 
   return (
@@ -65,26 +77,6 @@ export function CartSidebar({ open, onClose }: Props) {
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
             در حال بارگذاری...
           </div>
-        ) : !session ? (
-          <div className="flex-1 flex flex-col items-center justify-center gap-5 px-6 text-center">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <ShoppingCart className="h-7 w-7 text-primary" />
-            </span>
-            <div className="space-y-1.5">
-              <p className="font-semibold text-foreground">سبد خرید</p>
-              <p className="text-sm leading-6 text-muted-foreground">
-                برای مشاهده‌ی سبد خرید و تکمیل سفارش وارد شوید.
-              </p>
-            </div>
-            <Link
-              href="/login?from=/cart"
-              onClick={onClose}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              <LogIn className="h-4 w-4" />
-              ورود | ثبت‌نام
-            </Link>
-          </div>
         ) : items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground">
             <ShoppingCart className="h-12 w-12 opacity-20" />
@@ -94,7 +86,10 @@ export function CartSidebar({ open, onClose }: Props) {
           <>
             <div className="flex-1 overflow-y-auto divide-y">
               {items.map((item) => {
-                const thumb = item.variant.imageUrls?.[0] ?? null;
+                const thumb =
+                  item.variant.imageUrls?.[0] ??
+                  item.variant.product?.coverUrl ??
+                  null;
                 return (
                   <div key={item.id} className="px-5 py-4 flex gap-3">
                     {/* Thumbnail */}
@@ -103,7 +98,7 @@ export function CartSidebar({ open, onClose }: Props) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={thumb}
-                          alt=""
+                          alt={item.variant.product?.name ?? ""}
                           loading="lazy"
                           decoding="async"
                           className="w-full h-full object-cover"
@@ -115,14 +110,24 @@ export function CartSidebar({ open, onClose }: Props) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0 space-y-1">
+                      {item.variant.product?.name && (
+                        <p className="text-sm font-semibold truncate">
+                          {item.variant.product.name}
+                        </p>
+                      )}
                       <VariantAttributes
                         attributes={item.variant.attributes}
                         valueLabels={valueLabels}
                         variant="row"
                       />
-                      <p className="text-xs text-muted-foreground font-mono" dir="ltr">
-                        {item.variant.sku}
-                      </p>
+                      {item.variant.sku && (
+                        <p
+                          className="text-xs text-muted-foreground font-mono"
+                          dir="ltr"
+                        >
+                          {item.variant.sku}
+                        </p>
+                      )}
                       <div className="flex items-center gap-3 pt-0.5">
                         <span className="text-sm font-semibold text-primary">
                           {storePrice(item.variant.price)}
@@ -145,16 +150,32 @@ export function CartSidebar({ open, onClose }: Props) {
             </div>
 
             <div className="border-t px-5 py-4 space-y-3 bg-muted/30">
+              {isGuest && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                  <LogIn className="h-3.5 w-3.5 shrink-0" />
+                  <span>برای تکمیل خرید باید وارد حساب کاربری بشی.</span>
+                </div>
+              )}
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">جمع کل</span>
                 <span className="font-bold text-base">{storePrice(total)}</span>
               </div>
               <Link
-                href="/checkout"
-                onClick={onClose}
-                className={buttonVariants({ className: "w-full h-11 text-base justify-center" })}
+                href={isGuest ? "/login?next=/checkout" : "/checkout"}
+                onClick={(e) => {
+                  if (isGuest) {
+                    handlePayClick(e);
+                    return;
+                  }
+                  onClose();
+                }}
+                className={cn(
+                  buttonVariants(),
+                  "w-full h-11 text-base justify-center gap-2",
+                )}
               >
-                پرداخت
+                {isGuest && <LogIn className="h-4 w-4" />}
+                {isGuest ? "ورود و پرداخت" : "پرداخت"}
               </Link>
               <button
                 onClick={() => clearCart.mutate()}

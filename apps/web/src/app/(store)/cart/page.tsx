@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   ImageIcon,
+  LogIn,
   Minus,
   Plus,
   ShoppingBag,
@@ -18,6 +20,7 @@ import {
   useRemoveFromCart,
   useUpdateCartQuantity,
 } from "@/hooks/use-cart";
+import { useAuthSession } from "@/hooks/use-auth";
 import { useAttributeOptions } from "@/hooks/use-attribute-options";
 import { VariantAttributes } from "@/components/store/variant-attributes";
 import { cn } from "@/lib/utils";
@@ -27,11 +30,21 @@ function formatPrice(value: string | number) {
 }
 
 export default function CartPage() {
+  const router = useRouter();
   const { data: cart, isLoading } = useCart();
+  const { data: session, isLoading: sessionLoading } = useAuthSession();
   const removeItem = useRemoveFromCart();
   const updateQuantity = useUpdateCartQuantity();
   const clearCart = useClearCart();
   const { data: attributes } = useAttributeOptions();
+  const isGuest = !sessionLoading && !session;
+
+  function handleContinue(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (!isGuest) return;
+    e.preventDefault();
+    toast.info("برای ثبت سفارش، وارد حساب کاربری شوید");
+    router.push("/login?next=/checkout");
+  }
 
   // Translate hex color codes to friendly labels for VariantAttributes.
   const valueLabels = useMemo(() => {
@@ -214,14 +227,27 @@ export default function CartPage() {
               <span className="text-primary">{formatPrice(total)}</span>
             </div>
           </div>
+
+          {isGuest && (
+            <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-6 text-amber-800">
+              <LogIn className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>
+                برای ثبت سفارش باید وارد حساب کاربری بشی. سبد خریدت پس از
+                ورود حفظ می‌شود.
+              </span>
+            </div>
+          )}
+
           <Link
-            href="/checkout"
+            href={isGuest ? "/login?next=/checkout" : "/checkout"}
+            onClick={handleContinue}
             className={cn(
               buttonVariants(),
-              "mt-5 h-12 w-full justify-center text-base",
+              "mt-5 h-12 w-full justify-center gap-2 text-base",
             )}
           >
-            ادامه و ثبت سفارش
+            {isGuest && <LogIn className="h-4 w-4" />}
+            {isGuest ? "ورود و ادامه" : "ادامه و ثبت سفارش"}
           </Link>
         </aside>
       </div>

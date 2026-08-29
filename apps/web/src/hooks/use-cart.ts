@@ -8,6 +8,7 @@ import {
   getGuestCartItems,
   setGuestCartItems,
   type GuestCartItem,
+  type GuestVariantSnapshot,
 } from "@/lib/guest-cart";
 import {
   AUTH_SESSION_QUERY_KEY,
@@ -26,6 +27,8 @@ export interface CartVariant {
   product?: {
     id: string;
     name: string;
+    slug?: string;
+    coverUrl?: string | null;
   };
 }
 
@@ -54,21 +57,32 @@ function guestItemsToCart(items: GuestCartItem[]): Cart | null {
     userId: "guest",
     createdAt: "",
     updatedAt: "",
-    items: items.map((item, index) => ({
-      id: `guest-${index}`,
-      variantId: item.variantId,
-      quantity: item.quantity,
-      variant: {
-        id: item.variantId,
-        sku: "",
-        price: "0",
-        stock: 0,
-        reserved: 0,
-        attributes: {},
-        imageIds: [],
-        imageUrls: [],
-      },
-    })),
+    items: items.map((item, index) => {
+      const s = item.snapshot;
+      return {
+        id: `guest-${index}`,
+        variantId: item.variantId,
+        quantity: item.quantity,
+        variant: {
+          id: item.variantId,
+          sku: s?.sku ?? "",
+          price: s?.price ?? "0",
+          stock: 0,
+          reserved: 0,
+          attributes: s?.attributes ?? {},
+          imageIds: [],
+          imageUrls: s?.imageUrl ? [s.imageUrl] : [],
+          product: s
+            ? {
+                id: s.productId,
+                name: s.productName,
+                slug: s.productSlug,
+                coverUrl: s.productCoverUrl,
+              }
+            : undefined,
+        },
+      };
+    }),
   };
 }
 
@@ -104,21 +118,23 @@ export function useCartCount() {
   return data?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 }
 
+export interface AddToCartInput {
+  variantId: string;
+  qty: number;
+  /** Snapshot of the variant + product info at add-time. Persisted only
+   * on the guest path — the server pulls fresh data itself. */
+  snapshot?: GuestVariantSnapshot;
+}
+
 export function useAddToCart() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      variantId,
-      qty,
-    }: {
-      variantId: string;
-      qty: number;
-    }) => {
+    mutationFn: async ({ variantId, qty, snapshot }: AddToCartInput) => {
       const session = qc.getQueryData(AUTH_SESSION_QUERY_KEY);
 
       if (!session) {
-        const items = addGuestCartItem(variantId, qty);
+        const items = addGuestCartItem(variantId, qty, snapshot);
         return guestItemsToCart(items)!;
       }
 
@@ -197,10 +213,9 @@ export function useUpdateCartQuantity() {
 
       if (!session) {
         const items = getGuestCartItems()
-          .map((item) => ({
-            variantId: item.variantId,
-            quantity: item.variantId === variantId ? quantity : item.quantity,
-          }))
+          .map((item) =>
+            item.variantId === variantId ? { ...item, quantity } : item,
+          )
           .filter((item) => item.quantity > 0);
         setGuestCartItems(items);
         return guestItemsToCart(items);
@@ -246,6 +261,12 @@ export function useClearCart() {
   });
 }
 
+/**
+ * Called right after OTP verify. Per product decision: guest wins —
+ * if the guest cart has items we PUT them as the whole cart, replacing
+ * whatever the server had. If guest is empty, we don't touch the
+ * server so the previous session's cart survives.
+ */
 export function useMergeGuestCart() {
   const qc = useQueryClient();
 
@@ -254,9 +275,22 @@ export function useMergeGuestCart() {
       const guestItems = getGuestCartItems();
       if (!guestItems.length) return null;
 
-      const response = await apiClient.put("/cart", { items: guestItems });
-      clearGuestCart();
-      return response.data.data;
+      const payload = guestItems.map((item) => ({
+        variantId: item.variantId,
+        quantity: item.quantity,
+      }));
+
+      try {
+        const response = await apiClient.put("/cart", { items: payload });
+        clearGuestCart();
+        return response.data.data;
+      } catch {
+        // Backend rejected the whole payload (usually because at least one
+        // variant vanished). Wipe the guest cart so the shopper isn't
+        // stuck retrying forever — they already know it's a fresh session.
+        clearGuestCart();
+        return null;
+      }
     },
     onSuccess: (data) => {
       qc.setQueryData(cartQueryKey(true), data);

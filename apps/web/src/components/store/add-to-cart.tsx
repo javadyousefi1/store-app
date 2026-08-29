@@ -11,17 +11,45 @@ import {
 } from "@/hooks/use-cart";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import type { GuestVariantSnapshot } from "@/lib/guest-cart";
 import type { ProductVariant } from "@/types";
+
+interface ProductSnapshotInput {
+  id: string;
+  name: string;
+  slug: string;
+  coverUrl: string | null;
+}
 
 interface Props {
   variant: (ProductVariant & { reserved?: number }) | null;
+  /** Product info persisted alongside the guest cart entry so the sidebar
+   * / cart page can render without another network round-trip. */
+  product?: ProductSnapshotInput;
 }
 
 function available(v: ProductVariant & { reserved?: number }) {
   return (v.stock ?? 0) - (v.reserved ?? 0);
 }
 
-export function AddToCart({ variant }: Props) {
+function buildSnapshot(
+  variant: ProductVariant & { reserved?: number },
+  product?: ProductSnapshotInput,
+): GuestVariantSnapshot | undefined {
+  if (!product) return undefined;
+  return {
+    price: String(variant.price),
+    sku: variant.sku,
+    attributes: variant.attributes,
+    imageUrl: variant.imageUrls?.[0] ?? null,
+    productId: product.id,
+    productName: product.name,
+    productSlug: product.slug,
+    productCoverUrl: product.coverUrl,
+  };
+}
+
+export function AddToCart({ variant, product }: Props) {
   const addToCart = useAddToCart();
   const updateQty = useUpdateCartQuantity();
   const removeItem = useRemoveFromCart();
@@ -38,7 +66,11 @@ export function AddToCart({ variant }: Props) {
   async function handleAdd() {
     if (!variant || !inStock) return;
     try {
-      await addToCart.mutateAsync({ variantId: variant.id, qty: 1 });
+      await addToCart.mutateAsync({
+        variantId: variant.id,
+        qty: 1,
+        snapshot: buildSnapshot(variant, product),
+      });
       toast.success("به سبد خرید افزوده شد");
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })

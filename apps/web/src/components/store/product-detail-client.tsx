@@ -144,7 +144,19 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
 
           {/* Add to cart / notify — desktop inline. Mobile version lives in the sticky bar below. */}
           <div className="hidden md:block">
-            {isOutOfStock ? notifyButton : <AddToCart variant={matched} />}
+            {isOutOfStock ? (
+              notifyButton
+            ) : (
+              <AddToCart
+                variant={matched}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  slug: product.slug,
+                  coverUrl: product.coverUrl,
+                }}
+              />
+            )}
           </div>
 
           {/* Description */}
@@ -186,7 +198,19 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
             </div>
           )}
           <div className="min-w-0 flex-1">
-            {isOutOfStock ? notifyButton : <AddToCart variant={matched} />}
+            {isOutOfStock ? (
+              notifyButton
+            ) : (
+              <AddToCart
+                variant={matched}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  slug: product.slug,
+                  coverUrl: product.coverUrl,
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

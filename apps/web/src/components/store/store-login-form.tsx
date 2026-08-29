@@ -2,6 +2,7 @@
 
 import { useMergeGuestCart } from "@/hooks/use-cart";
 import {
+  AUTH_SESSION_QUERY_KEY,
   useGetOtp,
   useResendOtp,
   useVerifyOtp,
@@ -60,7 +61,11 @@ export function StoreLoginForm() {
   const verifyOtp = useVerifyOtp();
   const resendOtp = useResendOtp();
 
-  const returnTo = searchParams.get("from") || "/";
+  // Prefer `?next=` (the canonical name used by the cart/checkout flow),
+  // fall back to legacy `?from=` links that still exist in a couple of
+  // places, then to the home page.
+  const returnTo =
+    searchParams.get("next") || searchParams.get("from") || "/";
 
   useEffect(() => {
     return () => {
@@ -109,6 +114,10 @@ export function StoreLoginForm() {
     try {
       await verifyOtp.mutateAsync({ phone, otp });
       await mergeGuestCart.mutateAsync();
+      // Wait for the session query to refetch BEFORE navigating so the
+      // destination page (e.g. /checkout) doesn't observe the pre-login
+      // null session on mount and bounce the user right back here.
+      await queryClient.refetchQueries({ queryKey: AUTH_SESSION_QUERY_KEY });
       queryClient.invalidateQueries();
       toast.success("خوش آمدید!");
       router.replace(returnTo);
