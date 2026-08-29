@@ -25,7 +25,15 @@ export function ProductCard({ product }: Props) {
           : "hover:shadow-lg hover:-translate-y-0.5",
       )}
     >
-      <FavoriteButton productId={product.id} size="sm" />
+      <FavoriteButton
+        productId={product.id}
+        product={{
+          slug: product.slug,
+          name: product.name,
+          coverUrl: product.coverUrl,
+        }}
+        size="sm"
+      />
       {/* Image */}
       <div className="relative aspect-square bg-muted/50 overflow-hidden">
         {product.coverUrl ? (

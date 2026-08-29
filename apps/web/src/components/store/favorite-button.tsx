@@ -8,9 +8,20 @@ import {
   useIsFavorite,
   useToggleFavorite,
 } from "@/hooks/use-favorites";
+import type { GuestFavoriteSnapshot } from "@/lib/guest-favorites";
+
+interface ProductSnapshotInput {
+  slug: string;
+  name: string;
+  coverUrl: string | null;
+}
 
 interface Props {
   productId: string;
+  /** Optional product info persisted for guest favorites so the
+   * /favorites page can render even when the visitor never logged in.
+   * Skip this if the caller genuinely doesn't have the data. */
+  product?: ProductSnapshotInput;
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "overlay" | "ghost";
@@ -30,6 +41,7 @@ const SIZE_ICON: Record<NonNullable<Props["size"]>, string> = {
 
 export function FavoriteButton({
   productId,
+  product,
   className,
   size = "md",
   variant = "overlay",
@@ -41,8 +53,17 @@ export function FavoriteButton({
     e.preventDefault();
     e.stopPropagation();
     if (toggle.isPending) return;
+
+    const snapshot: GuestFavoriteSnapshot | undefined = product
+      ? {
+          slug: product.slug,
+          name: product.name,
+          coverUrl: product.coverUrl,
+        }
+      : undefined;
+
     try {
-      await toggle.mutateAsync({ productId, isFavorite: isFav });
+      await toggle.mutateAsync({ productId, isFavorite: isFav, snapshot });
       toast.success(
         isFav ? "از علاقه‌مندی‌ها حذف شد" : "به علاقه‌مندی‌ها افزوده شد",
       );

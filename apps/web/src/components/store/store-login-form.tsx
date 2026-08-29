@@ -1,6 +1,7 @@
 "use client";
 
 import { useMergeGuestCart } from "@/hooks/use-cart";
+import { useMergeGuestFavorites } from "@/hooks/use-favorites";
 import {
   AUTH_SESSION_QUERY_KEY,
   useGetOtp,
@@ -51,6 +52,7 @@ export function StoreLoginForm() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const mergeGuestCart = useMergeGuestCart();
+  const mergeGuestFavorites = useMergeGuestFavorites();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -113,7 +115,13 @@ export function StoreLoginForm() {
 
     try {
       await verifyOtp.mutateAsync({ phone, otp });
-      await mergeGuestCart.mutateAsync();
+      // Sync guest state into the freshly-authenticated account, in
+      // parallel — cart uses "guest wins" replace semantics, favorites
+      // are a union (POST /favorites is idempotent on the backend).
+      await Promise.all([
+        mergeGuestCart.mutateAsync(),
+        mergeGuestFavorites.mutateAsync(),
+      ]);
       // Wait for the session query to refetch BEFORE navigating so the
       // destination page (e.g. /checkout) doesn't observe the pre-login
       // null session on mount and bounce the user right back here.
