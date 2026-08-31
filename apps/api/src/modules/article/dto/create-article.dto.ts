@@ -86,4 +86,16 @@ export class CreateArticleDto {
   @IsOptional()
   @IsUUID()
   featuredProductId?: string | null;
+
+  @ApiPropertyOptional({ description: 'Custom heading shown in the inline product card', nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  featuredProductTitle?: string | null;
+
+  @ApiPropertyOptional({ description: 'Short editorial blurb above the product card', nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  featuredProductDescription?: string | null;
 }

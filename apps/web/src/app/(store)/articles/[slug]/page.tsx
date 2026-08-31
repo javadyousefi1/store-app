@@ -115,17 +115,24 @@ export async function generateMetadata({
   };
 }
 
-function FeaturedProductCard({ product }: { product: NonNullable<Article["featuredProduct"]> }) {
+function FeaturedProductCard({
+  product,
+  cardTitle,
+  cardDescription,
+}: {
+  product: NonNullable<Article["featuredProduct"]>;
+  cardTitle?: string | null;
+  cardDescription?: string | null;
+}) {
+  const heading = cardTitle?.trim() || product.name;
+
   return (
-    <aside
-      aria-label="محصول پیشنهادی"
-      className="not-prose relative overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-l from-brand-50 via-white to-white p-4 shadow-[0_10px_28px_rgba(45,32,67,0.05)] sm:p-5"
-    >
-      <p className="mb-3 text-[11px] font-medium tracking-[0.18em] text-brand-700">
-        محصول پیشنهادی
-      </p>
-      <Link href={`/products/${product.slug}`} className="group flex items-stretch gap-4">
-        <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:w-28">
+    <aside aria-label={heading} className="not-prose my-2">
+      <Link
+        href={`/products/${product.slug}`}
+        className="group flex gap-4 rounded-xl border border-border bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:gap-5 sm:p-5"
+      >
+        <div className="relative aspect-square w-20 shrink-0 overflow-hidden rounded-lg bg-muted sm:w-24">
           {product.coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -133,34 +140,35 @@ function FeaturedProductCard({ product }: { product: NonNullable<Article["featur
               alt={product.name}
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+            <div className="absolute inset-0 bg-muted" />
           )}
         </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
-          <div>
-            <h3 className="line-clamp-2 text-sm font-bold text-brand-800 transition-colors group-hover:text-brand-600 sm:text-base">
-              {product.name}
-            </h3>
-            {product.category?.name && (
-              <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">
-                {product.category.name}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center justify-between gap-3">
+
+        <div className="flex min-w-0 flex-1 flex-col gap-1 py-0.5">
+          <h3 className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-brand-700 sm:text-base">
+            {heading}
+          </h3>
+
+          {cardDescription?.trim() && (
+            <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+              {cardDescription}
+            </p>
+          )}
+
+          <div className="mt-auto flex items-center justify-between gap-3 pt-1">
             {product.minPrice != null ? (
-              <p className="text-sm font-bold text-primary sm:text-base">
+              <span className="text-sm font-bold text-primary sm:text-base">
                 {product.minPrice.toLocaleString("fa-IR")}
                 <span className="mr-1 text-[10px] font-normal text-muted-foreground">ریال</span>
-              </p>
+              </span>
             ) : (
               <span />
             )}
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform duration-300 group-hover:-translate-x-1 sm:text-sm">
-              مشاهده محصول
+            <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand-600 transition-transform duration-300 group-hover:-translate-x-1">
+              مشاهده
               <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
             </span>
           </div>
@@ -173,9 +181,13 @@ function FeaturedProductCard({ product }: { product: NonNullable<Article["featur
 function ArticleContentWithProduct({
   content,
   featured,
+  featuredProductTitle,
+  featuredProductDescription,
 }: {
   content: string;
   featured: Article["featuredProduct"];
+  featuredProductTitle?: string | null;
+  featuredProductDescription?: string | null;
 }) {
   const prose = "article-content text-[15px] leading-8 text-foreground sm:text-base sm:leading-9";
 
@@ -195,11 +207,19 @@ function ArticleContentWithProduct({
   const tagEnd = content.indexOf("</p>", splitTarget);
   const splitAt = tagEnd !== -1 ? tagEnd + 4 : -1;
 
+  const card = (
+    <FeaturedProductCard
+      product={featured}
+      cardTitle={featuredProductTitle}
+      cardDescription={featuredProductDescription}
+    />
+  );
+
   if (splitAt <= 0) {
     return (
       <>
         <div className={prose} dangerouslySetInnerHTML={{ __html: content }} />
-        <FeaturedProductCard product={featured} />
+        {card}
       </>
     );
   }
@@ -210,9 +230,9 @@ function ArticleContentWithProduct({
   return (
     <>
       <div className={prose} dangerouslySetInnerHTML={{ __html: firstHalf }} />
-      <FeaturedProductCard product={featured} />
+      {card}
       <div className={prose} dangerouslySetInnerHTML={{ __html: secondHalf }} />
-      <FeaturedProductCard product={featured} />
+      {card}
     </>
   );
 }
@@ -436,6 +456,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <ArticleContentWithProduct
           content={article.content}
           featured={featured}
+          featuredProductTitle={article.featuredProductTitle}
+          featuredProductDescription={article.featuredProductDescription}
         />
 
         {article.keywords?.length > 0 && (

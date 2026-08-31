@@ -130,6 +130,14 @@ export class Article {
   @JoinColumn({ name: 'featuredProductId' })
   featuredProduct: Product | null;
 
+  @ApiProperty({ nullable: true })
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  featuredProductTitle: string | null;
+
+  @ApiProperty({ nullable: true })
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  featuredProductDescription: string | null;
+
   @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;

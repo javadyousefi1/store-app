@@ -520,6 +520,8 @@ export interface Article {
   publishedAt: string | null;
   featuredProductId: string | null;
   featuredProduct: Product | null;
+  featuredProductTitle: string | null;
+  featuredProductDescription: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -546,5 +548,7 @@ export interface CreateArticleRequest {
   keywords?: string[];
   publishedAt?: string | null;
   featuredProductId?: string | null;
+  featuredProductTitle?: string | null;
+  featuredProductDescription?: string | null;
 }
 export type UpdateArticleRequest = Partial<CreateArticleRequest>;

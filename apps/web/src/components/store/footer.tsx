@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Mail, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EnamadImage } from "./enamad-image";
 
 const W = "mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10";
 
@@ -177,16 +178,7 @@ export function StoreFooter() {
               className="inline-flex shrink-0"
               aria-label="نماد اعتماد الکترونیکی"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                referrerPolicy="origin"
-                src="https://trustseal.enamad.ir/logo.aspx?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
-                alt="نماد اعتماد الکترونیکی"
-                style={{ cursor: "pointer" }}
-                {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/enamad_icon.png"; }}
-                className="h-16 w-auto"
-              />
+              <EnamadImage className="h-16 w-auto" />
             </a>
             <a
               href="https://www.zarinpal.com/"

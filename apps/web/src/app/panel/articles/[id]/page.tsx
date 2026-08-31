@@ -45,6 +45,8 @@ interface FormState {
   keywords: string[];
   published: boolean;
   featuredProductId: string | null;
+  featuredProductTitle: string;
+  featuredProductDescription: string;
 }
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -79,6 +81,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       keywords:        article.keywords,
       published:       !!article.publishedAt,
       featuredProductId: article.featuredProductId ?? null,
+      featuredProductTitle: article.featuredProductTitle ?? "",
+      featuredProductDescription: article.featuredProductDescription ?? "",
     });
     setDirty(false);
   }, [article]);
@@ -107,6 +111,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           metaDescription: form.metaDescription.trim() || undefined,
           keywords:        form.keywords,
           featuredProductId: form.featuredProductId,
+          featuredProductTitle: form.featuredProductTitle.trim() || null,
+          featuredProductDescription: form.featuredProductDescription.trim() || null,
           // Only send publishedAt when the toggle actually changed — avoids
           // overwriting the original publish date on every save.
           publishedAt: form.published
@@ -357,6 +363,10 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           <FeaturedProductPicker
             value={form.featuredProductId}
             onChange={(v) => patch("featuredProductId", v)}
+            title={form.featuredProductTitle}
+            onTitleChange={(v) => patch("featuredProductTitle", v)}
+            description={form.featuredProductDescription}
+            onDescriptionChange={(v) => patch("featuredProductDescription", v)}
           />
 
           {/* Cover image */}
@@ -742,9 +752,17 @@ async function copyToClipboard(text: string): Promise<void> {
 function FeaturedProductPicker({
   value,
   onChange,
+  title,
+  onTitleChange,
+  description,
+  onDescriptionChange,
 }: {
   value: string | null;
   onChange: (v: string | null) => void;
+  title: string;
+  onTitleChange: (v: string) => void;
+  description: string;
+  onDescriptionChange: (v: string) => void;
 }) {
   const { data: page, isLoading } = useProducts(1);
   const products = page?.data ?? [];
@@ -765,10 +783,28 @@ function FeaturedProductPicker({
       </CardHeader>
       <CardContent className="space-y-3 pt-1">
         <p className="text-[11px] text-muted-foreground">
-          یک کارت محصول در انتهای مقاله نمایش داده می‌شود و در JSON-LD به‌عنوان
-          <span className="mx-1 font-mono">mentions</span>
-          ثبت می‌شود — گوگل این ارجاع را به‌عنوان سیگنال ارتباط موضوعی می‌خواند.
+          کارت محصول وسط و انتهای مقاله نمایش داده می‌شود.
         </p>
+
+        <Field label="عنوان کارت" hint={<span className="text-[11px] text-muted-foreground">اختیاری — جایگزین نام محصول می‌شود</span>}>
+          <Input
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            maxLength={200}
+            placeholder="مثال: این مانتو رو ببین"
+          />
+        </Field>
+
+        <Field label="توضیح کوتاه" hint={<CharCounter value={description.length} max={300} />}>
+          <textarea
+            value={description}
+            onChange={(e) => onDescriptionChange(e.target.value)}
+            maxLength={300}
+            rows={2}
+            placeholder="یک جمله کوتاه که خواننده را به خرید ترغیب کند..."
+            className="w-full resize-none rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          />
+        </Field>
 
         {selected ? (
           <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-2">

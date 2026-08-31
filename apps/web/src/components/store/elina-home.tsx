@@ -16,6 +16,7 @@ import { HomeCatalogGateway } from "./home-catalog-gateway";
 import { NewsletterSignup } from "./newsletter-signup";
 import { ReviewsSection } from "./reviews-section";
 import { StoriesBar } from "./stories-bar";
+import { EnamadImage } from "./enamad-image";
 import type { Category, Product, Slider, Story } from "@/types";
 
 const faqItems = [
@@ -186,18 +187,7 @@ function TrustBadgesSection() {
             className="group flex flex-col items-center gap-2"
           >
             <div className="rounded-2xl border border-border bg-white p-3 shadow-[0_6px_18px_rgba(45,32,67,0.06)] transition group-hover:-translate-y-0.5 group-hover:shadow-[0_12px_24px_rgba(45,32,67,0.1)] sm:p-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                referrerPolicy="origin"
-                src="https://trustseal.enamad.ir/logo.aspx?id=7053706&Code=C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR"
-                alt="نماد اعتماد الکترونیکی"
-                {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/enamad_icon.png"; }}
-                className="h-20 w-auto sm:h-24"
-                style={{ cursor: "pointer" }}
-              />
+              <EnamadImage className="h-20 w-auto sm:h-24" />
             </div>
             <span className="text-[11px] font-medium text-[#5a5266]">
               نماد اعتماد
