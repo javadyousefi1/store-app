@@ -3,14 +3,15 @@
 import { use, useRef } from "react";
 import Link from "next/link";
 import { toast } from "@/lib/toast";
-import { ArrowRight, Plus, Pencil, Trash2, Upload, ImageIcon, X, BellRing, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Plus, Pencil, Trash2, Upload, ImageIcon, X, BellRing, CheckCircle2, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { VariantModal, ConfirmDeleteModal } from "@/components/modals";
-import { useProduct, useUploadProductCover, useDeleteProductCover, useNotifyProduct } from "@/hooks/use-products";
+import { useProduct, useUploadProductCover, useDeleteProductCover, useNotifyProduct, useUpdateProduct } from "@/hooks/use-products";
 import { useCreateVariant, useUpdateVariant, useDeleteVariant, useUploadVariantImage, useDeleteVariantImage } from "@/hooks/use-variants";
 import { useAttributeOptions } from "@/hooks/use-attribute-options";
 import { useModal } from "@/hooks/use-modal";
@@ -18,7 +19,7 @@ import { formatPrice } from "@/lib/format";
 import { compressImage } from "@/lib/compress-image";
 import type { ProductVariant } from "@/types";
 
-type VariantForm = { price: string; stock: string; attributes: Record<string, string> };
+type VariantForm = { price: string; oldPrice: string; stock: string; attributes: Record<string, string> };
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -28,6 +29,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const uploadCover = useUploadProductCover();
   const deleteCover = useDeleteProductCover();
   const notify = useNotifyProduct();
+  const updateProduct = useUpdateProduct();
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const createVariant = useCreateVariant(id);
@@ -54,16 +56,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }
 
   async function handleVariantSubmit(form: VariantForm) {
+    const oldPrice = form.oldPrice ? Number(form.oldPrice) : null;
     try {
       if (variantFormModal.data) {
         await updateVariant.mutateAsync({
           variantId: variantFormModal.data.id,
-          data: { price: Number(form.price), stock: Number(form.stock), attributes: form.attributes },
+          data: { price: Number(form.price), oldPrice, stock: Number(form.stock), attributes: form.attributes },
         });
         toast.success("variant ویرایش شد");
       } else {
         await createVariant.mutateAsync({
           price: Number(form.price),
+          oldPrice,
           stock: Number(form.stock),
           attributes: form.attributes,
         });
@@ -140,6 +144,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
               <p className="text-sm text-muted-foreground">{product.category?.name}</p>
               {product.description && <p className="text-sm mt-1">{product.description}</p>}
+              <div className="mt-3 flex items-center gap-2">
+                <Switch
+                  checked={product.isSpecialSale}
+                  disabled={updateProduct.isPending}
+                  onCheckedChange={async (checked) => {
+                    try {
+                      await updateProduct.mutateAsync({ id, data: { isSpecialSale: checked } });
+                      toast.success(checked ? "فروش ویژه فعال شد" : "فروش ویژه غیرفعال شد");
+                    } catch {
+                      toast.error("خطا در تغییر وضعیت");
+                    }
+                  }}
+                />
+                <span className="flex items-center gap-1 text-sm font-medium">
+                  <Flame className={`h-4 w-4 ${product.isSpecialSale ? "text-orange-500" : "text-muted-foreground"}`} />
+                  فروش ویژه
+                </span>
+              </div>
               {!product.notified && (
                 <Button
                   size="sm"
@@ -234,7 +256,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         <span className="text-xs text-muted-foreground font-mono" dir="ltr">{variant.sku}</span>
                       </div>
                       <div className="flex gap-4 text-sm flex-wrap">
-                        <span>قیمت: <span className="font-medium">{formatPrice(variant.price)} ریال</span></span>
+                        <span>
+                          قیمت: <span className="font-medium">{formatPrice(variant.price)} ریال</span>
+                          {variant.oldPrice && Number(variant.oldPrice) > Number(variant.price) && (
+                            <span className="mr-2 text-xs text-muted-foreground line-through">
+                              {formatPrice(variant.oldPrice)}
+                            </span>
+                          )}
+                        </span>
                         <span>موجودی: <span className="font-medium">{variant.stock}</span></span>
                       </div>
                     </div>

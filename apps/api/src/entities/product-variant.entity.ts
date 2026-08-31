@@ -36,6 +36,10 @@ export class ProductVariant {
   @Column({ type: 'decimal', precision: 15, scale: 2 })
   price: number;
 
+  @ApiProperty({ example: 79900000, nullable: true, description: 'Original price before discount — display only. All business logic uses price.' })
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: null })
+  oldPrice: number | null;
+
   @ApiProperty({ example: 10 })
   @Column({ type: 'int', default: 0 })
   stock: number;

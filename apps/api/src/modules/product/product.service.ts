@@ -77,6 +77,10 @@ export class ProductService {
             });
         }
 
+        if (dto.isSpecialSale !== undefined) {
+            query.andWhere('product.isSpecialSale = :isSpecialSale', { isSpecialSale: dto.isSpecialSale });
+        }
+
         if (dto.sort === 'price_asc') {
             query.orderBy('CAST("priceSummary"."minPrice" AS numeric)', 'ASC', 'NULLS LAST');
         } else if (dto.sort === 'price_desc') {
@@ -325,10 +329,11 @@ export class ProductService {
             .addSelect('MIN(v.price)', 'minPrice')
             .addSelect('SUM(GREATEST(v.stock - v.reserved, 0))', 'available')
             .addSelect(`array_agg(DISTINCT v.attributes->>'رنگ') FILTER (WHERE v.attributes->>'رنگ' IS NOT NULL)`, 'colors')
+            .addSelect(`BOOL_OR(v."oldPrice" IS NOT NULL AND v."oldPrice" > v.price)`, 'hasDiscount')
             .where('v.productId IN (:...ids)', {ids: products.map((p) => p.id)})
             .andWhere('v.deletedAt IS NULL')
             .groupBy('v.productId')
-            .getRawMany<{ productId: string; minPrice: string; available: string | null; colors: string[] | null }>();
+            .getRawMany<{ productId: string; minPrice: string; available: string | null; colors: string[] | null; hasDiscount: boolean | null }>();
 
         const summaryMap = new Map(rows.map((r) => [r.productId, r]));
 
@@ -337,6 +342,7 @@ export class ProductService {
             (product as any).minPrice = row ? Number(row.minPrice) : null;
             (product as any).colors = row?.colors ?? [];
             (product as any).inStock = row ? Number(row.available ?? 0) > 0 : false;
+            (product as any).hasDiscount = row?.hasDiscount ?? false;
         }
     }
 

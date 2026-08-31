@@ -243,6 +243,8 @@ export interface Product {
   inStock: boolean;
   notified: boolean;
   isActive: boolean;
+  isSpecialSale: boolean;
+  hasDiscount: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -393,6 +395,7 @@ export interface UpdateProductRequest {
   slug?: string;
   description?: string;
   isActive?: boolean;
+  isSpecialSale?: boolean;
 }
 
 // Variant
@@ -412,6 +415,7 @@ export interface ProductVariant {
   id: string;
   sku: string;
   price: string;
+  oldPrice: string | null;
   stock: number;
   attributes: Record<string, string>;
   imageIds: string[];
@@ -422,12 +426,14 @@ export interface ProductVariant {
 export interface CreateVariantRequest {
   sku?: string;
   price: number;
+  oldPrice?: number | null;
   stock: number;
   attributes: Record<string, string>;
 }
 
 export interface UpdateVariantRequest {
   price?: number;
+  oldPrice?: number | null;
   stock?: number;
   attributes?: Record<string, string>;
 }

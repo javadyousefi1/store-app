@@ -15,6 +15,7 @@ import type { Attribute, ProductVariant } from "@/types";
 
 interface VariantForm {
   price: string;
+  oldPrice: string;
   stock: string;
   attributes: Record<string, string>;
 }
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export function VariantModal({ open, onClose, onSubmit, isPending, initial, attrOptions }: Props) {
-  const [form, setForm] = useState<VariantForm>({ price: "", stock: "", attributes: {} });
+  const [form, setForm] = useState<VariantForm>({ price: "", oldPrice: "", stock: "", attributes: {} });
 
   const attrGroups = attrOptions.reduce<Record<string, { value: string; label?: string }[]>>((acc, attr) => {
     acc[attr.name] = attr.values.map((v) => ({ value: v.value, label: v.label }));
@@ -40,6 +41,7 @@ export function VariantModal({ open, onClose, onSubmit, isPending, initial, attr
     if (open) {
       setForm({
         price: initial?.price ?? "",
+        oldPrice: initial?.oldPrice ?? "",
         stock: initial ? String(initial.stock) : "",
         attributes: initial ? { ...initial.attributes } : {},
       });
@@ -83,6 +85,23 @@ export function VariantModal({ open, onClose, onSubmit, isPending, initial, attr
                 placeholder="10"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>
+              قیمت قبل از تخفیف (ریال){" "}
+              <span className="text-xs text-muted-foreground">— اختیاری</span>
+            </Label>
+            <Input
+              type="number"
+              value={form.oldPrice}
+              onChange={(e) => setForm((f) => ({ ...f, oldPrice: e.target.value }))}
+              dir="ltr"
+              placeholder="79900000"
+            />
+            <p className="text-xs text-muted-foreground">
+              اگر بیشتر از قیمت فعلی باشد، در سایت بصورت خط‌خورده نمایش داده می‌شود
+            </p>
           </div>
 
           {Object.keys(attrGroups).length === 0 && (

@@ -59,6 +59,10 @@ export class Product {
 
   @ApiProperty({ default: false })
   @Column({ default: false })
+  isSpecialSale: boolean;
+
+  @ApiProperty({ default: false })
+  @Column({ default: false })
   notified: boolean;
 
   @ApiProperty()

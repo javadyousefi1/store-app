@@ -3,6 +3,7 @@ import Image from "next/image";
 import {
   ArrowLeft,
   ChevronDown,
+  Flame,
   Headphones,
   PackageCheck,
   RefreshCcw,
@@ -232,11 +233,12 @@ function TrustBadgesSection() {
 interface ElinaHomeProps {
   categories: Category[];
   bestsellers: Product[];
+  specialSaleProducts: Product[];
   sliders?: Slider[];
   stories?: Story[];
 }
 
-export function ElinaHome({ categories, bestsellers, sliders, stories }: ElinaHomeProps) {
+export function ElinaHome({ categories, bestsellers, specialSaleProducts, sliders, stories }: ElinaHomeProps) {
   return (
     <div className="w-full pb-8">
       <script
@@ -326,6 +328,32 @@ export function ElinaHome({ categories, bestsellers, sliders, stories }: ElinaHo
             </div>
             <HomeProductGrid products={bestsellers} />
           </section>
+
+          {specialSaleProducts.length > 0 && (
+            <section id="special-sale" className="scroll-mt-24 pb-4 sm:pb-6">
+              <div className="mb-4 flex items-end justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-orange-500 text-white shadow-sm">
+                    <Flame className="h-4 w-4" strokeWidth={2.5} />
+                  </span>
+                  <div className="flex flex-col">
+                    <h2 className="bg-gradient-to-l from-rose-600 to-orange-500 bg-clip-text text-lg font-bold text-transparent sm:text-xl">
+                      فروش ویژه
+                    </h2>
+                    <span className="text-[11px] text-muted-foreground">پیشنهادهای داغ این هفته</span>
+                  </div>
+                </div>
+                <Link
+                  href="/products?isSpecialSale=true"
+                  className="shrink-0 flex items-center gap-1 text-xs text-brand-600 sm:text-sm"
+                >
+                  مشاهده همه
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </div>
+              <HomeProductGrid products={specialSaleProducts} />
+            </section>
+          )}
 
           <HomeCatalogGateway products={bestsellers} />
 

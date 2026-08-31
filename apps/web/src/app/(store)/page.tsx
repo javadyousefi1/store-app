@@ -35,9 +35,12 @@ export const metadata: Metadata = {
 const REVALIDATE = { next: { revalidate: 300 } };
 
 export default async function LandingPage() {
-  const [categories, bestsellersPage, sliders, stories] = await Promise.all([
+  const [categories, bestsellersPage, specialSalePage, sliders, stories] = await Promise.all([
     apiFetch<Category[]>("/categories?isActive=true", REVALIDATE).catch(() => [] as Category[]),
     apiFetch<PaginatedResponse<Product>>("/products?sort=newest&limit=6", REVALIDATE).catch(
+      () => ({ data: [] }) as { data: Product[] },
+    ),
+    apiFetch<PaginatedResponse<Product>>("/products?isSpecialSale=true&limit=8", REVALIDATE).catch(
       () => ({ data: [] }) as { data: Product[] },
     ),
     apiFetch<Slider[]>("/sliders", REVALIDATE).catch(() => [] as Slider[]),
@@ -48,6 +51,7 @@ export default async function LandingPage() {
     <ElinaHome
       categories={categories}
       bestsellers={bestsellersPage.data}
+      specialSaleProducts={specialSalePage.data}
       sliders={sliders}
       stories={stories}
     />

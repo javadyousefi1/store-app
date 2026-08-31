@@ -26,4 +26,10 @@ export class CreateVariantDto {
   @IsOptional()
   @IsObject()
   attributes?: Record<string, string>;
+
+  @ApiPropertyOptional({ example: 79900000, nullable: true, description: 'Original price before discount — display only' })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  oldPrice?: number | null;
 }

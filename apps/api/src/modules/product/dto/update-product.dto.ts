@@ -30,4 +30,9 @@ export class UpdateProductDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @ApiPropertyOptional({ example: false, description: 'Mark product as special sale / featured offer' })
+  @IsOptional()
+  @IsBoolean()
+  isSpecialSale?: boolean;
 }

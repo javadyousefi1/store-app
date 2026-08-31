@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ImageIcon } from "lucide-react";
+import { Flame, ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/store/favorite-button";
 import { cn } from "@/lib/utils";
@@ -11,31 +11,30 @@ interface Props {
 
 export function ProductCard({ product }: Props) {
   const outOfStock = !product.inStock;
+  const showDiscount = product.hasDiscount && !outOfStock;
 
   return (
     <Link
       href={`/products/${product.slug}`}
-      aria-label={
-        outOfStock ? `${product.name} — ناموجود` : product.name
-      }
+      aria-label={outOfStock ? `${product.name} — ناموجود` : product.name}
       className={cn(
         "group relative block rounded-2xl border bg-card overflow-hidden transition-all duration-200",
-        outOfStock
-          ? "hover:shadow-md"
-          : "hover:shadow-lg hover:-translate-y-0.5",
+        outOfStock ? "hover:shadow-md" : "hover:shadow-lg hover:-translate-y-0.5",
       )}
     >
       <FavoriteButton
         productId={product.id}
-        product={{
-          slug: product.slug,
-          name: product.name,
-          coverUrl: product.coverUrl,
-        }}
+        product={{ slug: product.slug, name: product.name, coverUrl: product.coverUrl }}
         size="sm"
       />
       {/* Image */}
       <div className="relative aspect-square bg-muted/50 overflow-hidden">
+        {product.isSpecialSale && (
+          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 rounded-full bg-gradient-to-l from-rose-500 to-orange-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm ring-1 ring-white/20 backdrop-blur-sm">
+            <Flame className="h-3 w-3" strokeWidth={2.5} />
+            فروش ویژه
+          </span>
+        )}
         {product.coverUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -45,9 +44,7 @@ export function ProductCard({ product }: Props) {
             decoding="async"
             className={cn(
               "w-full h-full object-cover transition-transform duration-300",
-              outOfStock
-                ? "grayscale opacity-70"
-                : "group-hover:scale-105",
+              outOfStock ? "grayscale opacity-70" : "group-hover:scale-105",
             )}
           />
         ) : (
@@ -55,7 +52,11 @@ export function ProductCard({ product }: Props) {
             <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
           </div>
         )}
-
+        {showDiscount && (
+          <span className="absolute bottom-2 right-2 z-10 inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm ring-1 ring-white/20 backdrop-blur-sm">
+            تخفیف
+          </span>
+        )}
         {outOfStock && (
           <span className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-foreground/85 py-1.5 text-[11px] font-semibold tracking-wide text-background backdrop-blur-sm">
             ناموجود

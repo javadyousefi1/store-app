@@ -129,6 +129,16 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
               fixed bottom bar so the CTA stays reachable without scrolling. */}
           {matched ? (
             <div className="hidden space-y-1.5 md:block">
+              {matched.oldPrice && Number(matched.oldPrice) > Number(matched.price) ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground line-through decoration-1">
+                    {Number(matched.oldPrice).toLocaleString("fa-IR")}
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+                    {Math.round((1 - Number(matched.price) / Number(matched.oldPrice)) * 100).toLocaleString("fa-IR")}٪
+                  </span>
+                </div>
+              ) : null}
               <p className="text-2xl font-bold text-primary">
                 {Number(matched.price).toLocaleString("fa-IR")}{" "}
                 <span className="text-base font-normal text-muted-foreground">تومان</span>
@@ -194,6 +204,16 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
               {matched ? (
                 <>
                   <span className="text-[11px] text-muted-foreground">قیمت</span>
+                  {matched.oldPrice && Number(matched.oldPrice) > Number(matched.price) ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-medium text-muted-foreground line-through decoration-1">
+                        {Number(matched.oldPrice).toLocaleString("fa-IR")}
+                      </span>
+                      <span className="rounded-full bg-emerald-500/95 px-1.5 text-[10px] font-bold text-white">
+                        {Math.round((1 - Number(matched.price) / Number(matched.oldPrice)) * 100).toLocaleString("fa-IR")}٪
+                      </span>
+                    </span>
+                  ) : null}
                   <span className="truncate text-base font-bold text-primary">
                     {Number(matched.price).toLocaleString("fa-IR")}
                     <span className="mr-1 text-[11px] font-normal text-muted-foreground">
