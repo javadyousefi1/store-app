@@ -11,6 +11,11 @@ export class GetPublicArticlesDto {
   @MaxLength(160)
   categorySlug?: string;
 
+  @ApiPropertyOptional({ description: 'Return articles that feature this product' })
+  @IsOptional()
+  @IsUUID()
+  featuredProductId?: string;
+
   @ApiPropertyOptional({ description: 'Free-text search across title/excerpt' })
   @IsOptional()
   @IsString()

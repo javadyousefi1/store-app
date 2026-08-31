@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/server-fetch";
 import { ProductDetailClient } from "@/components/store/product-detail-client";
 import { RelatedProducts } from "@/components/store/related-products";
 import type {
+  Article,
   Attribute,
   PaginatedResponse,
   Product,
@@ -73,7 +74,7 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  const [attributes, relatedRes] = await Promise.all([
+  const [attributes, relatedRes, articleRes] = await Promise.all([
     apiFetch<Attribute[]>("/attributes").catch(() => [] as Attribute[]),
     product.categoryId
       ? apiFetch<PaginatedResponse<Product>>(
@@ -81,7 +82,13 @@ export default async function ProductPage({ params }: PageProps) {
           { revalidate: 300 },
         ).catch(() => null)
       : Promise.resolve(null),
+    apiFetch<PaginatedResponse<Article>>(
+      `/articles?featuredProductId=${product.id}&limit=1`,
+      { revalidate: 3600 },
+    ).catch(() => null),
   ]);
+
+  const relatedArticle = articleRes?.data?.[0] ?? null;
 
   // Build value → label lookup for all attributes that have a label
   const valueLabels: Record<string, string> = {};
@@ -239,6 +246,29 @@ export default async function ProductPage({ params }: PageProps) {
         }
         valueLabels={valueLabels}
       />
+
+      {relatedArticle && (
+        <Link
+          href={`/articles/${encodeURIComponent(relatedArticle.slug)}`}
+          className="group block rounded-2xl border border-border bg-[#faf9fc] p-5 transition-shadow hover:shadow-[0_8px_24px_rgba(45,32,67,0.08)] sm:p-6"
+        >
+          <p className="mb-2 text-[10px] font-semibold tracking-[0.2em] text-brand-600 uppercase">
+            مطالعه بیشتر
+          </p>
+          <h2 className="line-clamp-2 text-base font-bold text-foreground transition-colors group-hover:text-brand-700 sm:text-lg">
+            {relatedArticle.title}
+          </h2>
+          {relatedArticle.excerpt && (
+            <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+              {relatedArticle.excerpt}
+            </p>
+          )}
+          <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform duration-300 group-hover:-translate-x-1">
+            خواندن مقاله
+            <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
+          </span>
+        </Link>
+      )}
 
       <RelatedProducts
         products={relatedProducts}

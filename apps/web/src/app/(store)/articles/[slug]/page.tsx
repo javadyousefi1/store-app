@@ -115,6 +115,108 @@ export async function generateMetadata({
   };
 }
 
+function FeaturedProductCard({ product }: { product: NonNullable<Article["featuredProduct"]> }) {
+  return (
+    <aside
+      aria-label="محصول پیشنهادی"
+      className="not-prose relative overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-l from-brand-50 via-white to-white p-4 shadow-[0_10px_28px_rgba(45,32,67,0.05)] sm:p-5"
+    >
+      <p className="mb-3 text-[11px] font-medium tracking-[0.18em] text-brand-700">
+        محصول پیشنهادی
+      </p>
+      <Link href={`/products/${product.slug}`} className="group flex items-stretch gap-4">
+        <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:w-28">
+          {product.coverUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={product.coverUrl}
+              alt={product.name}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+          )}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+          <div>
+            <h3 className="line-clamp-2 text-sm font-bold text-brand-800 transition-colors group-hover:text-brand-600 sm:text-base">
+              {product.name}
+            </h3>
+            {product.category?.name && (
+              <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">
+                {product.category.name}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            {product.minPrice != null ? (
+              <p className="text-sm font-bold text-primary sm:text-base">
+                {product.minPrice.toLocaleString("fa-IR")}
+                <span className="mr-1 text-[10px] font-normal text-muted-foreground">ریال</span>
+              </p>
+            ) : (
+              <span />
+            )}
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform duration-300 group-hover:-translate-x-1 sm:text-sm">
+              مشاهده محصول
+              <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </aside>
+  );
+}
+
+function ArticleContentWithProduct({
+  content,
+  featured,
+}: {
+  content: string;
+  featured: Article["featuredProduct"];
+}) {
+  const prose = "article-content text-[15px] leading-8 text-foreground sm:text-base sm:leading-9";
+
+  if (!featured) {
+    return (
+      <div
+        className={prose}
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
+  // Split after the </p> closest to the 45% mark so the card lands naturally
+  // in the middle of the article rather than either extreme.
+  const splitTarget = Math.floor(content.length * 0.45);
+  const tagEnd = content.indexOf("</p>", splitTarget);
+  const splitAt = tagEnd !== -1 ? tagEnd + 4 : -1;
+
+  if (splitAt <= 0) {
+    return (
+      <>
+        <div className={prose} dangerouslySetInnerHTML={{ __html: content }} />
+        <FeaturedProductCard product={featured} />
+      </>
+    );
+  }
+
+  const firstHalf = content.slice(0, splitAt);
+  const secondHalf = content.slice(splitAt);
+
+  return (
+    <>
+      <div className={prose} dangerouslySetInnerHTML={{ __html: firstHalf }} />
+      <FeaturedProductCard product={featured} />
+      <div className={prose} dangerouslySetInnerHTML={{ __html: secondHalf }} />
+      <FeaturedProductCard product={featured} />
+    </>
+  );
+}
+
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const article = await getArticle(slug);
@@ -331,69 +433,10 @@ export default async function ArticleDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        <div
-          className="article-content text-[15px] leading-8 text-foreground sm:text-base sm:leading-9"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: article.content }}
+        <ArticleContentWithProduct
+          content={article.content}
+          featured={featured}
         />
-
-        {featured && (
-          <aside
-            aria-label="محصول پیشنهادی"
-            className="not-prose relative overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-l from-brand-50 via-white to-white p-4 shadow-[0_10px_28px_rgba(45,32,67,0.05)] sm:p-5"
-          >
-            <p className="mb-3 text-[11px] font-medium tracking-[0.18em] text-brand-700">
-              محصول پیشنهادی
-            </p>
-            <Link
-              href={`/products/${featured.slug}`}
-              className="group flex items-stretch gap-4"
-            >
-              <div className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:w-28">
-                {featured.coverUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={featured.coverUrl}
-                    alt={featured.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
-                )}
-              </div>
-              <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
-                <div>
-                  <h3 className="line-clamp-2 text-sm font-bold text-brand-800 transition-colors group-hover:text-brand-600 sm:text-base">
-                    {featured.name}
-                  </h3>
-                  {featured.category?.name && (
-                    <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">
-                      {featured.category.name}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  {featured.minPrice != null ? (
-                    <p className="text-sm font-bold text-primary sm:text-base">
-                      {featured.minPrice.toLocaleString("fa-IR")}
-                      <span className="mr-1 text-[10px] font-normal text-muted-foreground">
-                        ریال
-                      </span>
-                    </p>
-                  ) : (
-                    <span />
-                  )}
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform duration-300 group-hover:-translate-x-1 sm:text-sm">
-                    مشاهده محصول
-                    <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden="true" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          </aside>
-        )}
 
         {article.keywords?.length > 0 && (
           <footer className="flex flex-wrap items-center gap-2 border-t border-border pt-6">

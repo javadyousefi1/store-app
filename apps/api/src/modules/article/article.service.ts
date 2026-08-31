@@ -60,6 +60,9 @@ export class ArticleService implements OnModuleInit {
     if (dto.categorySlug) {
       qb.andWhere('c.slug = :cSlug', { cSlug: dto.categorySlug });
     }
+    if (dto.featuredProductId) {
+      qb.andWhere('a.featuredProductId = :fpId', { fpId: dto.featuredProductId });
+    }
     if (dto.search?.trim()) {
       const q = `%${dto.search.trim()}%`;
       qb.andWhere(
