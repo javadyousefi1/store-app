@@ -4,10 +4,10 @@ import { useEffect, useState, type ReactNode } from "react";
 
 export function HomeHeroScrollArea({
   hero,
-  categories,
+  categories = null,
 }: {
   hero: ReactNode;
-  categories: ReactNode;
+  categories?: ReactNode;
 }) {
   const [mobileStickyTop, setMobileStickyTop] = useState(60);
 

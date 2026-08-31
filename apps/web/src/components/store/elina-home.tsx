@@ -251,86 +251,29 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
       <StoriesBar stories={stories ?? []} />
       <HomeHeroScrollArea
         hero={<HeroSlider sliders={sliders} />}
-        categories={
-          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-            <section
-              id="home-categories"
-              className="scroll-mt-24 pt-2 pb-9 sm:py-12"
-            >
-              <div className="mb-5 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
-                  دسته‌بندی
-                </h2>
-                <Link
-                  href="/products"
-                  className="flex items-center gap-1 text-xs text-brand-600 sm:text-sm"
-                >
-                  مشاهده همه
-                  <ArrowLeft className="h-4 w-4" />
-                </Link>
-              </div>
-              {/* Mobile: horizontal snap-scroll rail so many categories don't
-                  balloon the page height. Desktop keeps the roomy 5-col grid. */}
-              <div
-                className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
-                style={{ scrollSnapType: "x mandatory" }}
-              >
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={
-                      category.slug
-                        ? `/category/${encodeURIComponent(category.slug)}`
-                        : `/products?categoryId=${category.id}`
-                    }
-                    className="group w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)] sm:w-44 lg:w-auto"
-                    style={{ scrollSnapAlign: "start" }}
-                  >
-                    <div className="relative aspect-[5/6] overflow-hidden bg-muted">
-                      {category.coverUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={category.coverUrl}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
-                      )}
-                    </div>
-                    <p className="py-3.5 text-center text-sm font-semibold text-[#342b3d]">
-                      {category.name}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          </div>
-        }
+        categories={null}
       />
 
       <div className="relative z-10 bg-white">
         <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-          <section id="bestsellers" className="scroll-mt-24 pb-4 sm:pb-6">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
-                پرفروش‌ها
-              </h2>
-              <Link
-                href="/products"
-                className="flex items-center gap-1 text-xs text-brand-600 sm:text-sm"
-              >
-                مشاهده همه
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </div>
-            <HomeProductGrid products={bestsellers} />
-          </section>
+          {/*<section id="bestsellers" className="scroll-mt-24 pb-4 sm:pb-6">*/}
+          {/*  <div className="mb-5 flex items-center justify-between">*/}
+          {/*    <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">*/}
+          {/*      پرفروش‌ها*/}
+          {/*    </h2>*/}
+          {/*    <Link*/}
+          {/*      href="/products"*/}
+          {/*      className="flex items-center gap-1 text-xs text-brand-600 sm:text-sm"*/}
+          {/*    >*/}
+          {/*      مشاهده همه*/}
+          {/*      <ArrowLeft className="h-4 w-4" />*/}
+          {/*    </Link>*/}
+          {/*  </div>*/}
+          {/*  <HomeProductGrid products={bestsellers} />*/}
+          {/*</section>*/}
 
           {specialSaleProducts.length > 0 && (
-            <section id="special-sale" className="scroll-mt-24 pb-4 sm:pb-6">
+            <section id="special-sale" className="scroll-mt-24 py-4 sm:pb-6">
               <div className="mb-4 flex items-end justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-orange-500 text-white shadow-sm">
@@ -354,6 +297,59 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
               <HomeProductGrid products={specialSaleProducts} />
             </section>
           )}
+
+          <section
+            id="home-categories"
+            className="scroll-mt-24 pt-2 pb-9 sm:py-12"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
+                دسته‌بندی
+              </h2>
+              <Link
+                href="/products"
+                className="flex items-center gap-1 text-xs text-brand-600 sm:text-sm"
+              >
+                مشاهده همه
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </div>
+            <div
+              className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+              style={{ scrollSnapType: "x mandatory" }}
+            >
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={
+                    category.slug
+                      ? `/category/${encodeURIComponent(category.slug)}`
+                      : `/products?categoryId=${category.id}`
+                  }
+                  className="group w-36 shrink-0 overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_24px_rgba(42,31,65,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(42,31,65,0.12)] sm:w-44 lg:w-auto"
+                  style={{ scrollSnapAlign: "start" }}
+                >
+                  <div className="relative aspect-[5/6] overflow-hidden bg-muted">
+                    {category.coverUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={category.coverUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-brand-200" />
+                    )}
+                  </div>
+                  <p className="py-3.5 text-center text-sm font-semibold text-[#342b3d]">
+                    {category.name}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
 
           <HomeCatalogGateway products={bestsellers} />
 
