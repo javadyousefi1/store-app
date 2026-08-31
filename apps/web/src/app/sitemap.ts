@@ -7,9 +7,9 @@ import type {
   Product,
 } from "@/types";
 
-// Regenerate the sitemap every 12 hours at runtime (ISR) so newly published
-// articles and products appear without requiring a full redeploy.
-export const revalidate = 43200;
+// Always fetch fresh data — sitemaps are only hit by crawlers (not users),
+// so the per-request API cost is negligible and guarantees no stale URLs.
+export const dynamic = "force-dynamic";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
