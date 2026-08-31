@@ -273,7 +273,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
           {/*</section>*/}
 
           {specialSaleProducts.length > 0 && (
-            <section id="special-sale" className="scroll-mt-24 py-4 sm:pb-6">
+            <section id="special-sale" className="scroll-mt-24 pt-10 pb-10 sm:pt-14 sm:pb-14">
               <div className="mb-4 flex items-end justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-rose-500 to-orange-500 text-white shadow-sm">
@@ -300,7 +300,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
 
           <section
             id="home-categories"
-            className="scroll-mt-24 pt-2 pb-9 sm:py-12"
+            className="scroll-mt-24 pt-10 pb-10 sm:pt-14 sm:pb-14"
           >
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-bold text-brand-800 sm:text-2xl">
@@ -353,7 +353,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
 
           <HomeCatalogGateway products={bestsellers} />
 
-          <section className="content-auto grid gap-4 pb-10 sm:gap-5 sm:pb-14 md:grid-cols-2 md:grid-rows-2">
+          <section className="content-auto grid gap-4 pt-10 pb-10 sm:gap-5 sm:pt-14 sm:pb-14 md:grid-cols-2 md:grid-rows-2">
             {promoCards.map((card) => (
               <Link key={card.title} href={card.href} className={card.className}>
                 <PromoImage
@@ -373,7 +373,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
             ))}
           </section>
 
-          <section className="content-auto mb-6 grid grid-cols-2 gap-3 pb-4 sm:mb-8 md:grid-cols-4">
+          <section className="content-auto grid grid-cols-2 gap-3 pt-10 pb-10 sm:pt-14 sm:pb-14 md:grid-cols-4">
             {trustItems.map((item) => (
               <div
                 key={item.title}
@@ -407,7 +407,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
 
       <div className="relative z-10 bg-white">
         <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-10">
-          <div className="content-auto">
+          <div className="content-auto py-10 sm:py-14">
             <ReviewsSection />
           </div>
 
@@ -447,7 +447,7 @@ export function ElinaHome({ categories, bestsellers, specialSaleProducts, slider
 
           <section
             aria-labelledby="about-elina-heading"
-            className="content-auto mb-8 rounded-3xl border border-border bg-gradient-to-l from-brand-50 via-white to-white p-6 shadow-[0_10px_28px_rgba(45,32,67,0.04)] sm:p-8 md:p-10"
+            className="content-auto mb-10 sm:mb-14 rounded-3xl border border-border bg-gradient-to-l from-brand-50 via-white to-white p-6 shadow-[0_10px_28px_rgba(45,32,67,0.04)] sm:p-8 md:p-10"
           >
             <h2
               id="about-elina-heading"
