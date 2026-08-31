@@ -14,6 +14,13 @@ COPY apps/web ./apps/web
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# BACKEND_URL at build time lets Next.js reach the API during `next build`
+# (pre-rendering sitemap, generateStaticParams, etc.). Passed via --build-arg
+# in docker compose; falls back to localhost so the build never hard-fails
+# when the API is unreachable — ISR will regenerate at runtime instead.
+ARG BACKEND_URL=http://localhost:3000
+ENV BACKEND_URL=${BACKEND_URL}
+
 RUN pnpm --filter web run build
 
 

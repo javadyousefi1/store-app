@@ -3,11 +3,17 @@ services:
     build:
       context: ../..
       dockerfile: apps/web/Dockerfile
+      args:
+        # Lets next build reach the API during pre-rendering (sitemap etc.).
+        # host-gateway resolves to the host machine where the API container
+        # exposes port 3000.
+        BACKEND_URL: http://host.docker.internal:3000
       # Applied at BUILD time — bypasses docker's DNS for the npm mirror,
       # which currently doesn't resolve inside the build sandbox (EAI_AGAIN).
       # IP taken from `ping mirror-npm.runflare.com` on the host.
       extra_hosts:
         - "mirror-npm.runflare.com:195.214.235.194"
+        - "host.docker.internal:host-gateway"
     image: store-frontend:latest
     container_name: store-frontend
     restart: unless-stopped
