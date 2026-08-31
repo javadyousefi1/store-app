@@ -248,14 +248,14 @@ function MobileHeroCarousel({ slides }: { slides: Slide[] }) {
 
   return (
     <section
-      className="relative w-full bg-[#f8f6fb] pt-3 pb-2 md:py-3 lg:hidden"
+      className="relative w-full overflow-hidden lg:hidden"
       aria-label="پیشنهادهای ویژه"
     >
       <div
         ref={scrollerRef}
         onScroll={settleScroll}
         dir="ltr"
-        className="flex touch-pan-x snap-x snap-mandatory gap-3 overflow-x-auto px-7 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex touch-pan-x snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {mobileSlides.map((slide, index) => (
           <div
@@ -263,7 +263,7 @@ function MobileHeroCarousel({ slides }: { slides: Slide[] }) {
             ref={(node) => {
               itemRefs.current[index] = node;
             }}
-            className="relative aspect-[9/4.6] w-[calc(100%-4rem)] shrink-0 snap-center overflow-hidden rounded-xl bg-white shadow-[0_5px_18px_rgba(42,29,75,0.1)]"
+            className="relative aspect-[2/1] w-full shrink-0 snap-center overflow-hidden bg-[#f3f0f6]"
           >
             <SlideLink href={slide.href} className="absolute inset-0 block">
               <SlideMedia slide={slide} viewport="mobile" eager={index === 1} />
@@ -272,7 +272,8 @@ function MobileHeroCarousel({ slides }: { slides: Slide[] }) {
         ))}
       </div>
 
-      <div className="absolute bottom-4 left-1/2 z-30 hidden -translate-x-1/2 md:flex">
+      {/* Pagination dots */}
+      <div className="absolute bottom-3 left-1/2 z-30 -translate-x-1/2">
         <SliderPagination
           slides={slides}
           active={activeSlide}
