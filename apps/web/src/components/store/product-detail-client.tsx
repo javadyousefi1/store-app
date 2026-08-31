@@ -15,6 +15,59 @@ import type { ProductDetail, ProductVariant } from "@/types";
 
 type VariantWithReserved = ProductVariant & { reserved?: number };
 
+function StockBadge({ inStock }: { inStock: boolean }) {
+  return (
+    <div className="flex items-center gap-1.5 text-sm">
+      {inStock ? (
+        <>
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          <span className="text-green-700">موجود</span>
+        </>
+      ) : (
+        <>
+          <span className="w-2 h-2 rounded-full bg-red-500" />
+          <span className="text-red-600">ناموجود</span>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DiscountPriceBlock({ price, oldPrice, inStock }: { price: number; oldPrice: number; inStock: boolean }) {
+  const discountPct = Math.round((1 - price / oldPrice) * 100);
+  const savings = oldPrice - price;
+
+  return (
+    <div className="space-y-3">
+      {/* Discount banner */}
+      <div className="flex items-center gap-3 rounded-xl border border-rose-100 bg-gradient-to-l from-rose-50 to-orange-50 px-4 py-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-rose-500 text-sm font-extrabold text-white shadow-sm">
+          {discountPct.toLocaleString("fa-IR")}٪
+        </span>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[11px] font-medium text-muted-foreground">قیمت قبل از تخفیف</span>
+          <span className="text-sm font-semibold text-muted-foreground line-through decoration-1">
+            {oldPrice.toLocaleString("fa-IR")} تومان
+          </span>
+        </div>
+      </div>
+
+      {/* Current price */}
+      <div className="space-y-1">
+        <p className="text-3xl font-bold text-primary">
+          {price.toLocaleString("fa-IR")}{" "}
+          <span className="text-base font-normal text-muted-foreground">تومان</span>
+        </p>
+        <p className="text-xs font-medium text-emerald-600">
+          {savings.toLocaleString("fa-IR")} تومان صرفه‌جویی کردید
+        </p>
+      </div>
+
+      <StockBadge inStock={inStock} />
+    </div>
+  );
+}
+
 interface Props {
   product: ProductDetail & {
     variants: VariantWithReserved[];
@@ -128,34 +181,22 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
           {/* Price + stock — desktop inline. On mobile we move this into the
               fixed bottom bar so the CTA stays reachable without scrolling. */}
           {matched ? (
-            <div className="hidden space-y-1.5 md:block">
+            <div className="hidden md:block">
               {matched.oldPrice && Number(matched.oldPrice) > Number(matched.price) ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground line-through decoration-1">
-                    {Number(matched.oldPrice).toLocaleString("fa-IR")}
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
-                    {Math.round((1 - Number(matched.price) / Number(matched.oldPrice)) * 100).toLocaleString("fa-IR")}٪
-                  </span>
+                <DiscountPriceBlock
+                  price={Number(matched.price)}
+                  oldPrice={Number(matched.oldPrice)}
+                  inStock={available(matched) > 0}
+                />
+              ) : (
+                <div className="space-y-1.5">
+                  <p className="text-2xl font-bold text-primary">
+                    {Number(matched.price).toLocaleString("fa-IR")}{" "}
+                    <span className="text-base font-normal text-muted-foreground">تومان</span>
+                  </p>
+                  <StockBadge inStock={available(matched) > 0} />
                 </div>
-              ) : null}
-              <p className="text-2xl font-bold text-primary">
-                {Number(matched.price).toLocaleString("fa-IR")}{" "}
-                <span className="text-base font-normal text-muted-foreground">تومان</span>
-              </p>
-              <div className="flex items-center gap-1.5 text-sm">
-                {available(matched) > 0 ? (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-green-700">موجود</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-red-500" />
-                    <span className="text-red-600">ناموجود</span>
-                  </>
-                )}
-              </div>
+              )}
             </div>
           ) : (
             <p className="hidden text-xl font-bold text-muted-foreground md:block">—</p>
@@ -203,22 +244,21 @@ export function ProductDetailClient({ product, valueLabels = {} }: Props) {
             <div className="flex min-w-0 flex-1 flex-col">
               {matched ? (
                 <>
-                  <span className="text-[11px] text-muted-foreground">قیمت</span>
                   {matched.oldPrice && Number(matched.oldPrice) > Number(matched.price) ? (
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-[11px] font-medium text-muted-foreground line-through decoration-1">
+                    <>
+                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                        {Math.round((1 - Number(matched.price) / Number(matched.oldPrice)) * 100).toLocaleString("fa-IR")}٪ تخفیف
+                      </span>
+                      <span className="text-[11px] text-muted-foreground line-through">
                         {Number(matched.oldPrice).toLocaleString("fa-IR")}
                       </span>
-                      <span className="rounded-full bg-emerald-500/95 px-1.5 text-[10px] font-bold text-white">
-                        {Math.round((1 - Number(matched.price) / Number(matched.oldPrice)) * 100).toLocaleString("fa-IR")}٪
-                      </span>
-                    </span>
-                  ) : null}
+                    </>
+                  ) : (
+                    <span className="text-[11px] text-muted-foreground">قیمت</span>
+                  )}
                   <span className="truncate text-base font-bold text-primary">
                     {Number(matched.price).toLocaleString("fa-IR")}
-                    <span className="mr-1 text-[11px] font-normal text-muted-foreground">
-                      تومان
-                    </span>
+                    <span className="mr-1 text-[11px] font-normal text-muted-foreground">تومان</span>
                   </span>
                 </>
               ) : (
