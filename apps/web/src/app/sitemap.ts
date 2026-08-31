@@ -7,6 +7,10 @@ import type {
   Product,
 } from "@/types";
 
+// Regenerate the sitemap every 12 hours at runtime (ISR) so newly published
+// articles and products appear without requiring a full redeploy.
+export const revalidate = 43200;
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   "https://elinaclothes.com";
@@ -19,16 +23,17 @@ const siteUrl =
  */
 async function fetchAllPublishedArticles(): Promise<Article[]> {
   const all: Article[] = [];
-  const limit = 50; // must respect the backend Max(50) validator
+  const limit = 50;
   for (let page = 1; page <= 10; page += 1) {
     try {
       const res = await apiFetch<PaginatedResponse<Article>>(
         `/articles?page=${page}&limit=${limit}`,
-        { revalidate: 3600 },
+        { revalidate: 43200 },
       );
       all.push(...res.data);
       if (page >= res.totalPages) break;
-    } catch {
+    } catch (err) {
+      console.error("[sitemap] articles fetch failed:", err);
       break;
     }
   }
@@ -37,17 +42,13 @@ async function fetchAllPublishedArticles(): Promise<Article[]> {
 
 async function fetchProductCategories(): Promise<Category[]> {
   try {
-    return await apiFetch<Category[]>("/categories", { revalidate: 3600 });
-  } catch {
+    return await apiFetch<Category[]>("/categories", { revalidate: 43200 });
+  } catch (err) {
+    console.error("[sitemap] categories fetch failed:", err);
     return [];
   }
 }
 
-/**
- * Pull every active product for the sitemap. Same pattern as articles —
- * page through the public listing (50 max per hit) so Google can crawl a
- * URL per product for indexing.
- */
 async function fetchAllProducts(): Promise<Product[]> {
   const all: Product[] = [];
   const limit = 50;
@@ -55,11 +56,12 @@ async function fetchAllProducts(): Promise<Product[]> {
     try {
       const res = await apiFetch<PaginatedResponse<Product>>(
         `/products?page=${page}&limit=${limit}`,
-        { revalidate: 3600 },
+        { revalidate: 43200 },
       );
       all.push(...res.data);
       if (page >= res.totalPages) break;
-    } catch {
+    } catch (err) {
+      console.error("[sitemap] products fetch failed:", err);
       break;
     }
   }
