@@ -57,6 +57,7 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
+  isActive: boolean;
   coverId?: string | null;
   coverUrl?: string | null;
   createdAt: string;
@@ -71,6 +72,7 @@ export interface CreateCategoryRequest {
 export interface UpdateCategoryRequest {
   name?: string;
   slug?: string;
+  isActive?: boolean;
 }
 
 // Slider

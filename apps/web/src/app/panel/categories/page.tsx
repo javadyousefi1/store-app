@@ -3,6 +3,7 @@
 import { toast } from "@/lib/toast";
 import { Plus, Pencil, Trash2, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { DataTable, type Column } from "@/components/data-table";
 import { CategoryModal, ConfirmDeleteModal } from "@/components/modals";
 import { useCategories, useCreateCategory, useDeleteCategory, useUpdateCategory } from "@/hooks/use-categories";
@@ -47,6 +48,15 @@ export default function CategoriesPage() {
     }
   }
 
+  async function handleToggleActive(row: Category) {
+    try {
+      await updateCategory.mutateAsync({ id: row.id, data: { isActive: !row.isActive } });
+      toast.success(row.isActive ? "دسته‌بندی غیرفعال شد" : "دسته‌بندی فعال شد");
+    } catch {
+      toast.error("خطا در تغییر وضعیت");
+    }
+  }
+
   const columns: Column<Category>[] = [
     {
       key: "cover",
@@ -79,6 +89,19 @@ export default function CategoriesPage() {
         <code className="text-xs text-muted-foreground" dir="ltr">
           {row.slug}
         </code>
+      ),
+    },
+    {
+      key: "isActive",
+      header: "وضعیت",
+      className: "w-24",
+      cell: (row) => (
+        <Switch
+          checked={row.isActive}
+          onCheckedChange={() => handleToggleActive(row)}
+          disabled={updateCategory.isPending}
+          aria-label={row.isActive ? "فعال" : "غیرفعال"}
+        />
       ),
     },
     {

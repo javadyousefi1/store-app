@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -15,10 +15,10 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all categories', description: 'Returns categories with a public (non-signed) `coverUrl` when a cover is set.' })
-  @ApiResponse({ status: 200, description: 'List of active categories.' })
-  findAll() {
-    return this.categoryService.findAll();
+  @ApiOperation({ summary: 'Get all categories', description: 'Returns categories with a public (non-signed) `coverUrl` when a cover is set. Pass `isActive=true` to return only active categories.' })
+  @ApiResponse({ status: 200, description: 'List of categories.' })
+  findAll(@Query('isActive', new ParseBoolPipe({ optional: true })) isActive?: boolean) {
+    return this.categoryService.findAll(isActive);
   }
 
   @Get('by-slug/:slug')

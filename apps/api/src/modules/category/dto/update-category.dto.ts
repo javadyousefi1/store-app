@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length, Matches } from 'class-validator';
 import { SLUG_PATTERN } from '../../article/dto/create-article-category.dto';
 
 export class UpdateCategoryDto {
@@ -15,4 +15,9 @@ export class UpdateCategoryDto {
   @Length(2, 160)
   @Matches(SLUG_PATTERN, { message: 'slug باید حروف/اعداد و - باشد (بدون فاصله)' })
   slug?: string;
+
+  @ApiPropertyOptional({ example: true, description: 'Whether the category is visible on the storefront' })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }

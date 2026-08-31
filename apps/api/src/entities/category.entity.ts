@@ -26,6 +26,10 @@ export class Category {
   @Column({ length: 160 })
   slug: string;
 
+  @ApiProperty({ example: true })
+  @Column({ default: true })
+  isActive: boolean;
+
   @Column({ type: 'uuid', nullable: true })
   coverId: string | null;
 

@@ -84,7 +84,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
   const [products, categories] = await Promise.all([
     apiFetch<PaginatedResponse<Product>>(`/products?${params}`),
-    apiFetch<Category[]>("/categories"),
+    apiFetch<Category[]>("/categories?isActive=true"),
   ]);
 
   const buildUrl = (nextPage: number) => {

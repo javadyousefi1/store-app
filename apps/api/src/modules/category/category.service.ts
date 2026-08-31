@@ -16,8 +16,10 @@ export class CategoryService {
     private mediaService: MediaService,
   ) {}
 
-  async findAll(): Promise<Category[]> {
+  async findAll(isActive?: boolean): Promise<Category[]> {
+    const where = isActive !== undefined ? { isActive } : {};
     const categories = await this.repo.find({
+      where,
       order: { name: 'ASC' },
       relations: ['cover'],
     });
