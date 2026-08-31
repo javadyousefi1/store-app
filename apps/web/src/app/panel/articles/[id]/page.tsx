@@ -859,7 +859,10 @@ function FeaturedProductPicker({
                   <button
                     type="button"
                     key={p.id}
-                    onClick={() => onChange(p.id)}
+                    onClick={() => {
+                      onChange(p.id);
+                      if (!title.trim()) onTitleChange(p.name);
+                    }}
                     className={
                       "flex w-full items-center gap-2 rounded-md p-1.5 text-right text-xs transition-colors " +
                       (isPicked
