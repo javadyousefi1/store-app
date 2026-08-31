@@ -10,6 +10,7 @@ import { ArticleCategory } from '../../entities/article-category.entity';
 import { paginate } from '../../common/helpers/paginate.helper';
 import { PaginateResult } from '../../common/interfaces/paginate-result.interface';
 import { StorageService } from '../../services/storage/storage.service';
+import { MediaService } from '../media/media.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GetAdminArticlesDto, GetPublicArticlesDto } from './dto/get-articles.dto';
@@ -28,6 +29,7 @@ export class ArticleService implements OnModuleInit {
     @InjectRepository(Article) private readonly repo: Repository<Article>,
     private readonly categoryService: ArticleCategoryService,
     private readonly storageService: StorageService,
+    private readonly mediaService: MediaService,
   ) {}
 
   /**
@@ -91,11 +93,16 @@ export class ArticleService implements OnModuleInit {
   async findPublishedBySlug(slug: string): Promise<Article> {
     const article = await this.repo.findOne({
       where: { slug, publishedAt: Not(IsNull()) },
-      relations: ['category', 'featuredProduct'],
+      relations: ['category', 'featuredProduct', 'featuredProduct.cover'],
     });
     if (!article) throw new NotFoundException('Article not found');
     // Fire-and-forget view count bump — never fails the read.
     this.repo.increment({ id: article.id }, 'viewCount', 1).catch(() => {});
+    // Compute coverUrl for the featured product so the frontend can render it.
+    if (article.featuredProduct?.cover) {
+      (article.featuredProduct as any).coverUrl =
+        await this.mediaService.getUrl(article.featuredProduct.cover);
+    }
     return article;
   }
 
