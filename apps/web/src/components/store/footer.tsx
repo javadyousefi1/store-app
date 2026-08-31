@@ -184,6 +184,7 @@ export function StoreFooter() {
                 alt="نماد اعتماد الکترونیکی"
                 style={{ cursor: "pointer" }}
                 {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/enamad_icon.png"; }}
                 className="h-16 w-auto"
               />
             </a>

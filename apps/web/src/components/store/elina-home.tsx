@@ -194,6 +194,7 @@ function TrustBadgesSection() {
                 {...{ code: "C4T58bHVn5wGpSxKgRaItrYMiUVnk2oR" }}
                 loading="lazy"
                 decoding="async"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/enamad_icon.png"; }}
                 className="h-20 w-auto sm:h-24"
                 style={{ cursor: "pointer" }}
               />
